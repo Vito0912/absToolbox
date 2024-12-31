@@ -1,6 +1,6 @@
 # absToolbox
 
-A collection of tools designed to assist with ABS-related tasks.
+A collection of tools designed to assist with Audiobookshelf-related tasks.
 
 ## Available Tools
 
