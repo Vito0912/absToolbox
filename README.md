@@ -6,8 +6,10 @@ A collection of tools designed to assist with Audiobookshelf-related tasks.
 
 The toolbox currently includes the following utilities:
 
-- **`quick_match_chapters.py`**: Helps with quick chapter matching. (Not implemented yet in ABS) - It also fixes faulty chapters.
+- **`quick_match_chapters.py`**: Helps with quick chapter matching. It also fixes faulty chapters.
 - **`remove_empty_authors.py`**: Removes authors with no books.
+- **`cleanup_listening_sessions.py`**: Removes listening sessions with too much time. Make your statistics looks better and accurate again.
+- **`migrate_backup_to_new_server.py`**: Migrate your backup to a new server that has different paths or generally change the paths of your backup. (Currently only limited support. See the comments how to use and if you can use it for your library.)
 
 ## Installation & Usage
 
