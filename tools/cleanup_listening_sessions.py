@@ -1,3 +1,4 @@
+# MAKE A BACKUP BEFORE USE! DATA IS NOT RECOVERABLE IF THERE IS A PROBLEM WITH RETURNED DATA!
 # This script automatically deletes all listening sessions that are larger than a given threshold.
 # Depending on the size of the database, this script might take a while to run.
 import sys
