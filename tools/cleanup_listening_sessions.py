@@ -27,7 +27,7 @@ if len(USER_IDS) == 0:
 print(f"Processing {len(USER_IDS)} users")
 
 for user_id in USER_IDS:
-    sessions_response = requests.get(f"{ABS_HOST}/api/users/{user_id}/listening-sessions?itemsPerPage={2000000}&token={API_KEY}")
+    sessions_response = requests.get(f"{ABS_HOST}/api/users/{user_id}/listening-sessions?itemsPerPage={SESSIONS_TO_FETCH}&token={API_KEY}")
     sessions_to_delete = []
     session_time_not_deleted = 0
     session_time_deleted = 0
