@@ -128,12 +128,16 @@ for item in items:
     chapter_url = f"{ABS_HOST}/api/search/chapters?asin={asin}&region={REGION}&token={API_KEY}"
     chapter_response = requests.get(chapter_url)
 
-    if chapter_response.status_code != 200:
+    if chapter_response.status_code != 200 or chapter_response.json().get('error') is not None:
         book_info[book_id]['comment'] = 'Chapters retrieval failed'
         print(f"Error fetching chapters for '{title}'. Response Code:", chapter_response.status_code)
         continue
 
     chapters = chapter_response.json().get('chapters', [])
+    if len(chapters) == 0:
+        book_info[book_id]['comment'] = 'No chapters found'
+        print(f"No chapters found for '{title}'.")
+        continue
     print(f"Chapters found for '{title}': {len(chapters)}")
 
     # Compare current and found chapters
