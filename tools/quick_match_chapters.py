@@ -6,6 +6,7 @@
 
 import time
 import requests
+from urllib import parse
 
 # Configuration constants
 CHAPTER_THRESHOLD = 3  # Threshold for determining missing chapters. Do disable overwriting existing chapters, set to 99999999 ;)
@@ -15,7 +16,7 @@ API_KEY = ""  # API Key from user settings
 PROVIDER = "audible.de"  # Metadata provider (See available providers in API documentation https://api.audiobookshelf.org/#metadata-providers)
 REGION = "DE"  # Region code (e.g., US, DE)
 DISABLE_RATE_PROTECTION = False  # Rate protection, disable to speed up but risk timeouts
-DISABLE_QUICK_MATCH_NO_ASIN = True  # Disable quick match for books without ASIN to try to find ASIN
+SEARCH_FOR_ASIN = True  # Search for ASIN if not available. Disable this to use tracks as chapters if no ASIN is available.
 USE_TRACKS_AS_CHAPTERS = False  # Use tracks as chapters if no asin available (Fallback)
 
 
@@ -50,34 +51,31 @@ for item in items:
     if 'asin' not in metadata or metadata['asin'] is None:
         book_info[book_id]['status'] = 'NO_ASIN'
         book_info[book_id]['asin'] = 'N/A'
-        if not DISABLE_QUICK_MATCH_NO_ASIN:
-            post_data = {
-                "provider": PROVIDER,
-                "title": title,
-                "author": authors,
-            }
 
-            match_url = f"{ABS_HOST}/api/items/{book_id}/match?token={API_KEY}"
-            new_item_response = requests.post(match_url, json=post_data)
+        if SEARCH_FOR_ASIN:
+            match_url = f"{ABS_HOST}/api/search/books?title={parse.quote(title)}&author={parse.quote(authors)}&provider={PROVIDER}&token={API_KEY}"
+            new_item_response = requests.get(match_url)
 
             if new_item_response.status_code != 200:
                 print(f"Error matching book '{title}':", new_item_response.json())
                 continue
 
-            new_item = new_item_response.json()
-            if 'error' in new_item or 'libraryItem' not in new_item:
-                print(f"Error matching book '{title}' (No library item returned).")
+            if len(new_item_response.json()) == 0:
+                print(f"Error matching book '{title}' (No results found).")
                 book_info[book_id]['comment'] = 'Asin retrieval failed'
                 continue
 
-            if new_item['libraryItem']['media']['metadata'].get('asin') is None:
+            best_match = new_item_response.json()[0]
+            asin = best_match.get('asin', None)
+
+            if asin is None:
                 print(f"Error matching book '{title}' (No ASIN found).")
-                book_info[book_id]['comment'] = 'Asin retrieval failed'
+                book_info[book_id]['comment'] = 'Asin retrieval failed - No ASIN found'
                 continue
 
-            book_info[book_id]['comment'] = 'Asin quick matched'
-
-            item = new_item['libraryItem']
+            item['media']['metadata']['asin'] = asin
+            metadata['asin'] = asin
+            print(f"ASIN found: {asin}")
 
     # Check if asin is now available
     if 'asin' not in item['media']['metadata'] or item['media']['metadata']['asin'] is None:
