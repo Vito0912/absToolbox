@@ -94,22 +94,47 @@ for item in items:
 
                 current_time = 0
                 length_of_book = item['media']['duration']
+
+                current_chapters_num = item['media'].get('numChapters', 0)
+
+                if current_chapters_num == 0 or abs(current_chapters_num - len(tracks)) > CHAPTER_THRESHOLD:
+                    print(f"Chapters are missing or incorrect for '{title}' (Current num: {current_chapters_num}, Tracks num: {len(tracks)}). Updating...")
+                else:
+                    print(f"Chapters are fine for '{title}'.")
+                    book_info[book_id]['status'] = 'FINISHED'
+                    book_info[book_id]['comment'] = 'No chapters to update'
+                    continue
+
                 for i, track in enumerate(tracks):
                     duration = track['duration']
+
+                    # Use track['title'] and remove the extension
+                    track_title = track['metadata']['filename'].split('.')[0]
+
                     new_chapters.append({
                         "id": i,
                         "start": current_time,
                         "end": current_time + duration,
-                        "title": f"Chapter {i+1}",
+                        "title": track_title,
                         "error": None
                     })
                     current_time += duration - 0.001 # Subtract a tiny amount to avoid rounding issues
                     if length_of_book < current_time:
                         break
 
-                print(f"Chapters updated successfully for '{title}' (Using tracks!).")
-                book_info[book_id]['comment'] = 'Tracks used as chapters'
-                book_info[book_id]['status'] = 'FINISHED'
+                # Update chapters for the book
+                update_url = f"{ABS_HOST}/api/items/{book_id}/chapters?token={API_KEY}"
+                update_data = {"chapters": new_chapters}
+                update_response = requests.post(update_url, json=update_data)
+
+                if update_response.status_code == 200:
+                    print(f"Chapters updated successfully for '{title}' (Using tracks!).")
+                    book_info[book_id]['comment'] = 'Tracks used as chapters'
+                    book_info[book_id]['status'] = 'FINISHED'
+                else:
+                    print(f"Error updating chapters for '{title}'. Response Code:", update_response.status_code)
+                    book_info[book_id]['comment'] = 'Chapters update failed'
+
                 continue
             else:
                 print(f"Error using tracks as chapters for '{title}' (No or 1 track found).")
@@ -192,6 +217,6 @@ for book_id, info in book_info.items():
 
 print("\n--- Failed Books ---")
 for book_id, info in book_info.items():
-    if info['status'] == 'ERROR':
+    if info['status'] != 'FINISHED':
         print(f"{info['title']} ({info['status']}): {info['comment']}\nLink: {ABS_HOST}/item/{book_id}\n")
         print("-" * 50)
