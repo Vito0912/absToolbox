@@ -4,6 +4,9 @@ import base64
 import requests
 
 # Configuration constants
+
+# PLEASE MAKE A BACKUP BEFORE RUNNING THIS SCRIPT!
+
 ABS_HOST = ""  # AudiobookShelf Host URL
 API_KEY = ""
 LIBRARY_IDS = []  # Leave empty to process all libraries
