@@ -46,10 +46,10 @@ import sqlite3
 BACKUP_FILE = "backup.audiobookshelf"
 
 OLD_METADATA_DIR = r"/metadata"  # Default for docker
-METADATA_DIR = r"C:\Users\finn\Downloads\metadata"
+METADATA_DIR = r"C:\Users\<user>\Documents\metadata"
 
 OLD_LIBRARIES_DIR = r"/"  # Default for docker example
-LIBRARIES_DIR = r"C:\Users\finn\Downloads\libraries"
+LIBRARIES_DIR = r"C:\Users\<user>\Documents\libraries"
 
 # ###### Code ####
 
