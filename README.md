@@ -2,6 +2,19 @@
 
 A collection of tools designed to assist with Audiobookshelf-related tasks.
 
+> [!CAUTION]
+> All scripts may have unforeseen side effects or might even crash the server completely. Therefore, before starting any script, you should make a backup via the settings—especially if this is mentioned in the script description.
+
+> [!NOTE]  
+> Currently, these are only Python scripts. However, there are plans to implement plugin support:
+> [Plugin Support Pull Request](https://github.com/advplyr/audiobookshelf/pull/3745)
+>
+> Should this happen, I will try to integrate all scripts into ABS and create additional ones. Depending on how access to the database/UI is provided, possible developments include:
+> - An issue tracker with an interface for management (if it is possible to register a settings page)
+> - Ratings (if it is possible to access the database and/or create a custom table, and if the item view is customizable)
+> - Shared listening states (if there is access to the database)
+
+
 ## Available Tools
 
 The toolbox currently includes the following utilities:
