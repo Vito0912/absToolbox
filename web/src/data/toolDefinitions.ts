@@ -5,6 +5,7 @@ import { executeMatchAudiobookChapters } from "@/tools/quickMatchChapters";
 import { executeRemoveEmptyAuthors } from "@/tools/removeEmptyAuthors";
 import { executeForceMetadata } from "@/tools/forceMetadata";
 import { executeRenameSeries } from "@/tools/renameSeries";
+import { executePathTagUpdater } from "@/tools/pathTagUpdater";
 
 export const toolDefinitions: ToolDefinition[] = [
   {
@@ -19,7 +20,7 @@ export const toolDefinitions: ToolDefinition[] = [
         name: "libraryIds",
         description:
           "Select libraries to process. If left empty, all libraries will be included.",
-        type: "stringArray",
+        type: "librarySelector",
         label: "Library IDs (UUID)",
         required: false,
       },
@@ -91,7 +92,7 @@ export const toolDefinitions: ToolDefinition[] = [
     fields: [
       {
         name: "libraryId",
-        type: "string",
+        type: "singleLibrarySelector",
         label: "Library ID",
         description: "The UUID of the library to process.",
         required: true,
@@ -171,7 +172,7 @@ export const toolDefinitions: ToolDefinition[] = [
     fields: [
       {
         name: "libraryIds",
-        type: "stringArray",
+        type: "librarySelector",
         label: "Library IDs (UUID)",
         description:
           "Select specific libraries to process. If left empty, all libraries will be included.",
@@ -188,7 +189,7 @@ export const toolDefinitions: ToolDefinition[] = [
     fields: [
       {
         name: "libraryIds",
-        type: "stringArray",
+        type: "librarySelector",
         label: "Library IDs",
         description:
           "Select libraries to process. If left empty, all libraries will be included.",
@@ -205,7 +206,7 @@ export const toolDefinitions: ToolDefinition[] = [
     fields: [
       {
         name: "libraryId",
-        type: "string",
+        type: "singleLibrarySelector",
         label: "Library ID",
         description: "The UUID of the library.",
         required: true,
@@ -227,4 +228,47 @@ export const toolDefinitions: ToolDefinition[] = [
     ],
     execute: executeRenameSeries,
   },
+  {
+    id: "path-tag-genre-updater",
+    title: "Path Tag and Genre Updater",
+    description:
+      "Updates or removes tags and genres for based on file path patterns. Inspiration taken from <a href='https://github.com/bengalih/ABS-scripts/blob/main/ApTaGu.md' target='_blank' class='text-blue-500 hover:underline'>ApTaGu</a>.",
+    fields: [
+      {
+        name: "libraryId",
+        type: "singleLibrarySelector",
+        label: "Library ID",
+        description: "The UUID of the library.",
+        required: true,
+      },
+      {
+        name: "ruleSets",
+        type: "stringArray",
+        label: "Rule Sets",
+        description:
+          "Define rules for updating tags and genres based on file paths. Each rule should be in the format: '<regex>:<tag name>'.",
+          default: [
+            '.*Fiction.*:Fiction'
+          ]
+      },
+      {
+        name: "dryRun",
+        type: "boolean",
+        label: "Dry Runq",
+        description:
+          "If enabled, the tool will simulate the changes without applying them.",
+        default: true
+      },
+      {
+        name: "type",
+        type: "select",
+        label: "Type",
+        description: "Select whether to update tags or genres.",
+        required: true,
+        options: ["tags", "genres"],
+        default: "tags",
+      }
+    ],
+    execute: executePathTagUpdater
+  }
 ];

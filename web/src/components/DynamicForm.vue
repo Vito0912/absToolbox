@@ -108,6 +108,90 @@
             + Add Item
           </button>
         </div>
+
+        <div v-else-if="field.type === 'librarySelector'" class="space-y-3">
+          <div v-if="librariesLoading[field.name]" class="text-sm text-slate-400">
+            Loading libraries...
+          </div>
+          <div v-else-if="librariesError[field.name]" class="text-sm text-rose-400">
+            Error loading libraries: {{ librariesError[field.name] }}
+          </div>
+          <div v-else class="space-y-2">
+            <div class="flex items-center gap-2 pb-2 border-b border-white/10">
+              <button
+                type="button"
+                @click="selectAllLibraries(field.name)"
+                class="px-3 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-500 transition"
+              >
+                Select All
+              </button>
+              <button
+                type="button"
+                @click="deselectAllLibraries(field.name)"
+                class="px-3 py-1 text-xs bg-slate-600 text-white rounded hover:bg-slate-500 transition"
+              >
+                Deselect All
+              </button>
+              <span class="text-xs text-slate-400">
+                {{ getSelectedLibrariesCount(field.name) }} of {{ libraries[field.name]?.length || 0 }} selected
+              </span>
+            </div>
+            <div 
+              v-for="library in libraries[field.name]" 
+              :key="library.id"
+              class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition"
+            >
+              <label class="flex items-center gap-3 cursor-pointer flex-1">
+                <input
+                  type="checkbox"
+                  :value="library.id"
+                  v-model="formData[field.name]"
+                  class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 rounded focus:ring-indigo-500 focus:ring-2"
+                />
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-medium text-slate-200">{{ library.name }}</span>
+                  <span class="text-xs text-slate-400 px-2 py-1 bg-slate-800 rounded">
+                    {{ library.mediaType }}
+                  </span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="field.type === 'singleLibrarySelector'" class="space-y-3">
+          <div v-if="librariesLoading[field.name]" class="text-sm text-slate-400">
+            Loading libraries...
+          </div>
+          <div v-else-if="librariesError[field.name]" class="text-sm text-rose-400">
+            Error loading libraries: {{ librariesError[field.name] }}
+          </div>
+          <div v-else class="space-y-2">
+            <div class="space-y-1">
+              <div 
+                v-for="library in libraries[field.name]" 
+                :key="library.id"
+                class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition"
+              >
+                <label class="flex items-center gap-3 cursor-pointer flex-1">
+                  <input
+                    type="radio"
+                    :name="`radio-${field.name}`"
+                    :value="library.id"
+                    v-model="formData[field.name]"
+                    class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 focus:ring-indigo-500 focus:ring-2"
+                  />
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-slate-200">{{ library.name }}</span>
+                    <span class="text-xs text-slate-400 px-2 py-1 bg-slate-800 rounded">
+                      {{ library.mediaType }}
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="pt-2">
@@ -173,11 +257,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import type { ToolDefinition, ToolResult } from '@/types/tool'
+import { useApi } from '@/composables/useApi';
 
 interface Props {
   tool: ToolDefinition
+}
+
+interface Library {
+  id: string
+  name: string
+  mediaType: string
+  displayOrder: number
+  icon: string
 }
 
 const props = defineProps<Props>()
@@ -185,16 +278,63 @@ const props = defineProps<Props>()
 const formData = reactive<Record<string, any>>({})
 const loading = ref(false)
 const result = ref<ToolResult | null>(null)
+const libraries = reactive<Record<string, Library[]>>({})
+const librariesLoading = reactive<Record<string, boolean>>({})
+const librariesError = reactive<Record<string, string | null>>({})
+
+const { get } = useApi()
 
 props.tool.fields.forEach((field) => {
   if (field.type === 'boolean') {
     formData[field.name] = field.default !== undefined ? field.default : false
   } else if (field.type === 'stringArray') {
     formData[field.name] = field.default || ['']
+  } else if (field.type === 'librarySelector') {
+    formData[field.name] = []
+  } else if (field.type === 'singleLibrarySelector') {
+    formData[field.name] = field.default || ''
   } else {
     formData[field.name] = field.default !== undefined ? field.default : ''
   }
 })
+
+const loadLibraries = async (fieldName: string) => {
+  librariesLoading[fieldName] = true
+  librariesError[fieldName] = null
+  
+  try {
+    const response = (await get('/api/libraries')).data
+    if (response.libraries) {
+      libraries[fieldName] = response.libraries.sort((a: Library, b: Library) => a.displayOrder - b.displayOrder)
+      
+      const field = props.tool.fields.find(f => f.name === fieldName)
+      if (field?.type === 'librarySelector') {
+        formData[fieldName] = libraries[fieldName].map((lib: Library) => lib.id)
+      }
+      else if (field?.type === 'singleLibrarySelector' && !formData[fieldName] && libraries[fieldName].length > 0) {
+        formData[fieldName] = libraries[fieldName][0].id
+      }
+    }
+  } catch (error: any) {
+    librariesError[fieldName] = error.message || 'Failed to load libraries'
+  } finally {
+    librariesLoading[fieldName] = false
+  }
+}
+
+const selectAllLibraries = (fieldName: string) => {
+  if (libraries[fieldName]) {
+    formData[fieldName] = libraries[fieldName].map((lib: Library) => lib.id)
+  }
+}
+
+const deselectAllLibraries = (fieldName: string) => {
+  formData[fieldName] = []
+}
+
+const getSelectedLibrariesCount = (fieldName: string) => {
+  return Array.isArray(formData[fieldName]) ? formData[fieldName].length : 0
+}
 
 const getArrayValue = (fieldName: string): string[] => {
   if (!formData[fieldName]) formData[fieldName] = ['']
@@ -219,7 +359,7 @@ const handleSubmit = async () => {
   try {
     const cleanedData: Record<string, any> = { ...formData }
     props.tool.fields.forEach((field) => {
-      if (field.type === 'stringArray') {
+      if (field.type === 'stringArray' || field.type === 'librarySelector') {
         cleanedData[field.name] = formData[field.name].filter(
           (item: string) => item.trim() !== ''
         )
@@ -238,4 +378,12 @@ const handleSubmit = async () => {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  props.tool.fields.forEach((field) => {
+    if (field.type === 'librarySelector' || field.type === 'singleLibrarySelector') {
+      loadLibraries(field.name)
+    }
+  })
+})
 </script>

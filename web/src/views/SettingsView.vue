@@ -7,20 +7,41 @@
       </p>
     </div>
 
-    <p class="text-sm text-slate-400">
-      Note: All options you save are only stored locally and never leave your
-      browser other than to contact the address you saved above. All requests
-      are made client side and you can inspect them using your browser's
-      developer tools.
-    </p>
+    <div class="flex flex-row gap-4">
+      <div class="flex-1">
+        <p class="text-sm text-slate-400 py-2">
+          Note: All options you save are only stored locally and never leave your
+          browser other than to contact the address you saved above. All requests
+          are made client side and you can inspect them using your browser's
+          developer tools.
+        </p>
 
-<p class="text-md text-red-400">
-  <strong>Note:</strong> You need to disable CORS for your Audiobookshelf server. You can do this either by using a proxy or by setting the environment variable. See official <a href="https://www.audiobookshelf.org/docs/#security" class="text-blue-400 underline" target="_blank">documentation</a>:
-  <br />
-  <code>ALLOW_CORS='1'</code>
-  <br /><br />
-  Alternatively, you can install a browser extension to temporarily disable CORS. However, please be aware that many of these extensions pose security risks, and some may even contain malware, adware, or other threats.
-</p>
+        <p class="text-md text-red-300 py-4">
+          <strong>Note:</strong> You need to allow CORS for this website inside your
+          Audiobookshelf server. Visit your Audiobookshelf server's settings page and add
+          <br />
+          <code class="text-white">https://abstoolbox.vito0912.de</code>
+          <br />
+          as an allowed origin. Without this all request will fail with a CORS error.
+        </p>
+
+        <p class="text-sm text-slate-400 py-2">
+          Alternatively, you can install a browser extension to temporarily disable CORS.
+          However, please be aware that many of these extensions pose security risks,
+          and some may even contain malware, adware, or other threats.
+        </p>
+      </div>
+
+      <div>
+        <img
+          src="/images/cors.png"
+          alt="CORS Settings"
+          class="h-80 rounded-lg"
+        />
+      </div>
+    </div>
+
+
 
     <form
       @submit.prevent="saveSettings"

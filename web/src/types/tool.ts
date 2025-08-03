@@ -1,6 +1,6 @@
 export interface ToolField {
   name: string;
-  type: 'string' | 'boolean' | 'stringArray' | 'select';
+  type: 'string' | 'boolean' | 'stringArray' | 'select' | 'librarySelector' | 'singleLibrarySelector';
   label: string;
   description?: string;
   required?: boolean;

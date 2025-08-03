@@ -16,6 +16,7 @@
     </p>
 
     <div
+      v-if="!toolId || !selectedTool"
       class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr"
     >
       <div
@@ -34,7 +35,7 @@
           {{ tool.title }}
         </h3>
         <p class="mt-2 line-clamp-3 text-sm text-slate-400">
-          {{ tool.description }}
+            <span v-html="tool.description"></span>
         </p>
 
         <div class="mt-4 flex items-center justify-between text-xs">
@@ -48,8 +49,8 @@
     </div>
 
     <div
-      v-if="selectedTool"
-      class="rounded-xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20"
+      v-if="toolId && selectedTool"
+      class="p-6"
     >
       <DynamicForm :tool="selectedTool" />
     </div>
@@ -57,18 +58,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { toolDefinitions } from '@/data/toolDefinitions'
 import DynamicForm from '@/components/DynamicForm.vue'
 import type { ToolDefinition } from '@/types/tool'
 import { useSettingsStore } from '@/stores/settings'
+import { useRoute } from 'vue-router'
+import router from '@/router'
+
+const route = useRoute()
+
+const toolId = computed(() => route.params.id as string | undefined)
+
+const selectedTool = computed(() => 
+  toolDefinitions.find(tool => tool.id === toolId.value) || null
+)
 
 const settingsStore = useSettingsStore()
-const selectedTool = ref<ToolDefinition | null>(null)
-
 const isDisabled = computed(() => !settingsStore.settings.serverUrl)
 
 const selectTool = (tool: ToolDefinition) => {
-  selectedTool.value = tool
+  router.push({ name: 'tool', params: { id: tool.id } })
 }
 </script>

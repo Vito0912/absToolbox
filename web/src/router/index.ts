@@ -12,6 +12,11 @@ const router = createRouter({
       path: '/settings',
       name: 'settings',
       component: () => import('@/views/SettingsView.vue')
+    },
+    {
+      path: '/tool/:id',
+      name: 'tool',
+      component: () => import('@/views/ToolsView.vue'),
     }
   ]
 })
