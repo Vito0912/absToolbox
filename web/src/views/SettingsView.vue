@@ -14,6 +14,14 @@
       developer tools.
     </p>
 
+<p class="text-md text-red-400">
+  <strong>Note:</strong> You need to disable CORS for your Audiobookshelf server. You can do this either by using a proxy or by setting the environment variable. See official <a href="https://www.audiobookshelf.org/docs/#security" class="text-blue-400 underline" target="_blank">documentation</a>:
+  <br />
+  <code>ALLOW_CORS='1'</code>
+  <br /><br />
+  Alternatively, you can install a browser extension to temporarily disable CORS. However, please be aware that many of these extensions pose security risks, and some may even contain malware, adware, or other threats.
+</p>
+
     <form
       @submit.prevent="saveSettings"
       class="rounded-xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20"

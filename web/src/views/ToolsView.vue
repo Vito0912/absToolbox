@@ -7,17 +7,26 @@
       <p class="text-slate-400 text-sm">Select a tool to get started</p>
     </div>
 
+    <!-- WARNING IF NO SETTING -->
+    <p
+      v-if="!settingsStore.settings.serverUrl"
+      class="text-sm text-red-400 text-center"
+    >
+      Please configure the server URL in the settings.
+    </p>
+
     <div
       class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr"
     >
       <div
         v-for="tool in toolDefinitions"
         :key="tool.id"
-        class="group relative cursor-pointer rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 transition hover:border-indigo-400/40 hover:bg-indigo-500/5 hover:shadow-xl"
+        class="group relative rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 transition hover:border-indigo-400/40 hover:bg-indigo-500/5 hover:shadow-xl"
         :class="{
-          'ring-2 ring-indigo-500/40': selectedTool?.id === tool.id
+          'ring-2 ring-indigo-500/40': selectedTool?.id === tool.id,
+          'opacity-50 cursor-not-allowed pointer-events-none': isDisabled
         }"
-        @click="selectTool(tool)"
+        @click="!isDisabled && selectTool(tool)"
       >
         <h3
           class="text-base font-semibold text-slate-100 group-hover:text-white"
@@ -48,12 +57,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { toolDefinitions } from '@/data/toolDefinitions'
 import DynamicForm from '@/components/DynamicForm.vue'
 import type { ToolDefinition } from '@/types/tool'
+import { useSettingsStore } from '@/stores/settings'
 
+const settingsStore = useSettingsStore()
 const selectedTool = ref<ToolDefinition | null>(null)
+
+const isDisabled = computed(() => !settingsStore.settings.serverUrl)
 
 const selectTool = (tool: ToolDefinition) => {
   selectedTool.value = tool
