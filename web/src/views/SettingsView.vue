@@ -1,90 +1,139 @@
 <template>
-  <div class="settings-page">
-    <div class="settings-container">
-      <h1 class="page-title">Settings</h1>
-      <p class="page-description">Configure your Audiobookshelf server connection</p>
+  <div class="space-y-6">
+    <div class="space-y-2">
+      <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
+      <p class="text-slate-400">
+        Configure your Audiobookshelf server connection
+      </p>
+    </div>
 
-      <p>Note: All options you save are only stored locally and never leave your browser other than to contact the address you saved above. All requests are made client side and you can inspect them using your browser's developer tools.</p>
+    <p class="text-sm text-slate-400">
+      Note: All options you save are only stored locally and never leave your
+      browser other than to contact the address you saved above. All requests
+      are made client side and you can inspect them using your browser's
+      developer tools.
+    </p>
 
-      <form @submit.prevent="saveSettings" class="settings-form">
-        <div class="field-group">
-          <label class="field-label">Server URL</label>
+    <form
+      @submit.prevent="saveSettings"
+      class="rounded-xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20"
+    >
+      <div class="grid gap-6">
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-slate-200"
+            >Server URL</label
+          >
           <input
             v-model="settingsStore.settings.serverUrl"
             type="url"
             placeholder="https://your-audiobookshelf-server.com"
-            class="form-input"
+            class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
             required
           />
         </div>
 
-        <div class="field-group">
-          <label class="field-label">Authentication Method</label>
-          <div class="radio-group">
-            <label class="radio-option">
+        <div class="space-y-3">
+          <label class="block text-sm font-medium text-slate-200"
+            >Authentication Method</label
+          >
+          <div class="flex flex-wrap gap-3">
+            <label
+              class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-200 hover:border-indigo-400/50 transition"
+            >
               <input
                 v-model="settingsStore.settings.authMethod"
                 type="radio"
                 value="token"
+                class="h-4 w-4 accent-indigo-500"
               />
               API Token
             </label>
-            <label class="radio-option">
+            <label
+              class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-200 hover:border-indigo-400/50 transition"
+            >
               <input
                 v-model="settingsStore.settings.authMethod"
                 type="radio"
                 value="credentials"
+                class="h-4 w-4 accent-indigo-500"
               />
-              Username & Password
+              Username &amp; Password
             </label>
           </div>
         </div>
 
-        <div v-if="settingsStore.settings.authMethod === 'token'" class="field-group">
-          <label class="field-label">API Token</label>
+        <div
+          v-if="settingsStore.settings.authMethod === 'token'"
+          class="space-y-2"
+        >
+          <label class="block text-sm font-medium text-slate-200"
+            >API Token</label
+          >
           <input
             v-model="settingsStore.settings.apiToken"
             type="password"
             placeholder="Your API token"
-            class="form-input"
+            class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
             required
           />
         </div>
 
-        <div v-else class="credentials-group">
-          <div class="field-group">
-            <label class="field-label">Username</label>
+        <div v-else class="grid gap-6 sm:grid-cols-2">
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-slate-200"
+              >Username</label
+            >
             <input
               v-model="settingsStore.settings.username"
               type="text"
               placeholder="Your username"
-              class="form-input"
+              class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
               required
             />
           </div>
-          <div class="field-group">
-            <label class="field-label">Password</label>
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-slate-200"
+              >Password</label
+            >
             <input
               v-model="settingsStore.settings.password"
               type="password"
               placeholder="Your password"
-              class="form-input"
+              class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
               required
             />
           </div>
         </div>
 
-        <div class="form-actions">
-          <button type="submit" class="save-btn">Save Settings</button>
-          <button type="button" @click="testConnection" class="test-btn" :disabled="testing">
+        <div
+          class="mt-2 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row"
+        >
+          <button
+            type="submit"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 sm:w-auto"
+          >
+            Save Settings
+          </button>
+          <button
+            type="button"
+            @click="testConnection"
+            :disabled="testing"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow transition enabled:hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          >
             {{ testing ? 'Testing...' : 'Test Connection' }}
           </button>
         </div>
-      </form>
-
-      <div v-if="testResult" class="test-result" :class="testResult.success ? 'success' : 'error'">
-        {{ testResult.message }}
       </div>
+    </form>
+
+    <div
+      v-if="testResult"
+      class="rounded-xl border p-4"
+      :class="testResult.success
+        ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200'
+        : 'border-rose-500/30 bg-rose-500/10 text-rose-200'"
+    >
+      {{ testResult.message }}
     </div>
   </div>
 </template>
@@ -115,139 +164,19 @@ const testConnection = async () => {
     const response = await get('/api/me')
     testResult.value = {
       success: true,
-      message: `Connection successful! Server responded: ${response.data?.message || 'OK'}`
+      message: `Connection successful! Server responded: ${
+        response.data?.message || 'OK'
+      }`
     }
   } catch (error: any) {
     testResult.value = {
       success: false,
-      message: `Connection failed: ${error.response?.data?.message || error.message || 'Unknown error'}`
+      message: `Connection failed: ${
+        error.response?.data?.message || error.message || 'Unknown error'
+      }`
     }
   } finally {
     testing.value = false
   }
 }
 </script>
-
-<style scoped>
-.settings-page {
-  padding: 2rem;
-}
-
-.settings-container {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #1f2937;
-}
-
-.page-description {
-  color: #6b7280;
-  margin-bottom: 2rem;
-}
-
-.settings-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.field-group {
-  margin-bottom: 1.5rem;
-}
-
-.field-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #374151;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.radio-group {
-  display: flex;
-  gap: 1rem;
-}
-
-.radio-option {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
-.credentials-group {
-  display: grid;
-  gap: 1rem;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e5e7eb;
-}
-
-.save-btn,
-.test-btn {
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.save-btn {
-  background: #10b981;
-  color: white;
-}
-
-.test-btn {
-  background: #3b82f6;
-  color: white;
-}
-
-.test-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-}
-
-.test-result {
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-}
-
-.test-result.success {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
-}
-
-.test-result.error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #ef4444;
-}
-</style>

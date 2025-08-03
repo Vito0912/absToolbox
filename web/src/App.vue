@@ -1,77 +1,41 @@
 <template>
-  <div class="app">
-    <nav class="navbar">
-      <div class="nav-container">
-        <h1 class="nav-title">
-          <router-link to="/" class="nav-link">📚 ABS Toolbox</router-link>
+  <div class="min-h-screen bg-[#0b0f17] text-slate-100 antialiased">
+    <nav
+      class="sticky top-0 z-40 border-b border-white/10 bg-[#0b0f17]/80 backdrop-blur"
+    >
+      <div
+        class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"
+      >
+        <h1 class="text-xl font-semibold tracking-tight">
+          <router-link
+            to="/"
+            class="text-slate-100 hover:text-indigo-300 transition-colors"
+          >
+            📚 ABS Toolbox
+          </router-link>
         </h1>
-        <div class="nav-links">
-          <router-link to="/" class="nav-item" active-class="active">Tools</router-link>
-          <router-link to="/settings" class="nav-item" active-class="active">Settings</router-link>
+
+        <div class="flex items-center gap-2">
+          <router-link
+            to="/"
+            class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-indigo-300 bg-indigo-500/10"
+          >
+            Tools
+          </router-link>
+          <router-link
+            to="/settings"
+            class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-indigo-300 bg-indigo-500/10"
+          >
+            Settings
+          </router-link>
         </div>
       </div>
     </nav>
 
-    <main class="main-content">
+    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <router-view />
     </main>
   </div>
 </template>
-
-<style scoped>
-.app {
-  min-height: 100vh;
-  background: #f9fafb;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.navbar {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1rem 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.nav-link {
-  text-decoration: none;
-  color: #1f2937;
-}
-
-.nav-links {
-  display: flex;
-  gap: 2rem;
-}
-
-.nav-item {
-  text-decoration: none;
-  color: #6b7280;
-  font-weight: 500;
-  transition: color 0.2s;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-}
-
-.nav-item:hover,
-.nav-item.active {
-  color: #3b82f6;
-  background: #eff6ff;
-}
-
-.main-content {
-  flex: 1;
-}
-</style>
