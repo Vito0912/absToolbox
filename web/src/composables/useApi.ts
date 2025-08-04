@@ -9,7 +9,7 @@ export function useApi() {
   const apiClient = computed((): AxiosInstance => {
     const client = axios.create({
       baseURL: settingsStore.settings.serverUrl,
-      timeout: 30000,
+      timeout: 600000, // 10 minutes for now
       headers: {
         'Content-Type': 'application/json'
       }
