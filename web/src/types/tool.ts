@@ -12,7 +12,6 @@ export interface ToolField {
 export interface ToolResult {
   success: boolean;
   message: string;
-  data?: any;
   error?: string;
   timestamp: string;
 }

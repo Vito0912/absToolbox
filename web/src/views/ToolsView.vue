@@ -65,6 +65,8 @@ import type { ToolDefinition } from '@/types/tool'
 import { useSettingsStore } from '@/stores/settings'
 import { useRoute } from 'vue-router'
 import router from '@/router'
+import { useApi } from '@/composables/useApi'
+const { clearLogs } = useApi()
 
 const route = useRoute()
 
@@ -78,6 +80,7 @@ const settingsStore = useSettingsStore()
 const isDisabled = computed(() => !settingsStore.settings.serverUrl)
 
 const selectTool = (tool: ToolDefinition) => {
+  clearLogs()
   router.push({ name: 'tool', params: { id: tool.id } })
 }
 </script>

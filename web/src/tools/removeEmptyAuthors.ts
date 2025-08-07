@@ -2,8 +2,9 @@ import { fetchLibraryIds } from '@/common/libraryIds'
 import { useApi } from '@/composables/useApi'
 import type { ToolResult } from '@/types/tool'
 
+const { get, apiClient, addLog } = useApi()
+
 async function getAllLibraries() {
-  const { get } = useApi()
   try {
     const response = await get('/api/libraries')
     return response.data.libraries || []
@@ -14,7 +15,6 @@ async function getAllLibraries() {
 }
 
 async function getLibraryAuthors(libraryId: string) {
-  const { get } = useApi()
   try {
     const response = await get(`/api/libraries/${libraryId}/authors`)
     return response.data.authors || []
@@ -25,7 +25,6 @@ async function getLibraryAuthors(libraryId: string) {
 }
 
 async function deleteAuthor(authorId: string) {
-  const { apiClient } = useApi()
   try {
     await apiClient.value.delete(`/api/authors/${authorId}`)
     return true
@@ -42,18 +41,16 @@ export async function executeRemoveEmptyAuthors(formData: Record<string, any>): 
       deleteWithoutConfirmation = false
     } = formData
 
-    const logs: string[] = []
-
     const processableLibraries = await fetchLibraryIds(libraryIds);
 
-    logs.push(`Processing ${processableLibraries.length} libraries`)
+    addLog(`Processing ${processableLibraries.length} libraries`)
 
     let totalAuthorsToDelete = 0
     let totalAuthorsDeleted = 0
     let totalAuthorsDeletionFailed = 0
 
     for (const libraryId of processableLibraries) {
-      logs.push(`\nProcessing library ${libraryId}`)
+      addLog(`\nProcessing library ${libraryId}`)
       
       const authors = await getLibraryAuthors(libraryId)
       const authorsToDelete: Array<{id: string, name: string, numBooks: number}> = []
@@ -69,16 +66,16 @@ export async function executeRemoveEmptyAuthors(formData: Record<string, any>): 
         }
       }
 
-      logs.push(`Found ${authorsToDelete.length} authors without books`)
+      addLog(`Found ${authorsToDelete.length} authors without books`)
       
       if (authorsToDelete.length === 0) {
-        logs.push('No orphaned authors found in this library')
+        addLog('No orphaned authors found in this library')
         continue
       }
 
-      logs.push('The following authors will be deleted:')
+      addLog('The following authors will be deleted:')
       for (const author of authorsToDelete) {
-        logs.push(`- ${author.name} (${author.numBooks} books) - ID: ${author.id}`)
+        addLog(`- ${author.name} (${author.numBooks} books) - ID: ${author.id}`)
       }
 
       totalAuthorsToDelete += authorsToDelete.length
@@ -86,21 +83,21 @@ export async function executeRemoveEmptyAuthors(formData: Record<string, any>): 
       for (const author of authorsToDelete) {
         const success = await deleteAuthor(author.id)
         if (success) {
-          logs.push(`Deleted author: ${author.name}`)
+          addLog(`Deleted author: ${author.name}`)
           totalAuthorsDeleted++
         } else {
-          logs.push(`Error deleting author: ${author.name}`)
+          addLog(`Error deleting author: ${author.name}`)
           totalAuthorsDeletionFailed++
         }
       }
 
-      logs.push('--- Deletion Complete ---\n')
+      addLog('--- Deletion Complete ---\n')
     }
 
-    logs.push('\n=== SUMMARY ===')
-    logs.push(`Total authors found to delete: ${totalAuthorsToDelete}`)
-    logs.push(`Total authors successfully deleted: ${totalAuthorsDeleted}`)
-    logs.push(`Total authors failed to delete: ${totalAuthorsDeletionFailed}`)
+    addLog('\n=== SUMMARY ===')
+    addLog(`Total authors found to delete: ${totalAuthorsToDelete}`)
+    addLog(`Total authors successfully deleted: ${totalAuthorsDeleted}`)
+    addLog(`Total authors failed to delete: ${totalAuthorsDeletionFailed}`)
 
     const message = deleteWithoutConfirmation 
       ? `Successfully processed ${processableLibraries.length} libraries. Deleted ${totalAuthorsDeleted} orphaned authors.`
@@ -109,7 +106,6 @@ export async function executeRemoveEmptyAuthors(formData: Record<string, any>): 
     return {
       success: true,
       message: message,
-      data: logs,
       timestamp: new Date().toISOString()
     }
 

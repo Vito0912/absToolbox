@@ -200,10 +200,34 @@
           class="inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60"
           :disabled="loading"
         >
-          {{ loading ? 'Executing...' : 'Execute Tool' }}
+          {{ loading ? `Executing... (${elapsedTime})` : 'Execute Tool' }}
         </button>
       </div>
     </form>
+
+    <div
+      class="mt-6 overflow-hidden rounded-xl border border-indigo-500/30 bg-indigo-900/20"
+      v-if="executionLogs.length > 0"
+    >
+      <div class="flex items-center justify-between border-b border-indigo-500/30 bg-indigo-900/30 px-4 py-3">
+        <h3 class="text-sm font-semibold text-indigo-200">Execution Progress</h3>
+        <div class="flex items-center gap-2">
+          <div class="h-2 w-2 animate-pulse rounded-full bg-indigo-400"></div>
+          <span class="text-sm font-mono text-indigo-300">{{ elapsedTime }}</span>
+        </div>
+      </div>
+      <div class="max-h-64 overflow-y-auto p-4">
+        <div class="space-y-1">
+          <div
+            v-for="(log, index) in executionLogs"
+            :key="index"
+            class="text-sm font-mono text-slate-300 animate-fade-in"
+          >
+            {{ log }}
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div
       v-if="result"
@@ -233,21 +257,6 @@
           <strong class="font-semibold">Error:</strong> {{ result.error }}
         </div>
 
-        <div v-if="result.data" class="text-sm">
-          <details class="group">
-            <summary
-              class="cursor-pointer select-none text-indigo-300 hover:text-indigo-200"
-            >
-              View Details
-            </summary>
-            <pre
-              class="mt-2 overflow-x-auto rounded-lg bg-slate-900/80 p-3 text-xs text-slate-200"
-            >
-{{ JSON.stringify(result.data, null, 2) }}</pre
-            >
-          </details>
-        </div>
-
         <div class="text-xs text-slate-500">
           Executed at: {{ new Date(result.timestamp).toLocaleString() }}
         </div>
@@ -257,7 +266,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import type { ToolDefinition, ToolResult } from '@/types/tool'
 import { useApi } from '@/composables/useApi';
 
@@ -281,8 +290,11 @@ const result = ref<ToolResult | null>(null)
 const libraries = reactive<Record<string, Library[]>>({})
 const librariesLoading = reactive<Record<string, boolean>>({})
 const librariesError = reactive<Record<string, string | null>>({})
+const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
 
-const { get } = useApi()
+const { get, executionLogs, isExecuting, startExecution, stopExecution, getElapsedTime } = useApi()
+
+const elapsedTime = ref('0:00')
 
 props.tool.fields.forEach((field) => {
   if (field.type === 'boolean') {
@@ -355,6 +367,11 @@ const removeArrayItem = (fieldName: string, index: number) => {
 const handleSubmit = async () => {
   loading.value = true
   result.value = null
+  startExecution()
+  
+  timerInterval.value = setInterval(() => {
+    elapsedTime.value = getElapsedTime()
+  }, 1000)
 
   try {
     const cleanedData: Record<string, any> = { ...formData }
@@ -376,6 +393,12 @@ const handleSubmit = async () => {
     }
   } finally {
     loading.value = false
+    stopExecution()
+    
+    if (timerInterval.value) {
+      clearInterval(timerInterval.value)
+      timerInterval.value = null
+    }
   }
 }
 
@@ -387,3 +410,14 @@ onMounted(() => {
   })
 })
 </script>
+
+<style scoped>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+</style>

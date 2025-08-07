@@ -1,9 +1,9 @@
 import { useApi } from "@/composables/useApi";
 import type { ToolResult } from "@/types/tool";
-const { get, post } = useApi()
+
+const { get, post, addLog } = useApi()
 
 async function getAllBooksForSeries(seriesId: string, libraryId: string) {
-
   try {
     const base64SeriesId = btoa(unescape(encodeURIComponent(seriesId))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
@@ -47,10 +47,11 @@ export async function executeRenameSeries(formData: Record<string, any>): Promis
 
     await post('/api/items/batch/update', [...payload]);
 
+    addLog(`Renamed series to "${newName}" for ${payload.length} books`)
+
     return {
         success: true,
         message: `Series renamed successfully.`,
-        data: payload,
         timestamp: new Date().toISOString(),
     };
 }

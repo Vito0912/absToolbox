@@ -2,21 +2,23 @@ import { useApi } from '@/composables/useApi'
 import type { ToolResult } from '@/types/tool'
 
 async function getAllBooksForGenre(genre: string, libraryId: string) {
-  const { get } = useApi()
+  const { get, addLog } = useApi()
   try {
     const base64Genre = btoa(unescape(encodeURIComponent(genre))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
     const response = await get(`/api/libraries/${libraryId}/items?filter=genres.${base64Genre}`)
-    console.log(`Fetched ${response.data.results.length} books for genre ${genre} in library ${libraryId}`)
+    const bookCount = response.data.results.length
+    addLog(`Found ${bookCount} books for genre "${genre}" in library ${libraryId}`)
     return response.data.results || []
   } catch (error) {
+    addLog(`Error fetching books for genre "${genre}" in library ${libraryId}`)
     console.error(`Error fetching books for genre ${genre} in library ${libraryId}:`, error)
     return []
   }
 }
 
 async function appendGenreToBook(book: any, genre: string, delimiter: string, type: 'genres' | 'tags') {
-  const { patch } = useApi()
+  const { patch, addLog } = useApi()
   const bookId = book.id
   const genres = genre.split(delimiter).map((g: string) => g.trim())
 
@@ -26,19 +28,20 @@ async function appendGenreToBook(book: any, genre: string, delimiter: string, ty
         [type]: [...new Set([...book.media.metadata[type], ...genres].filter(g => g !== genre))]
       }
     })
-   
+    addLog(`Updated book: ${book.media.metadata.title}`)
   } catch (error) {
+    addLog(`Error updating book: ${book.media.metadata.title}`)
     console.error(`Error appending genre ${genre} to book ${bookId}:`, error)
   }
 }
 
 export async function executeSplitGenres(formData: Record<string, any>): Promise<ToolResult> {
-  const { get, post } = useApi()
+  const { get, post, addLog } = useApi()
   
   try {
     const { type, libraryIds, delimiter } = formData
-    let logs = []
 
+    addLog('Starting split genres operation...')
     console.log('Executing split genres with formData:', formData)
 
     const libraryResponse = await get('/api/libraries')
@@ -51,7 +54,8 @@ export async function executeSplitGenres(formData: Record<string, any>): Promise
       }
     }
 
-    logs.push(`Processing ${processableLibraries.length} libraries (${libraryIds.join(', ')}).`)
+    const libraryMessage = `Processing ${processableLibraries.length} libraries`
+    addLog(libraryMessage)
 
     const genres = (await get(`/api/${type}`)).data.genres || [];
 
@@ -63,8 +67,12 @@ export async function executeSplitGenres(formData: Record<string, any>): Promise
       }
     }
 
+    addLog(`Found ${multiGenres.length} genres to split`)
+
      for (const genre of multiGenres) {
-       logs.push(`Processing genre ${genre}`);
+       const genreMessage = `Processing genre: ${genre}`
+       addLog(genreMessage)
+       
        const bookTitlesOverall: string[] = [];
        for (const libraryId of processableLibraries) {
          const books = await getAllBooksForGenre(genre, libraryId);
@@ -73,26 +81,29 @@ export async function executeSplitGenres(formData: Record<string, any>): Promise
          for (const book of books) {
            try {
              await appendGenreToBook(book, genre, delimiter, type);
-             logs.push(`Successfully appended genre ${genre} to book ${book.id}`);
            } catch (e) {
              console.log(`Error processing book ${book.id}: ${e}`);
            }
          }
        }
-       logs.push(`Processed ${bookTitlesOverall.length} books for genre ${genre}: ${bookTitlesOverall.join(', ')}`);
+       addLog(`Processed ${bookTitlesOverall.length} books for genre ${genre}: ${bookTitlesOverall.join(', ')}`);
      }
+
+    const successMessage = `${type} split operation completed successfully`
+    addLog(successMessage)
 
     return {
       success: true,
-      message: `${type} split successfully`,
-      data: logs,
+      message: successMessage,
       timestamp: new Date().toISOString()
     }
 
   } catch (error: any) {
+    const errorMessage = 'Failed to split genres'
+    addLog(errorMessage)
     return {
       success: false,
-      message: 'Failed to split genres',
+      message: errorMessage,
       error: error.message || 'Unknown error',
       timestamp: new Date().toISOString()
     }

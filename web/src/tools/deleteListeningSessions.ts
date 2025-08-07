@@ -1,8 +1,9 @@
 import { useApi } from '@/composables/useApi'
 import type { ToolResult } from '@/types/tool'
 
+const { get, apiClient, addLog } = useApi()
+
 async function getAllUsers() {
-  const { get } = useApi()
   try {
     const response = await get('/api/users')
     return response.data.users || []
@@ -13,7 +14,6 @@ async function getAllUsers() {
 }
 
 async function getListeningSessions(userId: string, itemsPerPage: number) {
-  const { get } = useApi()
   try {
     const response = await get(`/api/users/${userId}/listening-sessions?itemsPerPage=${itemsPerPage}`)
     return response.data.sessions || []
@@ -24,7 +24,6 @@ async function getListeningSessions(userId: string, itemsPerPage: number) {
 }
 
 async function deleteSession(sessionId: string) {
-  const { apiClient } = useApi()
   try {
     await apiClient.value.delete(`/api/sessions/${sessionId}`)
     return true
@@ -42,7 +41,6 @@ export async function executeDeleteListeningSessions(formData: Record<string, an
       sessionsToFetch
     } = formData
 
-    const logs: string[] = []
     let processableUsers = userIds
 
     if (processableUsers.length === 0) {
@@ -50,7 +48,7 @@ export async function executeDeleteListeningSessions(formData: Record<string, an
       processableUsers = users.map((user: { id: string }) => user.id)
     }
 
-    logs.push(`Processing ${processableUsers.length} users`)
+    addLog(`Processing ${processableUsers.length} users`)
 
     for (const userId of processableUsers) {
       const sessions = await getListeningSessions(userId, sessionsToFetch)
@@ -64,33 +62,32 @@ export async function executeDeleteListeningSessions(formData: Record<string, an
         const sessionDuration = session.timeListening / 3600
         if (sessionDuration > threshold) {
           sessionTimeDeleted += sessionDuration
-          logs.push(`Session greater than threshold: ${session.id} ${sessionDuration} hours`)
+          addLog(`Session greater than threshold: ${session.id} ${sessionDuration} hours`)
           sessionsToDelete.push([session.id, sessionDuration])
         } else {
           sessionTimeNotDeleted += sessionDuration
         }
       }
 
-      logs.push(
+      addLog(
         `User ${userId} has ${sessionsToDelete.length} sessions to delete with a total duration of ${sessionTimeDeleted.toFixed(2)} hours. (${sessionTimeNotDeleted.toFixed(2)} hours not deleted)`
       )
 
       for (const [sessionId, duration] of sessionsToDelete) {
         const success = await deleteSession(sessionId)
         if (success) {
-          logs.push(`Deleted session ${sessionId}`)
+          addLog(`Deleted session ${sessionId}`)
         } else {
-          logs.push(`Error deleting session ${sessionId}`)
+          addLog(`Error deleting session ${sessionId}`)
         }
       }
 
-      logs.push(' ')
+      addLog(' ')
     }
 
     return {
       success: true,
       message: 'Listening sessions deleted successfully',
-      data: logs,
       timestamp: new Date().toISOString()
     }
 

@@ -1,12 +1,13 @@
 import { useApi } from '@/composables/useApi'
 import type { ToolResult } from '@/types/tool'
 
+const { get, post, addLog } = useApi()
+
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 async function fetchLibraryItems(libraryId: string) {
-  const { get } = useApi()
   try {
     const response = await get(`/api/libraries/${libraryId}/items`)
     return response.data.results || []
@@ -17,7 +18,6 @@ async function fetchLibraryItems(libraryId: string) {
 }
 
 async function searchForBook(title: string, author: string, provider: string) {
-  const { get } = useApi()
   try {
     const encodedTitle = encodeURIComponent(title)
     const encodedAuthor = encodeURIComponent(author)
@@ -30,7 +30,6 @@ async function searchForBook(title: string, author: string, provider: string) {
 }
 
 async function fetchBookDetails(bookId: string) {
-  const { get } = useApi()
   try {
     const response = await get(`/api/items/${bookId}?expanded=1`)
     return response.data || null
@@ -41,7 +40,6 @@ async function fetchBookDetails(bookId: string) {
 }
 
 async function fetchChaptersByAsin(asin: string, region: string) {
-  const { get } = useApi()
   try {
     const response = await get(`/api/search/chapters?asin=${asin}&region=${region}`)
     if (response.data.error) {
@@ -55,7 +53,6 @@ async function fetchChaptersByAsin(asin: string, region: string) {
 }
 
 async function updateBookChapters(bookId: string, chapters: any[]) {
-  const { post } = useApi()
   try {
     await post(`/api/items/${bookId}/chapters`, { chapters })
     return true
@@ -127,13 +124,12 @@ export async function executeMatchAudiobookChapters(formData: Record<string, any
       useTracksAsChapters = false
     } = formData
 
-    const logs: string[] = []
     const bookInfo: Record<string, any> = {}
 
-    logs.push(`Fetching library items from library: ${libraryId}`)
+    addLog(`Fetching library items from library: ${libraryId}`)
     
     const items = await fetchLibraryItems(libraryId)
-    logs.push(`Found ${items.length} items in the library.`)
+    addLog(`Found ${items.length} items in the library.`)
 
     // Process each item in the library
     for (const item of items) {
@@ -151,7 +147,7 @@ export async function executeMatchAudiobookChapters(formData: Record<string, any
         asin: 'N/A'
       }
 
-      logs.push(`\n--- Processing Book: ${title} ---`)
+      addLog(`\n--- Processing Book: ${title} ---`)
 
       // Check if book has ASIN
       if (!metadata.asin) {
@@ -159,11 +155,11 @@ export async function executeMatchAudiobookChapters(formData: Record<string, any
         bookInfo[bookId].asin = 'N/A'
 
         if (searchForAsin) {
-          logs.push(`Searching for ASIN for "${title}"...`)
+          addLog(`Searching for ASIN for "${title}"...`)
           const searchResults = await searchForBook(title, authors, provider)
 
           if (searchResults.length === 0) {
-            logs.push(`Error matching book "${title}" (No results found).`)
+            addLog(`Error matching book "${title}" (No results found).`)
             bookInfo[bookId].comment = 'ASIN retrieval failed'
             continue
           }
@@ -172,33 +168,33 @@ export async function executeMatchAudiobookChapters(formData: Record<string, any
           const asin = bestMatch.asin
 
           if (!asin) {
-            logs.push(`Error matching book "${title}" (No ASIN found).`)
+            addLog(`Error matching book "${title}" (No ASIN found).`)
             bookInfo[bookId].comment = 'ASIN retrieval failed - No ASIN found'
             continue
           }
 
           item.media.metadata.asin = asin
           metadata.asin = asin
-          logs.push(`ASIN found: ${asin}`)
+          addLog(`ASIN found: ${asin}`)
         }
       }
 
       // Check if ASIN is now available
       if (!item.media.metadata.asin) {
         if (useTracksAsChapters) {
-          logs.push(`Using tracks as chapters for "${title}".`)
+          addLog(`Using tracks as chapters for "${title}".`)
           bookInfo[bookId].status = 'TRACKS'
           
           const bookDetails = await fetchBookDetails(bookId)
           if (!bookDetails) {
-            logs.push(`Error fetching book "${title}": Failed to get book details`)
+            addLog(`Error fetching book "${title}": Failed to get book details`)
             bookInfo[bookId].comment = 'Tracks retrieval failed'
             continue
           }
 
           const audioFiles = bookDetails.media.audioFiles || []
           if (audioFiles.length <= 1) {
-            logs.push(`Error using tracks as chapters for "${title}" (No or 1 track found).`)
+            addLog(`Error using tracks as chapters for "${title}" (No or 1 track found).`)
             bookInfo[bookId].comment = 'Tracks retrieval failed'
             continue
           }
@@ -207,27 +203,27 @@ export async function executeMatchAudiobookChapters(formData: Record<string, any
           const tracksNum = audioFiles.length
 
           if (currentChaptersNum === 0 || Math.abs(currentChaptersNum - tracksNum) > chapterThreshold) {
-            logs.push(`Chapters are missing or incorrect for "${title}" (Current num: ${currentChaptersNum}, Tracks num: ${tracksNum}). Updating...`)
+            addLog(`Chapters are missing or incorrect for "${title}" (Current num: ${currentChaptersNum}, Tracks num: ${tracksNum}). Updating...`)
             
             const newChapters = createChaptersFromTracks(audioFiles, item.media.duration)
             const success = await updateBookChapters(bookId, newChapters)
 
             if (success) {
-              logs.push(`Chapters updated successfully for "${title}" (Using tracks!).`)
+              addLog(`Chapters updated successfully for "${title}" (Using tracks!).`)
               bookInfo[bookId].comment = 'Tracks used as chapters'
               bookInfo[bookId].status = 'FINISHED'
             } else {
-              logs.push(`Error updating chapters for "${title}".`)
+              addLog(`Error updating chapters for "${title}".`)
               bookInfo[bookId].comment = 'Chapters update failed'
             }
           } else {
-            logs.push(`Chapters are fine for "${title}".`)
+            addLog(`Chapters are fine for "${title}".`)
             bookInfo[bookId].status = 'FINISHED'
             bookInfo[bookId].comment = 'No chapters to update'
           }
           continue
         } else {
-          logs.push(`Skipping book "${title}" (No ASIN found and Tracks not used as source).`)
+          addLog(`Skipping book "${title}" (No ASIN found and Tracks not used as source).`)
           bookInfo[bookId].comment = 'ASIN retrieval failed'
           continue
         }
@@ -237,41 +233,41 @@ export async function executeMatchAudiobookChapters(formData: Record<string, any
 
       // Fetch chapters using ASIN
       const asin = item.media.metadata.asin
-      logs.push(`Fetching chapters for ASIN: ${asin}`)
+      addLog(`Fetching chapters for ASIN: ${asin}`)
       
       const chapters = await fetchChaptersByAsin(asin, region)
       
       if (chapters.length === 0) {
         bookInfo[bookId].comment = 'No chapters found'
-        logs.push(`No chapters found for "${title}".`)
+        addLog(`No chapters found for "${title}".`)
         continue
       }
 
-      logs.push(`Chapters found for "${title}": ${chapters.length}`)
+      addLog(`Chapters found for "${title}": ${chapters.length}`)
 
       // Compare current and found chapters
       const currentChaptersNum = item.media.numChapters || 0
       const foundChaptersNum = chapters.length
-      logs.push(`Current chapter count: ${currentChaptersNum}`)
+      addLog(`Current chapter count: ${currentChaptersNum}`)
 
       if (Math.abs(currentChaptersNum - foundChaptersNum) > chapterThreshold || currentChaptersNum === 0) {
-        logs.push(`Chapters are missing or incorrect for "${title}". Updating...`)
+        addLog(`Chapters are missing or incorrect for "${title}". Updating...`)
 
         const newChapters = createChaptersFromAsin(chapters, item.media.duration)
         const success = await updateBookChapters(bookId, newChapters)
 
         if (success) {
-          logs.push(`Chapters updated successfully for "${title}".`)
+          addLog(`Chapters updated successfully for "${title}".`)
           bookInfo[bookId].status = 'FINISHED'
           bookInfo[bookId].comment = 'Chapters updated'
         } else {
-          logs.push(`Error updating chapters for "${title}".`)
+          addLog(`Error updating chapters for "${title}".`)
           bookInfo[bookId].comment = 'Chapters update failed'
         }
       } else {
         bookInfo[bookId].status = 'FINISHED'
         bookInfo[bookId].comment = 'No chapters to update'
-        logs.push(`Chapters are fine for "${title}".`)
+        addLog(`Chapters are fine for "${title}".`)
       }
 
       if (!disableRateProtection) {
@@ -279,24 +275,23 @@ export async function executeMatchAudiobookChapters(formData: Record<string, any
       }
     }
 
-    logs.push('\n--- Summary ---')
+    addLog('\n--- Summary ---')
     for (const [bookId, info] of Object.entries(bookInfo)) {
-      logs.push(`${info.title} (${info.status}): ${info.comment}`)
-      logs.push('-'.repeat(50))
+      addLog(`${info.title} (${info.status}): ${info.comment}`)
+      addLog('-'.repeat(50))
     }
 
-    logs.push('\n--- Failed Books ---')
+    addLog('\n--- Failed Books ---')
     for (const [bookId, info] of Object.entries(bookInfo)) {
       if (info.status !== 'FINISHED') {
-        logs.push(`${info.title} (${info.status}): ${info.comment}`)
-        logs.push('-'.repeat(50))
+        addLog(`${info.title} (${info.status}): ${info.comment}`)
+        addLog('-'.repeat(50))
       }
     }
 
     return {
       success: true,
       message: 'Audiobook chapters matching completed',
-      data: logs,
       timestamp: new Date().toISOString()
     }
 

@@ -1,7 +1,11 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
+
+const executionLogs = ref<string[]>([])
+const executionStartTime = ref<number | null>(null)
+const isExecuting = ref(false)
 
 export function useApi() {
   const settingsStore = useSettingsStore()
@@ -58,6 +62,34 @@ export function useApi() {
     return url
   })
 
+  const startExecution = () => {
+    executionLogs.value = []
+    executionStartTime.value = Date.now()
+    isExecuting.value = true
+  }
+
+  const stopExecution = () => {
+    isExecuting.value = false
+    executionStartTime.value = null
+  }
+
+  const addLog = (message: string) => {
+    const timestamp = new Date().toLocaleTimeString()
+    executionLogs.value.push(`[${timestamp}] ${message}`)
+  }
+
+  const clearLogs = () => {
+    executionLogs.value = []
+  }
+
+  const getElapsedTime = () => {
+    if (!executionStartTime.value) return '0:00'
+    const elapsed = Math.floor((Date.now() - executionStartTime.value) / 1000)
+    const minutes = Math.floor(elapsed / 60)
+    const seconds = elapsed % 60
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
+
   return {
     apiClient,
     get,
@@ -65,6 +97,13 @@ export function useApi() {
     put,
     patch,
     delete: del,
-    baseDomain
+    baseDomain,
+    executionLogs,
+    isExecuting,
+    startExecution,
+    stopExecution,
+    addLog,
+    clearLogs,
+    getElapsedTime
   }
 }
