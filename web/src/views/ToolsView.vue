@@ -22,12 +22,12 @@
       <div
         v-for="tool in toolDefinitions"
         :key="tool.id"
-        class="group relative rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 transition hover:border-indigo-400/40 hover:bg-indigo-500/5 hover:shadow-xl"
+        class="group relative rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 transition hover:border-indigo-400/40 hover:bg-indigo-500/5 hover:shadow-xl cursor-pointer"
         :class="{
           'ring-2 ring-indigo-500/40': selectedTool?.id === tool.id,
-          'opacity-50 cursor-not-allowed pointer-events-none': isDisabled
+          'opacity-50 cursor-not-allowed pointer-events-none': isDisabled || !(tool.enabled ?? true)
         }"
-        @click="!isDisabled && selectTool(tool)"
+        @click="!isDisabled && selectTool(tool) && (tool.enabled ?? true)"
       >
         <h3
           class="text-base font-semibold text-slate-100 group-hover:text-white"
@@ -36,6 +36,7 @@
         </h3>
         <p class="mt-2 line-clamp-3 text-sm text-slate-400">
             <span v-html="tool.description"></span>
+            <span v-if="!(tool.enabled ?? true)" class="text-red-400"><br/>Work in Progress</span>
         </p>
 
         <div class="mt-4 flex items-center justify-between text-xs">

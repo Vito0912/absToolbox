@@ -73,9 +73,10 @@ export function useApi() {
     executionStartTime.value = null
   }
 
-  const addLog = (message: string) => {
+  const addLog = (...messages: string[]) => {
     const timestamp = new Date().toLocaleTimeString()
-    executionLogs.value.push(`[${timestamp}] ${message}`)
+    const combinedMessage = messages.filter(Boolean).join(' ')
+    executionLogs.value.push(`[${timestamp}] ${combinedMessage}`)
   }
 
   const clearLogs = () => {

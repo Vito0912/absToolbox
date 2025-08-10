@@ -4,9 +4,7 @@
       <h2 class="text-2xl font-semibold tracking-tight">
         {{ tool.title }}
       </h2>
-      <p class="text-slate-400">
-        {{ tool.longDescription }}
-      </p>
+      <p class="text-slate-400" v-html="tool.longDescription"></p>
     </div>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -218,13 +216,13 @@
       </div>
       <div class="max-h-64 overflow-y-auto p-4">
         <div class="space-y-1">
-          <div
+            <div
             v-for="(log, index) in executionLogs"
             :key="index"
-            class="text-sm font-mono text-slate-300 animate-fade-in"
-          >
-            {{ log }}
-          </div>
+            class="text-sm font-mono text-slate-300 animate-fade-in [&_a]:text-indigo-400 [&_a]:underline [&_a]:decoration-indigo-400 [&_a]:hover:text-indigo-300 [&_a]:hover:decoration-indigo-300"
+            >
+              <span v-html="log"></span>
+            </div>
         </div>
       </div>
     </div>

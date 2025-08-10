@@ -22,6 +22,7 @@ export interface ToolDefinition {
   description: string;
   longDescription?: string;
   fields: ToolField[];
+  enabled?: boolean;
   execute: (formData: Record<string, any>) => Promise<ToolResult>;
 }
 
