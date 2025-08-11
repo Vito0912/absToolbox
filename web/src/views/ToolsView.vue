@@ -15,6 +15,10 @@
       Please configure the server URL in the settings.
     </p>
 
+    <p class="text-red-200" v-if="settingsStore.settings.serverUrl">
+      <strong>Warning:</strong> Make a backup before using these tools. I am not responsible for any data loss or issues that may occur by using these tools. Visit <a :href="`${baseDomain}config/backups`" target="_blank" class="text-blue-400 underline">Backups</a> to create a backup before proceeding.
+    </p>
+
     <div
       v-if="!toolId || !selectedTool"
       class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr"
@@ -67,7 +71,7 @@ import { useSettingsStore } from '@/stores/settings'
 import { useRoute } from 'vue-router'
 import router from '@/router'
 import { useApi } from '@/composables/useApi'
-const { clearLogs } = useApi()
+const { clearLogs, baseDomain } = useApi()
 
 const route = useRoute()
 

@@ -13,7 +13,8 @@
           Note: All options you save are only stored locally and never leave your
           browser other than to contact the address you saved above. All requests
           are made client side and you can inspect them using your browser's
-          developer tools.
+          developer tools. They are not sent to any third-party service. Nor can
+          anyone else see them unless you use an unsecure http:// connection.
         </p>
 
         <p class="text-md text-red-300 py-4">
@@ -76,17 +77,6 @@
                 class="h-4 w-4 accent-indigo-500"
               />
               API Token
-            </label>
-            <label
-              class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-200 hover:border-indigo-400/50 transition"
-            >
-              <input
-                v-model="settingsStore.settings.authMethod"
-                type="radio"
-                value="credentials"
-                class="h-4 w-4 accent-indigo-500"
-              />
-              Username &amp; Password
             </label>
           </div>
         </div>
