@@ -48,6 +48,13 @@ export const toolDefinitions: ToolDefinition[] = [
         options: [",", ";", "|", "&"],
         default: ",",
       },
+      {
+        name: "delimiterOverride",
+        type: "string",
+        label: "Delimiter Override",
+        description: "Overrides the selected delimiter for splitting genres/tags.",
+        required: false,
+      },
     ],
     execute: executeSplitGenres,
   },

@@ -1,12 +1,12 @@
 import { useApi } from '@/composables/useApi'
 import type { ToolResult } from '@/types/tool'
 
-async function getAllBooksForGenre(genre: string, libraryId: string) {
+async function getAllBooksForGenre(genre: string, libraryId: string, type: string) {
   const { get, addLog } = useApi()
   try {
     const base64Genre = btoa(unescape(encodeURIComponent(genre))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
-    const response = await get(`/api/libraries/${libraryId}/items?filter=genres.${base64Genre}`)
+    const response = await get(`/api/libraries/${libraryId}/items?filter=${type}.${base64Genre}`)
     const bookCount = response.data.results.length
     addLog(`Found ${bookCount} books for genre "${genre}" in library ${libraryId}`)
     return response.data.results || []
@@ -23,11 +23,19 @@ async function appendGenreToBook(book: any, genre: string, delimiter: string, ty
   const genres = genre.split(delimiter).map((g: string) => g.trim())
 
   try {
-    await patch(`/api/items/${bookId}/media`, {
-      metadata: {
-        [type]: [...new Set([...book.media.metadata[type], ...genres].filter(g => g !== genre))]
-      }
-    })
+    if (type === 'genres') {
+      const current = Array.isArray(book.media?.metadata?.genres) ? book.media.metadata.genres : []
+      const updated = [...new Set([...current.filter((g: string) => g !== genre), ...genres])]
+      await patch(`/api/items/${bookId}/media`, {
+      metadata: { genres: updated }
+      })
+    } else {
+      const current = Array.isArray(book.media?.tags) ? book.media.tags : []
+      const updated = [...new Set([...current.filter((t: string) => t !== genre), ...genres])]
+      await patch(`/api/items/${bookId}/media`, {
+      tags: updated
+      })
+    }
     addLog(`Updated book: ${book.media.metadata.title}`)
   } catch (error) {
     addLog(`Error updating book: ${book.media.metadata.title}`)
@@ -39,7 +47,12 @@ export async function executeSplitGenres(formData: Record<string, any>): Promise
   const { get, post, addLog } = useApi()
   
   try {
-    const { type, libraryIds, delimiter } = formData
+    let { type, libraryIds, delimiter, delimiterOverride } = formData
+
+    if (delimiterOverride) {
+      delimiter = delimiterOverride
+      addLog(`Using delimiter override: ${delimiter}`)
+    }
 
     addLog('Starting split genres operation...')
     console.log('Executing split genres with formData:', formData)
@@ -57,11 +70,13 @@ export async function executeSplitGenres(formData: Record<string, any>): Promise
     const libraryMessage = `Processing ${processableLibraries.length} libraries`
     addLog(libraryMessage)
 
-    const genres = (await get(`/api/${type}`)).data.genres || [];
+    let genres = (await get(`/api/${type}`)).data || [];
+    genres = genres.genres || genres.tags || [];
 
     const multiGenres = [];
 
     for (const genre of genres) {
+      addLog(`Checking genre: ${genre}`)
       if (genre.split(delimiter).length > 1 && !formData.skip.includes(genre)) {
         multiGenres.push(genre);
       }
@@ -75,7 +90,7 @@ export async function executeSplitGenres(formData: Record<string, any>): Promise
        
        const bookTitlesOverall: string[] = [];
        for (const libraryId of processableLibraries) {
-         const books = await getAllBooksForGenre(genre, libraryId);
+         const books = await getAllBooksForGenre(genre, libraryId, type);
          const bookTitles = books.map((book: any) => book.media.metadata.title);
          bookTitlesOverall.push(...bookTitles);
          for (const book of books) {
