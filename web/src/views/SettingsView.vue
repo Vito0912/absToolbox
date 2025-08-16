@@ -125,18 +125,56 @@
         </div>
 
         <div
+          v-if="settingsStore.settings.serverUrl.startsWith('http:')"
+          class="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-amber-200 space-y-4"
+        >
+          <div class="flex items-center gap-2 text-amber-300">
+            <p class="font-semibold text-lg">Insecure Connection</p>
+          </div>
+
+          <p class="text-sm leading-relaxed">
+            You are using <code>http://</code>, which is <span class="font-semibold">not secure</span>.
+            To allow connections you need to enable insecure content in your browser’s
+            site settings. After this, restart Chrome and re-enter the address.
+            For others browsers please refer to their documentation to allow <code>mixed content</code>.
+          </p>
+
+          <p class="text-sm leading-relaxed">
+            If you still get <code>Connection failed: Network Error</code>, try using:
+            <br />
+            <span class="font-mono text-white break-all">
+              {{ settingsStore.settings.serverUrl }}/audiobookshelf
+            </span>
+          </p>
+
+          <div class="flex flex-col gap-4 pt-2">
+            <img
+              src="/images/insecure1.png"
+              alt="Browser site settings insecure content"
+              class="w-full max-w-md rounded-lg border border-white/10 shadow-md object-contain mx-auto"
+            />
+            <img
+              src="/images/insecure2.png"
+              alt="Allow insecure content option"
+              class="w-full max-w-md rounded-lg border border-white/10 shadow-md object-contain mx-auto"
+            />
+          </div>
+        </div>
+
+        <div
           class="mt-2 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row"
         >
           <button
             type="submit"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 sm:w-auto"
+            :disabled="!isValidUrl(settingsStore.settings.serverUrl)"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             Save Settings
           </button>
           <button
             type="button"
             @click="testConnection"
-            :disabled="testing"
+            :disabled="testing || !isValidUrl(settingsStore.settings.serverUrl)"
             class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow transition enabled:hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {{ testing ? 'Testing...' : 'Test Connection' }}
@@ -166,6 +204,15 @@ const settingsStore = useSettingsStore()
 const { get } = useApi()
 const testing = ref(false)
 const testResult = ref<{ success: boolean; message: string } | null>(null)
+
+const isValidUrl = (url: string) => {
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
 
 const saveSettings = () => {
   settingsStore.saveSettings()
