@@ -1,5 +1,11 @@
 # absToolbox
 
+# NEW
+
+Now available at https://abstoolbox.vito0912.de/ with easy access. Run these tools in seconds without any other program needed. Also works with local ABS servers.
+
+---
+
 A collection of tools designed to assist with Audiobookshelf-related tasks.
 
 > [!CAUTION]
@@ -17,17 +23,11 @@ A collection of tools designed to assist with Audiobookshelf-related tasks.
 
 ## Available Tools
 
-The toolbox currently includes the following utilities:
-
-- **`quick_match_chapters.py`**: Helps with quick chapter matching. It also fixes faulty chapters.
-- **`remove_empty_authors.py`**: Removes authors with no books.
-- **`cleanup_listening_sessions.py`**: Removes listening sessions with too much time. Make your statistics looks better and accurate again.
-- **`migrate_backup_to_new_server.py`**: Migrate your backup to a new server that has different paths or generally change the paths of your backup. (Currently only limited support. See the comments how to use and if you can use it for your library.)
-- **`update_descriptions.py`**: Replaces old descriptions with new ones that now support HTML descriptions.
+Visit https://abstoolbox.vito0912.de/
 
 ## Installation & Usage
 
-Follow these steps to set up and use absToolbox:
+Follow these steps to set up and use absToolbox (old Python scripts):
 
 1. Clone this repository to your local machine:
    ```bash
