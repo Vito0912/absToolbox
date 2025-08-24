@@ -2,7 +2,43 @@ import { useApi } from "@/composables/useApi";
 import type { ToolResult } from "@/types/tool";
 import axios from "axios";
 
-const { get, addLog, baseDomain } = useApi();
+const { get, post, addLog, baseDomain } = useApi();
+
+function expandMapping(mapping: Record<string, string | null>): Record<string, string> {
+  const expanded: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(mapping)) {
+    const keyParts = typeof key === "string" ? key.split(";") : [];
+    const valueParts =
+      typeof value === "string" ? value.split(";") : new Array(keyParts.length).fill(null);
+
+    keyParts.forEach((k, i) => {
+      const v = valueParts[i];
+      if (k && k !== "null" && v && v !== "null") {
+        expanded[k] = v;
+      }
+    });
+  }
+
+  return expanded;
+}
+
+function deepReplace(obj: any, mapping: Record<string, string>): any {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => deepReplace(item, mapping));
+  } else if (obj && typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]) => [
+        key,
+        deepReplace(value, mapping),
+      ])
+    );
+  } else if (typeof obj === "string") {
+    if (obj === "null") return "null";
+    return mapping[obj] ? mapping[obj] : obj;
+  }
+  return obj;
+}
 
 export async function executeMigrateServer(formData: Record<string, any>): Promise<ToolResult> {
 
@@ -75,6 +111,7 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
 
 
     const itemMapping: Record<string, string> = {};
+    const itemMediaMapping: Record<string, string> = {};
 
     addLog('=== Item Mapping ===');
     for (const [oldId, newId] of Object.entries(libraryMapping)) {
@@ -88,7 +125,7 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
             }
         })).data.results;
 
-        for (const oldItem of oldItems) {
+        for (let oldItem of oldItems) {
             let item = newItems.find((item: any) => item.media.metadata.asin !== null &&  oldItem.media.metadata.asin !== null && item.media.metadata.asin === oldItem.media.metadata.asin);
             if (!item) item = newItems.find((item: any) => item.media.metadata.isbn !== null && oldItem.media.metadata.isbn !== null && item.media.metadata.isbn === oldItem.media.metadata.isbn);
             if (!item) {
@@ -109,7 +146,28 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
                 addLog(
                     `<a href="${serverUrl}/item/${oldItem.id}" target="_blank">${oldItem.media.metadata.title}</a> -> <a href="${baseDomain.value}item/${item.id}" target="_blank">${item.media.metadata.title}</a>`
                 );
-                itemMapping[oldItem.id] = item.id;
+                if (oldItem.mediaType == 'podcast') {
+                    oldItem = (await axios.get(`${serverUrl}/api/items/${oldItem.id}`, {
+                        headers: {
+                            Authorization: `Bearer ${serverToken}`
+                        }
+                    })).data;
+                    item = (await get(`/api/items/${item.id}`)).data;
+
+                    for (let i: number = 0; i < oldItem.media.episodes.length; i++) {
+                        const oldEpisode = oldItem.media.episodes[i];
+                        const newEpisode = item.media.episodes[i];
+                        if (newEpisode) {
+                            itemMapping[`${oldItem.id};${oldEpisode.id}`] = `${item.id};${newEpisode.id}`;
+                        } else {
+                            addLog(`Warning: No mapping found for podcast episode <a href="${serverUrl}/item/${oldItem.id}" target="_blank">${oldItem.media.metadata.title}</a> episode "${oldEpisode.title}"`);
+                        }
+                    }
+
+                } else {
+                    itemMapping[`${oldItem.id};${null}`] = `${item.id};${null}`;
+                }
+                itemMediaMapping[oldItem.media.id] = item.media.id;
             }
         }
     }
@@ -131,15 +189,18 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
 
         for (let oldProgress of oldProgresses) {
             const itemId = oldProgress.libraryItemId;
-            const newItemId = itemMapping[itemId];
+            const episodeId = oldProgress.episodeId;
+            const newItemId = itemMapping[`${itemId ?? null};${episodeId ?? null}`];
             if (newItemId) {
-                oldProgress.libraryItemId = newItemId;
-                pushProgres.push(oldProgress);
+                const [first, lastRaw] = newItemId.split(";");
+                const last: string | null = lastRaw === "null" ? null : lastRaw;
+                const newProgress = deepReplace(oldProgress, expandMapping({ ...userMapping, ...libraryMapping, ...itemMapping, [oldProgress.libraryItemId]: first, [oldProgress.episodeId]: last, ...itemMediaMapping }));
+                pushProgres.push(newProgress);
 
                 addLog(`User ${oldId} item ${itemId} mapped to ${newItemId}`);
 
             } else {
-                addLog(`No mapping found for user ${oldId} item ${itemId}`);
+                addLog(`Warning: No mapping found for user ${oldId} item ${itemId}`);
             }
         }
         progressMapping[newId] = pushProgres;
@@ -153,19 +214,48 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
         }
     })).data.sessions;
 
-    for (const oldSession of oldSessions) {
-        const newUserId = userMapping[oldSession.userId];
-        const newLibraryId = libraryMapping[oldSession.libraryId];
-        const newLibraryItemId = itemMapping[oldSession.libraryItemId];
+    const uuidMapping: Record<string, string> = {
+        ...userMapping,
+        ...libraryMapping,
+        ...itemMapping,
+        ...itemMediaMapping
+    };
 
-        if (newUserId && newLibraryId && newLibraryItemId) {
-            const newSession = { ...oldSession, userId: newUserId, libraryId: newLibraryId, libraryItemId: newLibraryItemId, user: { ...oldSession.user, id: newUserId }, deviceInfo: { ...oldSession.deviceInfo, userId: newUserId } };
-            newSessions.push(newSession);
-            addLog(`Session ${oldSession.id} mapped to ${newSession.id}`);
-        } else {
-            addLog(`No mapping found for session ${oldSession.id}`);
+    let firstItem: string | null = null;
+
+    for (const [key, value] of Object.entries(itemMapping)) {
+        if (key.includes(";null")) {
+            firstItem = value.split(";")[0] ?? null;
+            break;
         }
     }
+
+    if (!firstItem) {
+        throw new Error("No non podcast item found. You need to have at least one non podcast item.");
+    }
+
+    const sessionsToFix: Record<string, string> = {};
+
+    for (const oldSession of oldSessions) {
+        const newSession = deepReplace(oldSession, expandMapping(uuidMapping));
+
+        if (!itemMapping[`${oldSession.libraryItemId};${oldSession.episodeId ?? null}`]) {
+            addLog(`Warning: The library item for session ${oldSession.id} could not be found. Using ${firstItem} as a fallback.`);
+            newSession.libraryItemId = firstItem;
+            newSession.episodeId = null;
+            sessionsToFix[newSession.id] = `${oldSession.libraryItemId};${oldSession.episodeId ?? null}`;
+        }
+
+        newSessions.push(newSession);
+        //console.log(newSession.id, `<pre>${JSON.stringify(newSession, null, 2)}</pre>`);
+        addLog(`Session ${newSession.id} updated`);
+    }
+
+    addLog('=== Adding Progress (This may take a while) ===');
+
+    await post('/api/session/local-all', {
+        "sessions": newSessions
+    })
 
     return {
         success: true,
