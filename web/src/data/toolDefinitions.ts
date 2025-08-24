@@ -210,9 +210,9 @@ export const toolDefinitions: ToolDefinition[] = [
     id: "migrate-server",
     title: "Migrate Server",
     description:
-      "Migrates all server data to a new server.",
+      "Migrates all server data to a new server.<div class='text-sm text-red-500'>There are known issues with marking podcasts episodes as played. Days and Session are still copied</div>",
     longDescription:
-    "<section>   <p>     To migrate a server to a new operating system or directory, you can use the     following tool to copy all stats and data. Please follow these steps     exactly:   </p>    <h3 class='font-bold mt-4'>1. Create a Backup</h3>   <p>Create a backup in the settings.</p>    <h3 class='font-bold mt-4'>2. Enable Metadata Storage</h3>   <p>     Enable the setting <strong>'Store metadata with item'</strong> in the ABS     settings:   </p>   <img src='/images/metadata.png' alt='Metadata setting screenshot' class='my-2' />    <p>     If this setting was not enabled from the beginning, you must use the     following tool to force the creation of the corresponding files:     <a       href='https://abstoolbox.vito0912.de/tool/force-metadata'       class='text-blue-500 underline hover:text-blue-700'       >Force Metadata tool</a     >.   </p>    <h3 class='font-bold mt-4'>3. Copy Library Folders</h3>   <p>     Now copy your library folders to your new server and set up your server from     scratch. Do <strong>NOT</strong> load a backup from the old server.   </p>    <h4 class='font-semibold mt-2'>When setting up your new server:</h4>   <ul class='list-disc list-inside'>     <li>       Name the libraries exactly the same. After migration, you can rename them       if you wish. The paths you add can, of course, be different.     </li>     <li>       Create all users for whom you want to migrate progress. Users that are not       created will have no progress or stats. Name the users exactly the same or       give them the same email address.     </li>   </ul>    <h3 class='font-bold mt-4'>4. Make Another Backup</h3>   <p>     After doing this, make another backup from both servers in the settings!   </p>    <h3 class='font-bold mt-4'>5. Add CORS Entry</h3>   <p>     Now add this website as a CORS entry in the settings of both servers. You     can find out how to do this here:     <a       href='https://abstoolbox.vito0912.de/settings'       class='text-blue-500 underline hover:text-blue-700'       >Settings</a     >.   </p>    <h3 class='font-bold mt-4'>Important!</h3>   <ul class='list-disc list-inside'>     <li>       The server in the       <a         href='https://abstoolbox.vito0912.de/settings'         class='text-blue-500 underline hover:text-blue-700'         >Settings</a       >       is your <strong>NEW</strong> server.     </li>     <li>       The server you enter below is your <strong>OLD</strong> server.     </li>   </ul>    <h3 class='font-bold mt-4'>6. Execute</h3>   <p>     Now you can click 'Execute' and wait. It should transfer all stats.   </p> </section>",
+    "Migrates all server data to a new server.<div class='text-sm text-red-500'>There are known issues with marking podcasts episodes as played. Days and Session are still copied correctly</div><br/> <section>   <p>     To migrate a server to a new operating system or directory, you can use the     following tool to copy all stats and data. Please follow these steps     exactly:   </p>    <h3 class='font-bold mt-4'>1. Create a Backup</h3>   <p>Create a backup in the settings.</p>    <h3 class='font-bold mt-4'>2. Enable Metadata Storage</h3>   <p>     Enable the setting <strong>'Store metadata with item'</strong> in the ABS     settings:   </p>   <img src='/images/metadata.png' alt='Metadata setting screenshot' class='my-2' />    <p>     If this setting was not enabled from the beginning, you must use the     following tool to force the creation of the corresponding files:     <a       href='https://abstoolbox.vito0912.de/tool/force-metadata'       class='text-blue-500 underline hover:text-blue-700'       >Force Metadata tool</a     >.   </p>    <h3 class='font-bold mt-4'>3. Copy Library Folders</h3>   <p>     Now copy your library folders to your new server and set up your server from     scratch. Do <strong>NOT</strong> load a backup from the old server.   </p>    <h4 class='font-semibold mt-2'>When setting up your new server:</h4>   <ul class='list-disc list-inside'>     <li>       Name the libraries exactly the same. After migration, you can rename them       if you wish. The paths you add can, of course, be different.     </li>     <li>       Create all users for whom you want to migrate progress. Users that are not       created will have no progress or stats. Name the users exactly the same or       give them the same email address.     </li>   </ul>    <h3 class='font-bold mt-4'>4. Make Another Backup</h3>   <p>     After doing this, make another backup from both servers in the settings!   </p>    <h3 class='font-bold mt-4'>5. Add CORS Entry</h3>   <p>     Now add this website as a CORS entry in the settings of both servers. You     can find out how to do this here:     <a       href='https://abstoolbox.vito0912.de/settings'       class='text-blue-500 underline hover:text-blue-700'       >Settings</a     >.   </p>    <h3 class='font-bold mt-4'>Important!</h3>   <ul class='list-disc list-inside'>     <li>       The server in the       <a         href='https://abstoolbox.vito0912.de/settings'         class='text-blue-500 underline hover:text-blue-700'         >Settings</a       >       is your <strong>NEW</strong> server.     </li>     <li>       The server you enter below is your <strong>OLD</strong> server.     </li>   </ul>    <h3 class='font-bold mt-4'>6. Execute</h3>   <p>     Now you can click 'Execute' and wait. It should transfer all stats.   </p> </section>",
     fields: [
       {
         name: "serverUrl",
@@ -227,19 +227,18 @@ export const toolDefinitions: ToolDefinition[] = [
         type: "string",
         label: "Server Token",
         description:
-          "Enter the authentication token for the old server.",
+          "Enter the authentication token for the old server. This needs to be a valid root or admin token!",
         required: true,
       },
       {
-        name: "copyCovers",
-        type: "boolean",
-        label: "Copy Covers",
-        description:
-          "Whether to copy cover images from the old server. If you have custom covers or covers not findable by metadata providers you can use this option to transfer them. Note that this will increase the migration time significantly and will use much more download and upload bandwidth.",
+        name: "apiKeyExpiresIn",
+        type: "string",
+        label: "API Key Expiration Time",
+        description: "For this script to work it needs to issue an API key for every user. Please specify (in minutes) how long the API keys should be valid. The more items you have, the longer the keys should be valid. 5 minutes should be good for a user with around 5 years of listening histories. Keys are never shared and automatically deleted. The expiration time should be set if the script fails and is unable to delete the key!",
         required: true,
+        default: "5"
       }
     ],
-    enabled: false,
     execute: executeMigrateServer,
   },
   {

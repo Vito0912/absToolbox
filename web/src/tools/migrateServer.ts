@@ -2,7 +2,7 @@ import { useApi } from "@/composables/useApi";
 import type { ToolResult } from "@/types/tool";
 import axios from "axios";
 
-const { get, post, addLog, baseDomain } = useApi();
+const { get, post, del, addLog, baseDomain } = useApi();
 
 function expandMapping(mapping: Record<string, string | null>): Record<string, string> {
   const expanded: Record<string, string> = {};
@@ -42,7 +42,13 @@ function deepReplace(obj: any, mapping: Record<string, string>): any {
 
 export async function executeMigrateServer(formData: Record<string, any>): Promise<ToolResult> {
 
-    const { serverUrl, serverToken } = formData;
+    const { serverUrl, serverToken, apiKeyExpiresIn } = formData;
+
+    const expiresInMinutes = Number.parseInt(String(apiKeyExpiresIn).trim(), 10);
+    if (Number.isNaN(expiresInMinutes)) {
+        throw new Error("apiKeyExpiresIn must be a numeric string (minutes).");
+    }
+    const expiresInSeconds = expiresInMinutes * 60;
 
     const newLibraries = (await get("/api/libraries")).data.libraries;
     const oldLibraries = (await axios.get(`${serverUrl}/api/libraries`, {
@@ -104,7 +110,7 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
             if (newUser) {
                 addLog(
                     `<a href="${serverUrl}/config/users/${oldUser.id}" target="_blank">${oldUser.username}</a> -> <a href="${baseDomain.value}config/users/${newUser.id}" target="_blank">${newUser.username}</a>`
-                );
+                );   
             }
         }
     }
@@ -190,11 +196,10 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
         for (let oldProgress of oldProgresses) {
             const itemId = oldProgress.libraryItemId;
             const episodeId = oldProgress.episodeId;
+            
             const newItemId = itemMapping[`${itemId ?? null};${episodeId ?? null}`];
             if (newItemId) {
-                const [first, lastRaw] = newItemId.split(";");
-                const last: string | null = lastRaw === "null" ? null : lastRaw;
-                const newProgress = deepReplace(oldProgress, expandMapping({ ...userMapping, ...libraryMapping, ...itemMapping, [oldProgress.libraryItemId]: first, [oldProgress.episodeId]: last, ...itemMediaMapping }));
+                const newProgress = deepReplace(oldProgress, expandMapping({ ...userMapping, ...libraryMapping, ...itemMapping, ...itemMediaMapping }));
                 pushProgres.push(newProgress);
 
                 addLog(`User ${oldId} item ${itemId} mapped to ${newItemId}`);
@@ -253,9 +258,39 @@ export async function executeMigrateServer(formData: Record<string, any>): Promi
 
     addLog('=== Adding Progress (This may take a while) ===');
 
-    await post('/api/session/local-all', {
-        "sessions": newSessions
-    })
+
+    for (const userId of Object.values(userMapping)) {
+        const userProgress = progressMapping[userId];
+
+        const apiKeyResponse = (await post('/api/api-keys', {
+            "name": "Migration Script",
+            "expiresIn": expiresInSeconds,
+            "isActive": true,
+            "userId": userId
+        })).data;
+
+        const apiKey = apiKeyResponse.apiKey.apiKey;
+        const apiKeyId = apiKeyResponse.apiKey.id;
+
+        const sessions = newSessions.filter((session: any) => session.userId === userId);
+
+        await axios.patch(`${baseDomain.value}api/me/progress/batch/update`, userProgress, {
+            headers: {
+                Authorization: `Bearer ${apiKey}`
+            }
+        });
+
+        await axios.post(`${baseDomain.value}api/session/local-all`, {
+            "sessions": sessions
+        }, {
+            headers: {
+                Authorization: `Bearer ${apiKey}`
+            }
+        });
+        await del(`/api/api-keys/${apiKeyId}`);
+
+        addLog(`Added sessions for user ${userId}`);
+    }
 
     return {
         success: true,

@@ -97,7 +97,7 @@ export function useApi() {
     post,
     put,
     patch,
-    delete: del,
+    del,
     baseDomain,
     executionLogs,
     isExecuting,
