@@ -6,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'tools',
-      component: () => import('@/views/ToolsView.vue')
+      component: () => import('@/views/SelectionView.vue')
     },
     {
       path: '/settings',
