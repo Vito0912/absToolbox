@@ -22,94 +22,13 @@
       </div>
     </div>
 
-    <div class="space-y-4 rounded-xl border border-white/10 bg-slate-900/40 p-4">
-      <div class="relative">
-        <input
-          v-model="filters.search"
-          type="text"
-          placeholder="Search projects..."
-          class="w-full rounded-lg border border-white/10 bg-slate-900 px-4 py-2 pl-10 text-sm text-slate-100 placeholder:text-slate-500 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
-        />
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-          <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-        <div class="flex-1">
-          <label class="block text-sm font-medium text-slate-300 mb-2">Tags</label>
-          <div class="flex flex-wrap gap-1">
-            <button
-              v-for="tag in availableTags"
-              :key="tag"
-              @click="toggleTag(tag)"
-              class="relative group px-2 py-1 rounded-md text-xs font-medium transition"
-              :class="[
-                filters.tags.includes(tag)
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-              ]"
-              :title="tagDefinitions[tag]?.description || ''"
-            >
-              {{ tagDefinitions[tag]?.name || tag }}
-            </button>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <label class="text-sm font-medium text-slate-300">Sort by</label>
-          <select
-            v-model="filters.sortBy"
-            class="rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
-          >
-            <option value="name">Name</option>
-            <option value="stars">Stars</option>
-            <option value="lastUpdated">Updated</option>
-            <option value="forks">Forks</option>
-          </select>
-          <button
-            @click="toggleSortDirection"
-            class="p-2 rounded-lg border border-white/10 bg-slate-900 hover:bg-slate-800 transition"
-          >
-            <svg
-              class="h-4 w-4 text-slate-300 transition-transform"
-              :class="{ 'rotate-180': filters.sortDirection === 'desc' }"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div v-if="filters.tags.length > 0" class="flex flex-wrap items-center gap-2 pt-2 border-t border-white/10">
-        <span class="text-sm text-slate-400">Filtered by:</span>
-        <div class="flex flex-wrap gap-1">
-          <span
-            v-for="tag in filters.tags"
-            :key="tag"
-            class="inline-flex items-center gap-1 px-2 py-1 bg-indigo-600/20 text-indigo-300 rounded text-xs"
-          >
-            {{ tag }}
-            <button @click="removeTag(tag)" class="hover:text-white transition">
-              <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </span>
-        </div>
-        <button
-          @click="clearFilters"
-          class="text-xs text-slate-400 hover:text-slate-300 underline transition"
-        >
-          Clear all
-        </button>
-      </div>
-    </div>
+    <FilterBar
+      v-model="filterBarModel"
+      search-placeholder="Search projects..."
+      filter-label="Tags"
+      :filter-options="tagFilterOptions"
+      :sort-options="sortOptions"
+    />
 
     <div v-if="isLoading && filteredProjects.length === 0" class="flex flex-col items-center justify-center py-16">
       <div class="animate-spin rounded-full h-8 w-8 border-2 border-indigo-500 border-t-transparent"></div>
@@ -191,6 +110,8 @@ import { ref, computed, onMounted } from 'vue';
 import type { Project, ProjectFilter } from '@/types/project';
 import { projects, availableTags, tagDefinitions } from '@/data/projects';
 import { useProjectsCache } from '@/composables/useProjectsCache';
+import FilterBar from '@/components/FilterBar.vue';
+import type { FilterOption, SortOption } from '@/types/filterBar';
 
 const { isLoading, fetchProjectsWithStats, clearCache, getCacheAge } = useProjectsCache();
 
@@ -203,6 +124,36 @@ const filters = ref<ProjectFilter>({
   sortBy: 'name',
   sortDirection: 'asc'
 });
+
+const filterBarModel = computed({
+  get: () => ({
+    search: filters.value.search,
+    filters: filters.value.tags,
+    sortBy: filters.value.sortBy,
+    sortDirection: filters.value.sortDirection
+  }),
+  set: (value) => {
+    filters.value.search = value.search;
+    filters.value.tags = value.filters;
+    filters.value.sortBy = value.sortBy as ProjectFilter['sortBy'];
+    filters.value.sortDirection = value.sortDirection as ProjectFilter['sortDirection'];
+  }
+});
+
+const tagFilterOptions = computed<FilterOption[]>(() => 
+  availableTags.map(tag => ({
+    value: tag,
+    label: tagDefinitions[tag]?.name || tag,
+    description: tagDefinitions[tag]?.description
+  }))
+);
+
+const sortOptions = computed<SortOption[]>(() => [
+  { value: 'name', label: 'Name' },
+  { value: 'stars', label: 'Stars' },
+  { value: 'lastUpdated', label: 'Updated' },
+  { value: 'forks', label: 'Forks' }
+]);
 
 const filteredProjects = computed(() => {
   let filtered = [...projectsList.value];
@@ -255,31 +206,6 @@ const filteredProjects = computed(() => {
 
   return filtered;
 });
-
-const toggleTag = (tag: string) => {
-  const index = filters.value.tags.indexOf(tag);
-  if (index > -1) {
-    filters.value.tags.splice(index, 1);
-  } else {
-    filters.value.tags.push(tag);
-  }
-};
-
-const removeTag = (tag: string) => {
-  const index = filters.value.tags.indexOf(tag);
-  if (index > -1) {
-    filters.value.tags.splice(index, 1);
-  }
-};
-
-const clearFilters = () => {
-  filters.value.tags = [];
-  filters.value.search = '';
-};
-
-const toggleSortDirection = () => {
-  filters.value.sortDirection = filters.value.sortDirection === 'asc' ? 'desc' : 'asc';
-};
 
 const refreshProjects = async () => {
   clearCache();
