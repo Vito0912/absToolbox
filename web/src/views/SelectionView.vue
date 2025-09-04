@@ -52,40 +52,6 @@
         </div>
       </div>
     </div>
-
-    <!-- External Projects -->
-    <div v-if="externalProjects.length" class="space-y-4 pt-4">
-    <div class="pb-4">
-        <h2 class="text-xl font-semibold tracking-tight pb-1">External Projects</h2>
-        <p class="text-slate-400 text-sm">External projects are handpicked projects by other awesome developers that contribute to the Audiobookshelf ecosystem.</p>
-    </div>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr">
-        <a
-          v-for="proj in externalProjects"
-          :key="proj.link"
-          :href="proj.link"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="block rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 transition hover:border-indigo-400/40 hover:bg-indigo-500/5 hover:shadow-xl"
-        >
-          <div class="flex items-start justify-between gap-2">
-            <h3 class="text-base font-semibold text-slate-100">{{ proj.name }}</h3>
-            <span class="text-xs text-slate-500">by
-              <span v-for="(a, idx) in proj.authors" :key="a">
-                <template v-if="proj.authorLinks?.[idx]">
-                  <a :href="proj.authorLinks[idx]" target="_blank" class="text-indigo-300 hover:underline">{{ a }}</a>
-                </template>
-                <template v-else>{{ a }}</template>
-                <span v-if="idx < proj.authors.length - 1">, </span>
-              </span>
-            </span>
-          </div>
-          <p v-if="proj.description" class="mt-2 text-sm text-slate-400">
-            {{ proj.description }}
-          </p>
-        </a>
-      </div>
-    </div>
   </div>
   
 </template>
@@ -97,8 +63,6 @@ import type { ToolDefinition } from '@/types/tool'
 import { useSettingsStore } from '@/stores/settings'
 import router from '@/router'
 import { useApi } from '@/composables/useApi'
-import type { ExternalProject } from '@/types/external'
-import { ExternalProjects as externalProjectsData } from '@/data/externalProjects'
 
 const { clearLogs, baseDomain } = useApi()
 const settingsStore = useSettingsStore()
@@ -109,6 +73,4 @@ const selectTool = (tool: ToolDefinition) => {
   clearLogs()
   router.push({ name: 'tool', params: { id: tool.id } })
 }
-
-const externalProjects = computed<ExternalProject[]>(() => externalProjectsData)
 </script>

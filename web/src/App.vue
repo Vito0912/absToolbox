@@ -24,6 +24,13 @@
             Tools
           </router-link>
           <router-link
+            to="/projects"
+            class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-indigo-300 bg-indigo-500/10"
+          >
+            Projects
+          </router-link>
+          <router-link
             to="/settings"
             class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
             active-class="!text-indigo-300 bg-indigo-500/10"
