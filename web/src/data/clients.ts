@@ -51,6 +51,7 @@ export const projects: ClientInfo[] = [
       oidc: true,
       carSupport: true,
       widgets: true,
+      bookmarks: true,
     }
   },
   {
@@ -100,6 +101,163 @@ export const projects: ClientInfo[] = [
       oidc: false,
       carSupport: false,
       widgets: false,
+      bookmarks: false,
+    }
+  },
+  {
+    name: "Shelfplayer",
+    link: "https://github.com/rasmuslos/ShelfPlayer",
+    iconLink: "https://github.com/rasmuslos/ShelfPlayer/blob/main/Multiplatform/Assets.xcassets/Logo.imageset/ShelfPlayer.png?raw=true",
+    language: "Swift",
+    OSes: ["iOS"],
+    openSource: true,
+    cost: "Paid",
+    notes: [
+      {
+        color: "blue",
+        text: "Any features are only from the GitHub page, as I have not tested this app myself"
+      }
+    ],
+    features: {
+      tested: {
+        wasTested: false,
+        date: undefined,
+        usedApiCorrectly: undefined,
+        comments: []
+      },
+      ebooks: {
+        available: true,
+        ePubSupport: false,
+        pdfSupport: true,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: undefined,
+      queue: true,
+      autoqueue: undefined,
+      sleepTimer: false,
+      chapters: true,
+      playHistory: undefined,
+      shakeToRewind: undefined,
+      downloads: true,
+      customHeaders: undefined,
+      caching: undefined,
+      biggerScreens: true,
+      oidc: false,
+      carSupport: true,
+      widgets: true,
+      bookmarks: undefined,
+    }
+  },
+  {
+    name: "Plappa",
+    link: "https://github.com/LeoKlaus/plappa",
+    iconLink: undefined,
+    language: "Unknown",
+    OSes: ["iOS"],
+    openSource: false,
+    cost: "Freemium",
+    notes: [
+      {
+        color: "green",
+        text: "Supports watchOS (from what I read on the GitHub page)"
+      },
+      {
+        color: "yellow",
+        text: "Always uses /download for streaming books which can lead to issues and blocks listening without download permission. See https://github.com/advplyr/audiobookshelf/issues/4196#issuecomment-2797497694"
+      },
+      {
+        color: "blue",
+        text: "The libraries are in another sort order"
+      }
+    ],
+    features: {
+      tested: {
+        wasTested: true,
+        date: "09-06-2025",
+        usedApiCorrectly: 3,
+        comments: [
+          "Can cause race conditions due to syncing twice at the same time (Will be fixed after ABS is restarted in recent ABS versions)",
+          "Calls the user object every ~10 seconds that can be up to 1MB in size, additional to streaming a book",
+          "Does not use the /play endpoint, but uses sessions"
+        ]
+      },
+      ebooks: {
+        available: false,
+        ePubSupport: false,
+        pdfSupport: false,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: false,
+      queue: true,
+      autoqueue: true,
+      sleepTimer: true,
+      chapters: true,
+      playHistory: false,
+      shakeToRewind: undefined,
+      downloads: true,
+      customHeaders: true,
+      caching: undefined,
+      biggerScreens: true,
+      oidc: true,
+      carSupport: undefined,
+      widgets: true,
+      bookmarks: true
+    }
+  },
+  {
+    name: "Lissen",
+    link: "https://github.com/GrakovNe/lissen-android",
+    iconLink: "https://github.com/GrakovNe/lissen-android/blob/main/metadata/en-US/images/icon.png?raw=true",
+    language: "Kotlin",
+    OSes: ["Android"],
+    openSource: true,
+    cost: "Free",
+    notes: [
+      {
+        color: "green",
+        text: "Supports Android Auto in a beta branch (but currently not in the Play Store version)"
+      },
+      {
+        color: "blue",
+        text: "I would give this a score of 2.5, because only the download endpoint is problematic. Creating a session every time is not ideal, and syncing when not actively listening is also not good, but not \"critical\" and due to the working design (and awesome download option), I think a score of 2 would be unfair."
+      },
+    ],
+    features: {
+      tested: {
+        wasTested: true,
+        date: "09-06-2025",
+        usedApiCorrectly: 3,
+        comments: [
+          "Uses old playback API",
+          "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",
+          "Does sync even when paused, which can overwrite progress made on other clients",
+          "Creates a new session for every chapter"
+        ]
+      },
+      ebooks: {
+        available: false,
+        ePubSupport: false,
+        pdfSupport: false,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: true,
+      queue: false,
+      autoqueue: false,
+      sleepTimer: true,
+      chapters: true,
+      playHistory: false,
+      shakeToRewind: false,
+      downloads: true,
+      customHeaders: true,
+      caching: undefined,
+      biggerScreens: true,
+      oidc: true,
+      carSupport: false,
+      widgets: true,
+      bookmarks: false
     }
   },
   {
@@ -148,6 +306,7 @@ export const projects: ClientInfo[] = [
       oidc: true,
       carSupport: false,
       widgets: false,
+      bookmarks: false,
     }
   },
   {
@@ -197,7 +356,8 @@ export const projects: ClientInfo[] = [
       biggerScreens: false,
       oidc: true,
       carSupport: undefined,
-      widgets: undefined,
+      widgets: false,
+      bookmarks: false,
     }
   },
   {
@@ -211,7 +371,7 @@ export const projects: ClientInfo[] = [
     notes: [
             {
         color: "yellow",
-        text: "Creates, but never closes an session for every item you open, regardless if you play it or not."
+        text: "Creates but never closes a session for every item you open, whether you play it or not"
       },
       {
         color: "red",
@@ -258,6 +418,7 @@ export const projects: ClientInfo[] = [
       oidc: false,
       carSupport: true,
       widgets: false,
+      bookmarks: false,
     }
   },
 ];

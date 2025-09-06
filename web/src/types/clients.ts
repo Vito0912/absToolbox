@@ -43,4 +43,5 @@ export interface ClientFeatures {
     biggerScreens?: boolean;
     oidc?: boolean;
     widgets?: boolean;
+    bookmarks?: boolean;
 }

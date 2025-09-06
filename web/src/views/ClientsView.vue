@@ -108,6 +108,12 @@
                 >
                   Open Source
                 </span>
+                <span
+                  v-if="!client.openSource"
+                  class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-600/20 text-yellow-300"
+                >
+                  Closed Source
+                </span>
               </div>
               
               <div v-if="client.features.tested.wasTested" class="flex items-center gap-1">
@@ -257,6 +263,10 @@
                   <div class="flex items-center gap-1" :class="getFeatureClass(client.features.widgets)">
                     <component :is="getFeatureIcon(client.features.widgets)" class="h-3 w-3" />
                     Widgets
+                  </div>
+                  <div class="flex items-center gap-1" :class="getFeatureClass(client.features.bookmarks)">
+                    <component :is="getFeatureIcon(client.features.bookmarks)" class="h-3 w-3" />
+                    Bookmarks
                   </div>
                 </div>
               </div>
@@ -412,9 +422,8 @@ const getCostBadgeClass = (cost: string) => {
     case 'Free':
       return 'bg-green-600/20 text-green-300'
     case 'Freemium':
-      return 'bg-yellow-600/20 text-yellow-300'
     case 'Paid':
-      return 'bg-red-600/20 text-red-300'
+      return 'bg-yellow-600/20 text-yellow-300'
     default:
       return 'bg-slate-600/20 text-slate-300'
   }
