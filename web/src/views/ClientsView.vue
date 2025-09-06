@@ -274,8 +274,8 @@
           </div>
 
           <div v-if="client.features.tested.comments && client.features.tested.comments.length > 0" class="mb-4">
-            <h4 class="text-sm font-medium text-slate-300 mb-2">Testing Comments</h4>
-            <ul class="space-y-1 text-xs text-slate-400">
+            <h4 class="text-sm font-medium text-white-300 mb-2">Testing Comments</h4>
+            <ul class="space-y-1 text-xs text-gray-300">
               <li v-for="comment in client.features.tested.comments" :key="comment" class="flex items-start gap-1">
                 <span class="text-orange-400 mt-1">•</span>
                 {{ comment }}
