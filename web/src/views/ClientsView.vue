@@ -43,6 +43,9 @@
           <span class="text-slate-400">5: Excellent API usage</span>
         </div>
       </div>
+      <span class="text-slate-400 text-sm">Always check the last tested date. Apps can change over time. This only represents a snapshot in time.</span>
+      <br />
+      <br />
       <span class="text-slate-400 text-sm"><p><strong>Disclaimer:</strong> API scores and all content on this page reflect my personal opinion and do not represent the views of the ABS dev team or ABS as a whole. Creating an app takes significant effort, so publishing even one is already a big achievement. If you find any mistakes or believe something should be updated, feel free to contact me on <a href="https://discord.com/users/339746615369793536">Discord (@vito0912)</a> or send me an <a href="mailto:finn@dittmar-ldk.de">email here.</a></p></span>
     </div>
 
@@ -64,12 +67,15 @@
         <div class="p-6">
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
-              <img
-                :src="client.iconLink"
-                :alt="`${client.name} icon`"
-                class="h-12 w-12 rounded-lg object-cover"
-                @error="handleImageError"
-              />
+                <div v-if="client.iconLink" class="h-12 w-12 rounded-lg overflow-hidden">
+                <img
+                  :src="client.iconLink"
+                  :alt="`${client.name} icon`"
+                  class="h-full w-full object-cover"
+                  @error="handleImageError"
+                />
+                </div>
+                <div v-else class="h-12 w-12 rounded-lg bg-slate-600"></div>
               <div>
                 <h3 class="text-lg font-semibold text-slate-100">
                   <a
@@ -111,13 +117,16 @@
                   :class="getApiScoreColor(client.features.tested.usedApiCorrectly)"
                 ></div>
                 <span class="text-xs font-medium text-slate-300">
-                  {{ client.features.tested.usedApiCorrectly || 'N/A' }}
+                  {{ client.features.tested.usedApiCorrectly != undefined ? client.features.tested.usedApiCorrectly : 'N/A' }}
                 </span>
               </div>
             </div>
           </div>
 
           <div class="mb-4">
+            <div v-if="client.features.tested.usedApiCorrectly === 0 || client.features.tested.usedApiCorrectly === 1" class="text-xs font-medium text-red-800">
+                Apps with 1 or 0 should not be used with a production ABS server as they can cause bigger issues to stats, progress and worse performance if not use many resources for transcoding jobs. Reminder to read the Disclaimer at the top, as this is my personal assessment and experience at the time of testing.
+            </div>
             <h4 class="text-sm font-medium text-slate-300 mb-2">Operating Systems</h4>
             <div class="flex flex-wrap gap-1">
               <span
@@ -244,6 +253,10 @@
                   <div class="flex items-center gap-1" :class="getFeatureClass(client.features.carSupport)">
                     <component :is="getFeatureIcon(client.features.carSupport)" class="h-3 w-3" />
                     Car Support
+                  </div>
+                  <div class="flex items-center gap-1" :class="getFeatureClass(client.features.widgets)">
+                    <component :is="getFeatureIcon(client.features.widgets)" class="h-3 w-3" />
+                    Widgets
                   </div>
                 </div>
               </div>
@@ -408,7 +421,7 @@ const getCostBadgeClass = (cost: string) => {
 }
 
 const getApiScoreColor = (score: number | undefined) => {
-  if (!score) return 'bg-slate-500'
+  if (score == undefined) return 'bg-slate-500'
   if (score <= 1) return 'bg-red-500'
   if (score <= 3) return 'bg-orange-500'
   if (score === 4) return 'bg-yellow-500'

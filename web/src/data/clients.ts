@@ -50,6 +50,7 @@ export const projects: ClientInfo[] = [
       biggerScreens: true,
       oidc: true,
       carSupport: true,
+      widgets: true,
     }
   },
   {
@@ -75,7 +76,7 @@ export const projects: ClientInfo[] = [
       tested: {
         wasTested: true,
         date: "2025-01-01",
-        usedApiCorrectly: 4,
+        usedApiCorrectly: 3,
         comments: [
           "Uses old playback API",
           "Uses outdated authentication method"
@@ -98,6 +99,55 @@ export const projects: ClientInfo[] = [
       biggerScreens: true,
       oidc: false,
       carSupport: false,
+      widgets: false,
+    }
+  },
+  {
+    name: "LitLyric",
+    link: "https://github.com/shane9b3/LitLyric---Beta",
+    iconLink: undefined,
+    language: "Unknown",
+    OSes: ["Android"],
+    openSource: false,
+    cost: "Free",
+    notes: [
+      {
+        color: "yellow",
+        text: "In the current state, the stats are not accurate"
+      },
+    ],
+    features: {
+      tested: {
+        wasTested: true,
+        date: "2025-09-06",
+        usedApiCorrectly: 2,
+        comments: [
+          "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",  
+          "Uses an old playback API",  
+          "Does not use a session, which makes stats inaccurate and can cause other issues related to progress"
+        ]
+      },
+      ebooks: {
+        available: true,
+        ePubSupport: true,
+        pdfSupport: false,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: true,
+      queue: false,
+      autoqueue: false,
+      sleepTimer: true,
+      chapters: true,
+      playHistory: false,
+      shakeToRewind: false,
+      downloads: true,
+      customHeaders: false,
+      caching: undefined,
+      biggerScreens: undefined,
+      oidc: true,
+      carSupport: false,
+      widgets: false,
     }
   },
   {
@@ -147,6 +197,67 @@ export const projects: ClientInfo[] = [
       biggerScreens: false,
       oidc: true,
       carSupport: undefined,
+      widgets: undefined,
     }
-  }
+  },
+  {
+    name: "Kitzi ABS Player",
+    link: "https://github.com/bennybar/kitzi_abs_player/tree/v0.0.5",
+    iconLink: undefined,
+    language: "Dart",
+    OSes: ["Android"],
+    openSource: true,
+    cost: "Free",
+    notes: [
+            {
+        color: "yellow",
+        text: "Creates, but never closes an session for every item you open, regardless if you play it or not."
+      },
+      {
+        color: "red",
+        text: "Creates 10s if not 100s of sessions if you download an audiobook"
+      },
+      {
+        color: "red",
+        text: "Loads every image from the server. Expect very high data usage on first login. In general does no pagination, which leads to very poor loading times"
+      },
+      {
+        color: "red",
+        text: "Does not work with the ABS Demo server/ known cases of the client not working"
+      },
+    ],
+    features: {
+      tested: {
+        wasTested: true,
+        date: "2025-09-06",
+        usedApiCorrectly: 0,
+        comments: [
+          "Does no pagination, which can lead to performance issues with large libraries. Loads everything into memory",
+          "Does not use sessions",
+          "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",
+        ]
+      },
+      ebooks: {
+        available: false,
+        ePubSupport: false,
+        pdfSupport: false,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: false,
+      queue: false,
+      autoqueue: false,
+      sleepTimer: false,
+      chapters: true,
+      playHistory: false,
+      shakeToRewind: false,
+      downloads: true,
+      customHeaders: false,
+      caching: false,
+      biggerScreens: undefined,
+      oidc: false,
+      carSupport: true,
+      widgets: false,
+    }
+  },
 ];

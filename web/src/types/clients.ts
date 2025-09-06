@@ -1,7 +1,7 @@
 export interface ClientInfo {
     name: string;
     link: string;
-    iconLink: string;
+    iconLink?: string;
     language: string;
     OSes: ("Android" | "iOS" | "Windows" | "macOS" | "Linux" | "Web")[];
     cost: "Free" | "Freemium" | "Paid";
@@ -42,4 +42,5 @@ export interface ClientFeatures {
     caching?: boolean;
     biggerScreens?: boolean;
     oidc?: boolean;
+    widgets?: boolean;
 }
