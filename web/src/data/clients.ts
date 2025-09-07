@@ -3,6 +3,54 @@ import { factory } from 'typescript';
 
 export const projects: ClientInfo[] = [
   {
+    name: "Audiobookshelf PWA",
+    link: "https://www.audiobookshelf.org/",
+    iconLink: "https://www.audiobookshelf.org/Logo.png",
+    language: "JS, Vue",
+    OSes: ["Android", "iOS", "Web"],
+    openSource: true,
+    cost: "Free",
+    notes: [
+      {
+        color: "blue",
+        text: "Custom headers are checked, because you can use Forward Auth"
+      },
+      {
+        color: "blue",
+        text: "To use the PWA on iOS, you have to add it to the home screen from Safari"
+      }
+    ],
+    features: {
+      tested: {
+        wasTested: true,
+        date: "2025-09-07",
+        usedApiCorrectly: 5,
+      },
+      ebooks: {
+        available: true,
+        pdfSupport: true,
+        ePubSupport: true,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: true,
+      queue: true,
+      autoqueue: true,
+      sleepTimer: true,
+      chapters: true,
+      playHistory: false,
+      shakeToRewind: false,
+      downloads: false,
+      customHeaders: true,
+      caching: false,
+      biggerScreens: true,
+      oidc: true,
+      carSupport: false,
+      widgets: false,
+      bookmarks: true,
+    }
+  },
+  {
     name: "Audiobookshelf",
     link: "https://www.audiobookshelf.org/",
     iconLink: "https://www.audiobookshelf.org/Logo.png",
@@ -369,32 +417,23 @@ export const projects: ClientInfo[] = [
     openSource: true,
     cost: "Free",
     notes: [
-            {
-        color: "yellow",
-        text: "Creates but never closes a session for every item you open, whether you play it or not"
+      {
+        color: "green",
+        text: "Dev is very responsive. After reporting major issues with the use of sessions, they quickly fixed most of them."
       },
       {
         color: "red",
-        text: "Creates 10s if not 100s of sessions if you download an audiobook"
-      },
-      {
-        color: "red",
-        text: "Loads every image from the server. Expect very high data usage on first login. In general does no pagination, which leads to very poor loading times"
-      },
-      {
-        color: "red",
-        text: "Does not work with the ABS Demo server/ known cases of the client not working"
+        text: "Signing out does not work/ leaves the app in a broken state"
       },
     ],
     features: {
       tested: {
         wasTested: true,
-        date: "2025-09-06",
-        usedApiCorrectly: 0,
+        date: "2025-09-07",
+        usedApiCorrectly: 3,
         comments: [
-          "Does no pagination, which can lead to performance issues with large libraries. Loads everything into memory",
-          "Does not use sessions",
-          "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",
+          "Does load big chunks of books in advance.",
+          "Opens sessions for everything you click on, even if you don't play it (but closes them)",
         ]
       },
       ebooks: {
@@ -419,6 +458,127 @@ export const projects: ClientInfo[] = [
       carSupport: true,
       widgets: false,
       bookmarks: false,
+    }
+  },
+  {
+    name: "Soundleaf",
+    link: "https://github.com/SoundLeaf/SoundLeafApp",
+    iconLink: undefined,
+    language: "Unknown",
+    OSes: ["iOS"],
+    openSource: false,
+    cost: "Freemium",
+    notes: [
+      {
+        color: "blue",
+        text: "Switching libraries seems to be a multi step process, so users with multiple libraries might find it inconvenient"
+      },
+      {
+        color: "blue",
+        text: "Pro features are prominently displayed in the UI"
+      },
+      {
+        color: "yellow",
+        text: "Very poor scrolling performance with medium to large libraries"
+      },
+      {
+        color: "red",
+        text: "Signing out does not work"
+      },
+      {
+        color: "blue",
+        text: "Downloads have not been tested"
+      },
+    ],
+    features: {
+      tested: {
+        wasTested: true,
+        date: "2025-09-07",
+        usedApiCorrectly: 2,
+        comments: [
+          "Loads big chunks of books in advance. Loads whole books in advance",
+          "Continuously fetches whole books without doing anything around every 5 seconds. This data can be up to MB in size",
+          "Uses old playback API",
+          "Uses outdated authentication method"
+        ]
+      },
+      ebooks: {
+        available: false,
+        ePubSupport: false,
+        pdfSupport: false,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: false,
+      queue: false,
+      autoqueue: false,
+      sleepTimer: true,
+      chapters: true,
+      playHistory: false,
+      shakeToRewind: false,
+      downloads: true,
+      customHeaders: false,
+      caching: true,
+      biggerScreens: true,
+      oidc: false,
+      carSupport: undefined,
+      widgets: false,
+      bookmarks: false,
+    }
+  },
+  {
+    name: "Prologue",
+    link: "https://prologue.audio/",
+    iconLink: "https://prologue.audio/img/app-icon.svg",
+    language: "Unknown",
+    OSes: ["iOS"],
+    openSource: false,
+    cost: "Freemium",
+    notes: [
+      {
+        color: "green",
+        text: "Has advanced features like Volume Boost, EQ, and Media Info"
+      },
+      {
+        color: "green",
+        text: "Current Testflight contains no paid features"
+      }
+    ],
+    features: {
+      tested: {
+        wasTested: true,
+        date: "2025-09-07",
+        usedApiCorrectly: 2,
+        comments: [
+          "Loads the whole library in advance",
+          "Uses old playback API",
+          "Uses outdated authentication method",
+          "Does not use the /play endpoint, but uses sessions. This can lead to overwriting progress made on other clients",
+          "Does not use a download endpoint for downloads, which can lead to issues when the user does not have download permission"
+        ]
+      },
+      ebooks: {
+        available: false,
+        ePubSupport: false,
+        pdfSupport: false,
+        annotations: false,
+      },
+      audiobooks: true,
+      podcasts: false,
+      queue: false,
+      autoqueue: false,
+      sleepTimer: true,
+      chapters: true,
+      playHistory: false,
+      shakeToRewind: undefined,
+      downloads: true,
+      customHeaders: true,
+      caching: true,
+      biggerScreens: true,
+      oidc: true,
+      carSupport: undefined,
+      widgets: true,
+      bookmarks: true,
     }
   },
 ];
