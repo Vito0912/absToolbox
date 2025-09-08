@@ -7,6 +7,7 @@ import { executeForceMetadata } from "@/tools/forceMetadata";
 import { executeRenameSeries } from "@/tools/renameSeries";
 import { executePathTagUpdater } from "@/tools/pathTagUpdater";
 import { executeMigrateServer } from "@/tools/migrateServer";
+import { executeListenDateUpdater } from "@/tools/listenDateUpdater";
 
 export const toolDefinitions: ToolDefinition[] = [
   {
@@ -313,5 +314,28 @@ export const toolDefinitions: ToolDefinition[] = [
       }
     ],
     execute: executePathTagUpdater
+  },
+    {
+    id: "listen-date-updater",
+    title: "Listen Date Updater",
+    description:
+      "Updates the listen date for specific library items.",
+    fields: [
+      {
+        name: "libraryItemIds",
+        type: "libraryItemsSelector",
+        label: "Library Item IDs",
+        description: "The UUIDs of the library items.",
+        required: true,
+      },
+      {
+        name: "dateToSet",
+        type: "date",
+        label: "Date to Set",
+        description: "The date to set as the listen date.",
+        required: true,
+      }
+    ],
+    execute: executeListenDateUpdater
   }
 ];

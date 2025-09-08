@@ -190,6 +190,72 @@
             </div>
           </div>
         </div>
+
+        <div v-else-if="field.type === 'libraryItemsSelector'" class="space-y-3">
+          <div v-if="librariesLoading[field.name]" class="text-sm text-slate-400">
+            Loading libraries...
+          </div>
+          <div v-else-if="librariesError[field.name]" class="text-sm text-rose-400">
+            Error loading libraries: {{ librariesError[field.name] }}
+          </div>
+          <div v-else>
+            <label class="block text-sm font-medium text-slate-200">Choose Library</label>
+            <select
+              v-model="selectedLibrary[field.name]"
+              @change="loadLibraryItems(field.name, selectedLibrary[field.name])"
+              class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+            >
+              <option value="">-- Select a library --</option>
+              <option
+                v-for="library in libraries[field.name]"
+                :key="library.id"
+                :value="library.id"
+              >
+                {{ library.name }} ({{ library.mediaType }})
+              </option>
+            </select>
+
+            <div v-if="selectedLibrary[field.name]" class="mt-4 space-y-2">
+              <input
+                v-model="itemSearch[field.name]"
+                type="text"
+                placeholder="Search items..."
+                class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+              />
+
+              <div v-if="itemsLoading[field.name]" class="text-sm text-slate-400">
+                Loading items...
+              </div>
+              <div v-else-if="itemsError[field.name]" class="text-sm text-rose-400">
+                Error loading items: {{ itemsError[field.name] }}
+              </div>
+              <div v-else class="max-h-60 overflow-y-auto space-y-1">
+                <label
+                  v-for="item in filteredItems(field.name)"
+                  :key="item.id"
+                  class="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    :value="item.id"
+                    v-model="formData[field.name]"
+                    class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 rounded focus:ring-indigo-500 focus:ring-2"
+                  />
+                  <span class="text-sm text-slate-200">{{ item.media.metadata.title }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input
+          v-else-if="field.type === 'date'"
+          v-model="formData[field.name]"
+          type="date"
+          :placeholder="field.placeholder"
+          :required="field.required"
+          class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+        />
       </div>
 
       <div class="pt-2">
@@ -264,7 +330,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import type { ToolDefinition, ToolResult } from '@/types/tool'
 import { useApi } from '@/composables/useApi';
 
@@ -280,6 +346,17 @@ interface Library {
   icon: string
 }
 
+interface LibraryItem {
+  id: string
+  media: {
+    metadata: {
+      title: string
+      [key: string]: any
+    }
+    [key: string]: any
+  }
+}
+
 const props = defineProps<Props>()
 
 const formData = reactive<Record<string, any>>({})
@@ -290,7 +367,13 @@ const librariesLoading = reactive<Record<string, boolean>>({})
 const librariesError = reactive<Record<string, string | null>>({})
 const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
 
-const { get, executionLogs, isExecuting, startExecution, stopExecution, getElapsedTime } = useApi()
+const items = reactive<Record<string, LibraryItem[]>>({})
+const itemsLoading = reactive<Record<string, boolean>>({})
+const itemsError = reactive<Record<string, string | null>>({})
+const selectedLibrary = reactive<Record<string, string>>({})
+const itemSearch = reactive<Record<string, string>>({})
+
+const { get, executionLogs, startExecution, stopExecution, getElapsedTime } = useApi()
 
 const elapsedTime = ref('0:00')
 
@@ -302,6 +385,12 @@ props.tool.fields.forEach((field) => {
   } else if (field.type === 'librarySelector') {
     formData[field.name] = []
   } else if (field.type === 'singleLibrarySelector') {
+    formData[field.name] = field.default || ''
+  } else if (field.type === 'libraryItemsSelector') {
+    formData[field.name] = []
+    selectedLibrary[field.name] = ''
+    itemSearch[field.name] = ''
+  } else if (field.type === 'date') {
     formData[field.name] = field.default || ''
   } else {
     formData[field.name] = field.default !== undefined ? field.default : ''
@@ -330,6 +419,33 @@ const loadLibraries = async (fieldName: string) => {
   } finally {
     librariesLoading[fieldName] = false
   }
+}
+
+const loadLibraryItems = async (fieldName: string, libraryId: string) => {
+  if (!libraryId) {
+    items[fieldName] = []
+    return
+  }
+  itemsLoading[fieldName] = true
+  itemsError[fieldName] = null
+  try {
+    const response = (await get(`/api/libraries/${libraryId}/items`)).data
+    if (response.results) {
+      items[fieldName] = response.results
+    }
+  } catch (error: any) {
+    itemsError[fieldName] = error.message || 'Failed to load items'
+  } finally {
+    itemsLoading[fieldName] = false
+  }
+}
+
+const filteredItems = (fieldName: string) => {
+  const search = (itemSearch[fieldName] || '').toLowerCase()
+  if (!search) return items[fieldName] || []
+  return (items[fieldName] || []).filter((i) =>
+    i.media.metadata.title.toLowerCase().includes(search)
+  )
 }
 
 const selectAllLibraries = (fieldName: string) => {
@@ -374,7 +490,7 @@ const handleSubmit = async () => {
   try {
     const cleanedData: Record<string, any> = { ...formData }
     props.tool.fields.forEach((field) => {
-      if (field.type === 'stringArray' || field.type === 'librarySelector') {
+      if (field.type === 'stringArray' || field.type === 'librarySelector' || field.type === 'libraryItemsSelector') {
         cleanedData[field.name] = formData[field.name].filter(
           (item: string) => item.trim() !== ''
         )
@@ -402,7 +518,11 @@ const handleSubmit = async () => {
 
 onMounted(() => {
   props.tool.fields.forEach((field) => {
-    if (field.type === 'librarySelector' || field.type === 'singleLibrarySelector') {
+    if (
+      field.type === 'librarySelector' ||
+      field.type === 'singleLibrarySelector' ||
+      field.type === 'libraryItemsSelector'
+    ) {
       loadLibraries(field.name)
     }
   })
