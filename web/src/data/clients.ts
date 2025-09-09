@@ -1,5 +1,5 @@
-import type { ClientInfo } from '@/types/clients';
-import { factory } from 'typescript';
+import type { ClientInfo } from "@/types/clients";
+import { factory } from "typescript";
 
 export const projects: ClientInfo[] = [
   {
@@ -13,12 +13,12 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "blue",
-        text: "Custom headers are checked, because you can use Forward Auth"
+        text: "Custom headers are checked, because you can use Forward Auth",
       },
       {
         color: "blue",
-        text: "To use the PWA on iOS, you have to add it to the home screen from Safari"
-      }
+        text: "To use the PWA on iOS, you have to add it to the home screen from Safari",
+      },
     ],
     features: {
       tested: {
@@ -48,7 +48,7 @@ export const projects: ClientInfo[] = [
       carSupport: false,
       widgets: false,
       bookmarks: true,
-    }
+    },
   },
   {
     name: "Audiobookshelf",
@@ -61,16 +61,16 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "blue",
-        text: "The iOS app does not support CarPlay. Downloads do not resume in the background."
+        text: "The iOS app does not support CarPlay. Downloads do not resume in the background.",
       },
       {
         color: "yellow",
-        text: "There are known sync issues when listening offline or with Android Auto."
+        text: "There are known sync issues when listening offline or with Android Auto.",
       },
       {
         color: "red",
-        text: "The iOS beta is currently full. Join the ABS Discord to get notified when new spots open."
-      }
+        text: "The iOS beta is currently full. Join the ABS Discord to get notified when new spots open.",
+      },
     ],
     features: {
       tested: {
@@ -100,7 +100,7 @@ export const projects: ClientInfo[] = [
       carSupport: true,
       widgets: true,
       bookmarks: true,
-    }
+    },
   },
   {
     name: "Buchable",
@@ -114,12 +114,12 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "yellow",
-        text: "This app was developed by me. This should not be a site to promote my apps, but rather provide a list of all available clients. In fact, I think the design is not that good."
+        text: "This app was developed by me. This should not be a site to promote my apps, but rather provide a list of all available clients. In fact, I think the design is not that good.",
       },
-     {
+      {
         color: "yellow",
-        text: "Downloads can be unstable on some devices. Multi-File books crash the app on Windows."
-      }
+        text: "Downloads can be unstable on some devices. Multi-File books crash the app on Windows.",
+      },
     ],
     features: {
       tested: {
@@ -128,8 +128,8 @@ export const projects: ClientInfo[] = [
         usedApiCorrectly: 3,
         comments: [
           "Uses old playback API",
-          "Uses outdated authentication method"
-        ]
+          "Uses outdated authentication method",
+        ],
       },
       ebooks: {
         available: false,
@@ -150,12 +150,13 @@ export const projects: ClientInfo[] = [
       carSupport: false,
       widgets: false,
       bookmarks: false,
-    }
+    },
   },
   {
     name: "Shelfplayer",
     link: "https://github.com/rasmuslos/ShelfPlayer",
-    iconLink: "https://github.com/rasmuslos/ShelfPlayer/blob/main/Multiplatform/Assets.xcassets/Logo.imageset/ShelfPlayer.png?raw=true",
+    iconLink:
+      "https://github.com/rasmuslos/ShelfPlayer/blob/main/Multiplatform/Assets.xcassets/Logo.imageset/ShelfPlayer.png?raw=true",
     language: "Swift",
     OSes: ["iOS"],
     openSource: true,
@@ -163,15 +164,15 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "blue",
-        text: "Any features are only from the GitHub page, as I have not tested this app myself"
-      }
+        text: "Any features are only from the GitHub page, as I have not tested this app myself",
+      },
     ],
     features: {
       tested: {
         wasTested: false,
         date: undefined,
         usedApiCorrectly: undefined,
-        comments: []
+        comments: [],
       },
       ebooks: {
         available: true,
@@ -195,7 +196,7 @@ export const projects: ClientInfo[] = [
       carSupport: true,
       widgets: true,
       bookmarks: undefined,
-    }
+    },
   },
   {
     name: "Plappa",
@@ -208,16 +209,16 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "green",
-        text: "Supports watchOS (from what I read on the GitHub page)"
+        text: "Supports watchOS (from what I read on the GitHub page)",
       },
       {
         color: "yellow",
-        text: "Always uses /download for streaming books which can lead to issues and blocks listening without download permission. See https://github.com/advplyr/audiobookshelf/issues/4196#issuecomment-2797497694"
+        text: "Always uses /download for streaming books which can lead to issues and blocks listening without download permission. See https://github.com/advplyr/audiobookshelf/issues/4196#issuecomment-2797497694",
       },
       {
         color: "blue",
-        text: "The libraries are in another sort order"
-      }
+        text: "The libraries are in another sort order",
+      },
     ],
     features: {
       tested: {
@@ -227,8 +228,8 @@ export const projects: ClientInfo[] = [
         comments: [
           "Can cause race conditions due to syncing twice at the same time (Will be fixed after ABS is restarted in recent ABS versions)",
           "Calls the user object every ~10 seconds that can be up to 1MB in size, additional to streaming a book",
-          "Does not use the /play endpoint, but uses sessions"
-        ]
+          "Does not use the /play endpoint, but uses sessions",
+        ],
       },
       ebooks: {
         available: false,
@@ -251,13 +252,14 @@ export const projects: ClientInfo[] = [
       oidc: true,
       carSupport: undefined,
       widgets: true,
-      bookmarks: true
-    }
+      bookmarks: true,
+    },
   },
   {
     name: "Lissen",
     link: "https://github.com/GrakovNe/lissen-android",
-    iconLink: "https://github.com/GrakovNe/lissen-android/blob/main/metadata/en-US/images/icon.png?raw=true",
+    iconLink:
+      "https://github.com/GrakovNe/lissen-android/blob/main/metadata/en-US/images/icon.png?raw=true",
     language: "Kotlin",
     OSes: ["Android"],
     openSource: true,
@@ -265,11 +267,11 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "green",
-        text: "Supports Android Auto in a beta branch (but currently not in the Play Store version)"
+        text: "Supports Android Auto in a beta branch (but currently not in the Play Store version)",
       },
       {
         color: "blue",
-        text: "I would give this a score of 2.5, because only the download endpoint is problematic. Creating a session every time is not ideal, and syncing when not actively listening is also not good, but not \"critical\" and due to the working design (and awesome download option), I think a score of 2 would be unfair."
+        text: 'I would give this a score of 2.5, because only the download endpoint is problematic. Creating a session every time is not ideal, and syncing when not actively listening is also not good, but not "critical" and due to the working design (and awesome download option), I think a score of 2 would be unfair.',
       },
     ],
     features: {
@@ -281,8 +283,8 @@ export const projects: ClientInfo[] = [
           "Uses old playback API",
           "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",
           "Does sync even when paused, which can overwrite progress made on other clients",
-          "Creates a new session for every chapter"
-        ]
+          "Creates a new session for every chapter",
+        ],
       },
       ebooks: {
         available: false,
@@ -303,10 +305,10 @@ export const projects: ClientInfo[] = [
       caching: undefined,
       biggerScreens: true,
       oidc: true,
-      carSupport: false,
+      carSupport: true,
       widgets: true,
-      bookmarks: false
-    }
+      bookmarks: false,
+    },
   },
   {
     name: "LitLyric",
@@ -319,7 +321,7 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "yellow",
-        text: "In the current state, the stats are not accurate"
+        text: "In the current state, the stats are not accurate",
       },
     ],
     features: {
@@ -328,10 +330,10 @@ export const projects: ClientInfo[] = [
         date: "2025-09-06",
         usedApiCorrectly: 2,
         comments: [
-          "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",  
-          "Uses an old playback API",  
-          "Does not use a session, which makes stats inaccurate and can cause other issues related to progress"
-        ]
+          "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",
+          "Uses an old playback API",
+          "Does not use a session, which makes stats inaccurate and can cause other issues related to progress",
+        ],
       },
       ebooks: {
         available: true,
@@ -352,16 +354,15 @@ export const projects: ClientInfo[] = [
       caching: undefined,
       biggerScreens: undefined,
       oidc: true,
-      carSupport: false,
+      carSupport: true,
       widgets: false,
       bookmarks: false,
-    }
+    },
   },
   {
     name: "Tonspur",
     link: "https://tonspur.app/",
-    iconLink:
-      "https://tonspur.app/_next/image?url=%2Fapp_icon.png&w=1920&q=75",
+    iconLink: "https://tonspur.app/_next/image?url=%2Fapp_icon.png&w=1920&q=75",
     language: "Unknown",
     OSes: ["iOS"],
     openSource: false,
@@ -369,23 +370,23 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "blue",
-        text: "Freemium was chosen because the developer said there will be a paid version in the future. Currently, it seems to be free due to TestFlight."
+        text: "Freemium was chosen because the developer said there will be a paid version in the future. Currently, it seems to be free due to TestFlight.",
       },
       {
         color: "blue",
-        text: "There is a download button, but it did not work for me."
+        text: "There is a download button, but it did not work for me.",
       },
       {
         color: "yellow",
-        text: "The media control center does not properly show the current time and duration. (Tested on iPad)"
-      }
+        text: "The media control center does not properly show the current time and duration. (Tested on iPad)",
+      },
     ],
     features: {
       tested: {
         wasTested: true,
         date: "2025-09-04",
         usedApiCorrectly: 4,
-        comments: ["Uses old playback API"]
+        comments: ["Uses old playback API"],
       },
       ebooks: {
         available: false,
@@ -406,7 +407,7 @@ export const projects: ClientInfo[] = [
       carSupport: undefined,
       widgets: false,
       bookmarks: false,
-    }
+    },
   },
   {
     name: "Kitzi ABS Player",
@@ -419,11 +420,11 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "green",
-        text: "Dev is very responsive. After reporting major issues with the use of sessions, they quickly fixed most of them."
+        text: "Dev is very responsive. After reporting major issues with the use of sessions, they quickly fixed most of them.",
       },
       {
         color: "red",
-        text: "Signing out does not work/ leaves the app in a broken state"
+        text: "Signing out does not work/ leaves the app in a broken state",
       },
     ],
     features: {
@@ -434,7 +435,7 @@ export const projects: ClientInfo[] = [
         comments: [
           "Does load big chunks of books in advance.",
           "Opens sessions for everything you click on, even if you don't play it (but closes them)",
-        ]
+        ],
       },
       ebooks: {
         available: false,
@@ -458,7 +459,7 @@ export const projects: ClientInfo[] = [
       carSupport: true,
       widgets: false,
       bookmarks: false,
-    }
+    },
   },
   {
     name: "Soundleaf",
@@ -471,23 +472,23 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "blue",
-        text: "Switching libraries seems to be a multi step process, so users with multiple libraries might find it inconvenient"
+        text: "Switching libraries seems to be a multi step process, so users with multiple libraries might find it inconvenient",
       },
       {
         color: "blue",
-        text: "Pro features are prominently displayed in the UI"
+        text: "Pro features are prominently displayed in the UI",
       },
       {
         color: "yellow",
-        text: "Very poor scrolling performance with medium to large libraries"
+        text: "Very poor scrolling performance with medium to large libraries",
       },
       {
         color: "red",
-        text: "Signing out does not work"
+        text: "Signing out does not work",
       },
       {
         color: "blue",
-        text: "Downloads have not been tested"
+        text: "Downloads have not been tested",
       },
     ],
     features: {
@@ -499,8 +500,8 @@ export const projects: ClientInfo[] = [
           "Loads big chunks of books in advance. Loads whole books in advance",
           "Continuously fetches whole books without doing anything around every 5 seconds. This data can be up to MB in size",
           "Uses old playback API",
-          "Uses outdated authentication method"
-        ]
+          "Uses outdated authentication method",
+        ],
       },
       ebooks: {
         available: false,
@@ -524,7 +525,7 @@ export const projects: ClientInfo[] = [
       carSupport: undefined,
       widgets: false,
       bookmarks: false,
-    }
+    },
   },
   {
     name: "Prologue",
@@ -537,12 +538,12 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "green",
-        text: "Has advanced features like Volume Boost, EQ, and Media Info"
+        text: "Has advanced features like Volume Boost, EQ, and Media Info",
       },
       {
         color: "green",
-        text: "Current Testflight contains no paid features"
-      }
+        text: "Current Testflight contains no paid features",
+      },
     ],
     features: {
       tested: {
@@ -554,8 +555,8 @@ export const projects: ClientInfo[] = [
           "Uses old playback API",
           "Uses outdated authentication method",
           "Does not use the /play endpoint, but uses sessions. This can lead to overwriting progress made on other clients",
-          "Does not use a download endpoint for downloads, which can lead to issues when the user does not have download permission"
-        ]
+          "Does not use a download endpoint for downloads, which can lead to issues when the user does not have download permission",
+        ],
       },
       ebooks: {
         available: false,
@@ -579,6 +580,6 @@ export const projects: ClientInfo[] = [
       carSupport: undefined,
       widgets: true,
       bookmarks: true,
-    }
+    },
   },
 ];
