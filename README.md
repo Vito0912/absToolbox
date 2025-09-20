@@ -9,10 +9,11 @@ Now available at https://abstoolbox.vito0912.de/ with easy access. Run these too
 A collection of tools designed to assist with Audiobookshelf-related tasks.
 
 > [!CAUTION]
-> All scripts may have unforeseen side effects or might even crash the server completely. Therefore, before starting any script, you should make a backup via the settings—especially if this is mentioned in the script description.
+> All scripts may have unforeseen side effects or might even crash the server completely. Therefore, before starting any script, you should make a backup via the settings! Do not use the Python scripts anymore. These are legacy!
 
 > [!NOTE]  
-> Currently, these are only Python scripts. However, there are plans to implement plugin support:
+> Old, but still valid note:\
+> Currently, these are ~~only~~ Python scripts. However, there are plans to implement plugin support:
 > [Plugin Support Pull Request](https://github.com/advplyr/audiobookshelf/pull/3745)
 >
 > Should this happen, I will try to integrate all scripts into ABS and create additional ones. Depending on how access to the database/UI is provided, possible developments include:
@@ -23,9 +24,9 @@ A collection of tools designed to assist with Audiobookshelf-related tasks.
 
 ## Available Tools
 
-Visit https://abstoolbox.vito0912.de/
+Visit https://abstoolbox.vito0912.de
 
-## Installation & Usage
+## Legacy Installation & Usage
 
 Follow these steps to set up and use absToolbox (old Python scripts):
 
