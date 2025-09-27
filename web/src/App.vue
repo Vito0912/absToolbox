@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen bg-[#0b0f17] text-slate-100 antialiased">
+  <div
+    class="min-h-screen bg-[#0b0f17] text-slate-100 antialiased flex flex-col"
+  >
     <nav
       class="sticky top-0 z-40 border-b border-white/10 bg-[#0b0f17]/80 backdrop-blur"
     >
@@ -48,8 +50,14 @@
       </div>
     </nav>
 
-    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex-1">
       <router-view />
     </main>
+
+    <Footer />
   </div>
 </template>
+
+<script setup lang="ts">
+import Footer from "./components/Footer.vue";
+</script>

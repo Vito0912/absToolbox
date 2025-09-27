@@ -102,6 +102,7 @@
                   :src="client.iconLink"
                   :alt="`${client.name} icon`"
                   class="h-full w-full object-cover"
+                  rel="noopener noreferrer"
                   @error="handleImageError"
                 />
               </div>
