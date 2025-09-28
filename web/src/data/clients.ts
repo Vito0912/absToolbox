@@ -377,9 +377,9 @@ export const projects: ClientInfo[] = [
       tested: {
         wasTested: true,
         date: "2025-09-28",
-        usedApiCorrectly: 4,
+        usedApiCorrectly: 5,
         comments: [
-          "Does not close sessions on it's own. Due to the stable implementation a new item, closes the session.",
+          "Does not close sessions on it's own. Due to the stable implementation a new playback, closes the old session. 4.5/5 ",
         ]
       },
       ebooks: {
