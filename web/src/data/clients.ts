@@ -369,8 +369,8 @@ export const projects: ClientInfo[] = [
     cost: "Freemium",
     notes: [
       {
-        color: "red",
-        text: "Buying the download feature does not work. They confirmation goes trough, but the feature is not unlocked.",
+        color: "info",
+        text: "Download feature not yet tested",
       }
     ],
     features: {
@@ -393,7 +393,7 @@ export const projects: ClientInfo[] = [
       chapters: true,
       playHistory: false,
       shakeToRewind: false,
-      downloads: false,
+      downloads: true,
       customHeaders: true,
       caching: true,
       biggerScreens: false,
