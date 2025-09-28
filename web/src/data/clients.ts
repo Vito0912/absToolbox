@@ -369,24 +369,18 @@ export const projects: ClientInfo[] = [
     cost: "Freemium",
     notes: [
       {
-        color: "blue",
-        text: "Freemium was chosen because the developer said there will be a paid version in the future. Currently, it seems to be free due to TestFlight.",
-      },
-      {
-        color: "blue",
-        text: "There is a download button, but it did not work for me.",
-      },
-      {
-        color: "yellow",
-        text: "The media control center does not properly show the current time and duration. (Tested on iPad)",
-      },
+        color: "red",
+        text: "Buying the download feature does not work. They confirmation goes trough, but the feature is not unlocked.",
+      }
     ],
     features: {
       tested: {
         wasTested: true,
-        date: "2025-09-04",
+        date: "2025-09-28",
         usedApiCorrectly: 4,
-        comments: ["Uses old playback API"],
+        comments: [
+          "Does not close sessions on it's own. Due to the stable implementation a new item, closes the session.",
+        ]
       },
       ebooks: {
         available: false,
@@ -400,11 +394,11 @@ export const projects: ClientInfo[] = [
       playHistory: false,
       shakeToRewind: false,
       downloads: false,
-      customHeaders: false,
+      customHeaders: true,
       caching: true,
       biggerScreens: false,
       oidc: true,
-      carSupport: undefined,
+      carSupport: true,
       widgets: false,
       bookmarks: false,
     },
@@ -544,18 +538,21 @@ export const projects: ClientInfo[] = [
         color: "green",
         text: "Current Testflight contains no paid features",
       },
+      {
+        color: "red",
+        text: "Loads most server information directly into the app. An app should never need to have that much information pre-loaded. Especially since the app uses very little pagination causing much traffic. I never got the app load all data of my only 1.5 year old account"
+      }
     ],
     features: {
       tested: {
         wasTested: true,
-        date: "2025-09-07",
-        usedApiCorrectly: 2,
+        date: "2025-09-28",
+        usedApiCorrectly: 1,
         comments: [
           "Loads the whole library in advance",
           "Uses old playback API",
-          "Uses outdated authentication method",
+          "Does load all sessions of a user in advance (only in 10 session chunks, for the whole user containing thousands of sessions) - Bad in general",
           "Does not use the /play endpoint, but uses sessions. This can lead to overwriting progress made on other clients",
-          "Does not use a download endpoint for downloads, which can lead to issues when the user does not have download permission",
         ],
       },
       ebooks: {
@@ -598,18 +595,13 @@ export const projects: ClientInfo[] = [
       {
         color: "yellow",
         text: "Library switching needs an app restart. Performance can be slow with bigger libraries, especially on the personalized page.",
-      },
-      {
-        color: "red",
-        text: "While the app uses the correct APIs, syncing does not add the timeListed, thus with this app, your listening stats will always be wrong",
-      },
+      }
     ],
     features: {
       tested: {
         wasTested: true,
-        date: "2025-09-27",
-        usedApiCorrectly: 4,
-        comments: ["Does not sync the listened time and leaves sessions open"],
+        date: "2025-09-28",
+        usedApiCorrectly: 5,
       },
       ebooks: {
         available: false,
