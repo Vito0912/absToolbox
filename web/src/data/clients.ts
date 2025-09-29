@@ -106,7 +106,7 @@ export const projects: ClientInfo[] = [
     name: "Buchable",
     link: "https://github.com/Vito0912/abs_flutter",
     iconLink:
-      "https://raw.githubusercontent.com/Vito0912/abs_flutter/refs/heads/main/assets/images/logo/logo_blue_abs.png",
+      "./logos/buchable.png",
     language: "Dart",
     OSes: ["Android", "Windows", "Web", "Linux"],
     openSource: true,
@@ -369,8 +369,8 @@ export const projects: ClientInfo[] = [
     cost: "Freemium",
     notes: [
       {
-        color: "info",
-        text: "Download feature not yet tested",
+        color: "yellow",
+        text: "The download feature can override progress made on other clients. Start a non-downloaded book before closing the app.",
       }
     ],
     features: {

@@ -6,14 +6,15 @@
       class="sticky top-0 z-40 border-b border-white/10 bg-[#0b0f17]/80 backdrop-blur"
     >
       <div
-        class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"
+        class="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8"
       >
         <h1 class="text-xl font-semibold tracking-tight">
           <router-link
             to="/"
-            class="text-slate-100 hover:text-indigo-300 transition-colors"
+            class="inline-flex items-center text-slate-100 hover:text-indigo-300 transition-colors"
           >
-            📚 ABS Toolbox
+            <img src="../icon-192x192.png" alt="icon" class="h-10 w-10 mr-2 filter brightness-0 invert" />
+            ABS Toolbox
           </router-link>
         </h1>
 
