@@ -13,7 +13,7 @@
             to="/"
             class="inline-flex items-center text-slate-100 hover:text-indigo-300 transition-colors"
           >
-            <img src="../icon-192x192.png" alt="icon" class="h-10 w-10 mr-2 filter brightness-0 invert" />
+            <img src="/icon-192x192.png" alt="icon" class="h-10 w-10 mr-2 filter brightness-0 invert" />
             ABS Toolbox
           </router-link>
         </h1>
