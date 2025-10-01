@@ -10,26 +10,30 @@
     <div class="flex flex-row gap-4">
       <div class="flex-1">
         <p class="text-sm text-slate-400 py-2">
-          Note: All options you save are only stored locally and never leave your
-          browser other than to contact the address you saved above. All requests
-          are made client side and you can inspect them using your browser's
-          developer tools. They are not sent to any third-party service. Nor can
-          anyone else see them unless you use an unsecure http:// connection.
+          Note: All options you save are only stored locally and never leave
+          your browser other than to contact the address you saved above. All
+          requests are made client side and you can inspect them using your
+          browser's developer tools. They are not sent to any third-party
+          service. Nor can anyone else see them unless you use an unsecure
+          http:// connection.
         </p>
 
         <p class="text-md text-red-300 py-4">
-          <strong>Note:</strong> You need to allow CORS for this website inside your
-          Audiobookshelf server. Visit your Audiobookshelf server's settings page and add
+          <strong>Note:</strong> You need to allow CORS for this website inside
+          your Audiobookshelf server. Visit your Audiobookshelf server's
+          settings page and add
           <br />
           <code class="text-white">https://abstoolbox.vito0912.de</code>
           <br />
-          as an allowed origin. Without this all request will fail with a CORS error.
+          as an allowed origin. Without this all request will fail with a CORS
+          error.
         </p>
 
         <p class="text-sm text-slate-400 py-2">
-          Alternatively, you can install a browser extension to temporarily disable CORS.
-          However, please be aware that many of these extensions pose security risks,
-          and some may even contain malware, adware, or other threats.
+          Alternatively, you can install a browser extension to temporarily
+          disable CORS. However, please be aware that many of these extensions
+          pose security risks, and some may even contain malware, adware, or
+          other threats.
         </p>
       </div>
 
@@ -41,8 +45,6 @@
         />
       </div>
     </div>
-
-
 
     <form
       @submit.prevent="saveSettings"
@@ -133,14 +135,17 @@
           </div>
 
           <p class="text-sm leading-relaxed">
-            You are using <code>http://</code>, which is <span class="font-semibold">not secure</span>.
-            To allow connections you need to enable insecure content in your browser’s
-            site settings. After this, restart Chrome and re-enter the address.
-            For others browsers please refer to their documentation to allow <code>mixed content</code>.
+            You are using <code>http://</code>, which is
+            <span class="font-semibold">not secure</span>. To allow connections
+            you need to enable insecure content in your browser’s site settings.
+            After this, restart Chrome and re-enter the address. For others
+            browsers please refer to their documentation to allow
+            <code>mixed content</code>.
           </p>
 
           <p class="text-sm leading-relaxed">
-            If you still get <code>Connection failed: Network Error</code>, try using:
+            If you still get <code>Connection failed: Network Error</code>, try
+            using:
             <br />
             <span class="font-mono text-white break-all">
               {{ settingsStore.settings.serverUrl }}/audiobookshelf
@@ -177,7 +182,7 @@
             :disabled="testing || !isValidUrl(settingsStore.settings.serverUrl)"
             class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow transition enabled:hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
-            {{ testing ? 'Testing...' : 'Test Connection' }}
+            {{ testing ? "Testing..." : "Test Connection" }}
           </button>
         </div>
       </div>
@@ -186,9 +191,11 @@
     <div
       v-if="testResult"
       class="rounded-xl border p-4"
-      :class="testResult.success
-        ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200'
-        : 'border-rose-500/30 bg-rose-500/10 text-rose-200'"
+      :class="
+        testResult.success
+          ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200'
+          : 'border-rose-500/30 bg-rose-500/10 text-rose-200'
+      "
     >
       {{ testResult.message }}
     </div>
@@ -196,53 +203,53 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useSettingsStore } from '@/stores/settings'
-import { useApi } from '@/composables/useApi'
+import { ref } from "vue";
+import { useSettingsStore } from "@/stores/settings";
+import { useApi } from "@/composables/useApi";
 
-const settingsStore = useSettingsStore()
-const { get } = useApi()
-const testing = ref(false)
-const testResult = ref<{ success: boolean; message: string } | null>(null)
+const settingsStore = useSettingsStore();
+const { get } = useApi();
+const testing = ref(false);
+const testResult = ref<{ success: boolean; message: string } | null>(null);
 
 const isValidUrl = (url: string) => {
   try {
-    const parsed = new URL(url)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+    const parsed = new URL(url);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
   } catch {
-    return false
+    return false;
   }
-}
+};
 
 const saveSettings = () => {
-  settingsStore.saveSettings()
-  testResult.value = { success: true, message: 'Settings saved successfully!' }
+  settingsStore.saveSettings();
+  testResult.value = { success: true, message: "Settings saved successfully!" };
   setTimeout(() => {
-    testResult.value = null
-  }, 3000)
-}
+    testResult.value = null;
+  }, 3000);
+};
 
 const testConnection = async () => {
-  testing.value = true
-  testResult.value = null
+  testing.value = true;
+  testResult.value = null;
 
   try {
-    const response = await get('/api/me')
+    const response = await get("/api/me");
     testResult.value = {
       success: true,
       message: `Connection successful! Server responded: ${
-        response.data?.message || 'OK'
-      }`
-    }
+        response.data?.message || "OK"
+      }`,
+    };
   } catch (error: any) {
     testResult.value = {
       success: false,
       message: `Connection failed: ${
-        error.response?.data?.message || error.message || 'Unknown error'
-      }`
-    }
+        error.response?.data?.message || error.message || "Unknown error"
+      }`,
+    };
   } finally {
-    testing.value = false
+    testing.value = false;
   }
-}
+};
 </script>

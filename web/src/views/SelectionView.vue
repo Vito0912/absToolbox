@@ -15,8 +15,15 @@
     </p>
 
     <p class="text-red-200" v-if="settingsStore.settings.serverUrl">
-      <strong>Warning:</strong> Make a backup before using these tools. I am not responsible for any data loss or issues that may occur by using these tools. Visit
-      <a :href="`${baseDomain}config/backups`" target="_blank" class="text-blue-400 underline">Backups</a>
+      <strong>Warning:</strong> Make a backup before using these tools. I am not
+      responsible for any data loss or issues that may occur by using these
+      tools. Visit
+      <a
+        :href="`${baseDomain}config/backups`"
+        target="_blank"
+        class="text-blue-400 underline"
+        >Backups</a
+      >
       to create a backup before proceeding.
     </p>
 
@@ -27,9 +34,10 @@
       <div
         v-for="tool in toolDefinitions"
         :key="tool.id"
-        class="group relative rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 transition hover:border-indigo-400/40 hover:bg-indigo-500/5 hover:shadow-xl cursor-pointer"
+        class="group relative rounded-xl border border-white/10 bg-slate-900/40 p-5 shadow-lg shadow-black/20 transition hover:border-indigo-400/40 hover:bg-indigo-500/5 hover:shadow-xl cursor-pointer"
         :class="{
-          'opacity-50 cursor-not-allowed pointer-events-none': isDisabled || !(tool.enabled ?? true)
+          'opacity-50 cursor-not-allowed pointer-events-none':
+            isDisabled || !(tool.enabled ?? true),
         }"
         @click="!isDisabled && (tool.enabled ?? true) && selectTool(tool)"
       >
@@ -40,7 +48,9 @@
         </h3>
         <p class="mt-2 line-clamp-3 text-sm text-slate-400">
           <span v-html="tool.description"></span>
-          <span v-if="!(tool.enabled ?? true)" class="text-red-400"><br />Work in Progress</span>
+          <span v-if="!(tool.enabled ?? true)" class="text-red-400"
+            ><br />Work in Progress</span
+          >
         </p>
 
         <div class="mt-4 flex items-center justify-between text-xs">
@@ -53,24 +63,23 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { toolDefinitions } from '@/data/toolDefinitions'
-import type { ToolDefinition } from '@/types/tool'
-import { useSettingsStore } from '@/stores/settings'
-import router from '@/router'
-import { useApi } from '@/composables/useApi'
+import { computed } from "vue";
+import { toolDefinitions } from "@/data/toolDefinitions";
+import type { ToolDefinition } from "@/types/tool";
+import { useSettingsStore } from "@/stores/settings";
+import router from "@/router";
+import { useApi } from "@/composables/useApi";
 
-const { clearLogs, baseDomain } = useApi()
-const settingsStore = useSettingsStore()
+const { clearLogs, baseDomain } = useApi();
+const settingsStore = useSettingsStore();
 
-const isDisabled = computed(() => !settingsStore.settings.serverUrl)
+const isDisabled = computed(() => !settingsStore.settings.serverUrl);
 
 const selectTool = (tool: ToolDefinition) => {
-  clearLogs()
-  router.push({ name: 'tool', params: { id: tool.id } })
-}
+  clearLogs();
+  router.push({ name: "tool", params: { id: tool.id } });
+};
 </script>
