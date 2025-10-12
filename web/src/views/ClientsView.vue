@@ -5,7 +5,7 @@
     >
       <div>
         <h1 class="text-3xl font-semibold tracking-tight">Clients</h1>
-        <p class="text-slate-400 text-sm">
+        <p class="text-gray-400 text-sm">
           Third-party applications for accessing Audiobookshelf
         </p>
       </div>
@@ -19,33 +19,33 @@
       :sort-options="sortOptions"
     />
 
-    <div class="rounded-xl border border-white/10 bg-slate-900/40 p-4">
-      <h3 class="text-sm font-medium text-slate-300 mb-2">API Score Legend</h3>
+    <div class="rounded-xl border border-white/10 bg-gray-900/40 p-4">
+      <h3 class="text-sm font-medium text-gray-300 mb-2">API Score Legend</h3>
       <div class="flex flex-wrap gap-4 text-xs pb-4">
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-red-500"></div>
-          <span class="text-slate-400">0-1: Poor API usage</span>
+          <span class="text-gray-400">0-1: Poor API usage</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-orange-500"></div>
-          <span class="text-slate-400">2-3: Fair API usage</span>
+          <span class="text-gray-400">2-3: Fair API usage</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-          <span class="text-slate-400">4: Good API usage</span>
+          <span class="text-gray-400">4: Good API usage</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-3 h-3 rounded-full bg-green-500"></div>
-          <span class="text-slate-400">5: Excellent API usage</span>
+          <span class="text-gray-400">5: Excellent API usage</span>
         </div>
       </div>
-      <span class="text-slate-400 text-sm"
+      <span class="text-gray-400 text-sm"
         >Always check the last tested date. Apps can change over time. This only
         represents a snapshot in time.</span
       >
       <br />
       <br />
-      <span class="text-slate-400 text-sm"
+      <span class="text-gray-400 text-sm"
         ><p>
           <strong>Disclaimer:</strong> API scores and all content on this page
           reflect my personal opinion and do not represent the views of the ABS
@@ -65,7 +65,7 @@
       v-if="filteredClients.length === 0"
       class="flex flex-col items-center justify-center py-16"
     >
-      <div class="text-slate-500 mb-2">
+      <div class="text-gray-500 mb-2">
         <svg
           class="h-12 w-12 mx-auto"
           fill="none"
@@ -80,7 +80,7 @@
           />
         </svg>
       </div>
-      <p class="text-slate-400 text-center">
+      <p class="text-gray-400 text-center">
         No clients found matching your filters
       </p>
     </div>
@@ -89,7 +89,7 @@
       <div
         v-for="client in filteredClients"
         :key="client.name"
-        class="group relative overflow-hidden rounded-xl border border-white/10 bg-slate-900/60 backdrop-blur transition hover:border-white/20 hover:bg-slate-900/80"
+        class="group relative overflow-hidden rounded-xl border border-white/10 bg-gray-900/60 backdrop-blur transition hover:border-white/20 hover:bg-gray-900/80"
       >
         <div class="p-6">
           <div class="flex items-start justify-between mb-4">
@@ -106,14 +106,14 @@
                   @error="handleImageError"
                 />
               </div>
-              <div v-else class="h-12 w-12 rounded-lg bg-slate-600"></div>
+              <div v-else class="h-12 w-12 rounded-lg bg-gray-600"></div>
               <div>
-                <h3 class="text-lg font-semibold text-slate-100">
+                <h3 class="text-lg font-semibold text-gray-100">
                   <a
                     :href="client.link"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hover:text-indigo-300 transition-colors"
+                    class="hover:text-blue-300 transition-colors"
                   >
                     {{ client.name }}
                     <svg
@@ -131,7 +131,7 @@
                     </svg>
                   </a>
                 </h3>
-                <p class="text-sm text-slate-400">{{ client.language }}</p>
+                <p class="text-sm text-gray-400">{{ client.language }}</p>
               </div>
             </div>
 
@@ -161,14 +161,14 @@
                 v-if="client.features.tested.wasTested"
                 class="flex items-center gap-1"
               >
-                <span class="text-xs text-slate-400">API Score:</span>
+                <span class="text-xs text-gray-400">API Score:</span>
                 <div
                   class="w-3 h-3 rounded-full"
                   :class="
                     getApiScoreColor(client.features.tested.usedApiCorrectly)
                   "
                 ></div>
-                <span class="text-xs font-medium text-slate-300">
+                <span class="text-xs font-medium text-gray-300">
                   {{
                     client.features.tested.usedApiCorrectly != undefined
                       ? client.features.tested.usedApiCorrectly
@@ -193,14 +193,14 @@
               Reminder to read the Disclaimer at the top, as this is my personal
               assessment and experience at the time of testing.
             </div>
-            <h4 class="text-sm font-medium text-slate-300 mb-2">
+            <h4 class="text-sm font-medium text-gray-300 mb-2">
               Operating Systems
             </h4>
             <div class="flex flex-wrap gap-1">
               <span
                 v-for="os in client.OSes"
                 :key="os"
-                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-slate-800 text-slate-300"
+                class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-800 text-gray-300"
               >
                 {{ os }}
               </span>
@@ -208,7 +208,7 @@
           </div>
 
           <div v-if="client.notes && client.notes.length > 0" class="mb-4">
-            <h4 class="text-sm font-medium text-slate-300 mb-2">Notes</h4>
+            <h4 class="text-sm font-medium text-gray-300 mb-2">Notes</h4>
             <div class="space-y-2">
               <div
                 v-for="(note, index) in client.notes"
@@ -220,17 +220,17 @@
                   class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
                   :class="getNoteColorClass(note.color)"
                 ></div>
-                <p class="text-xs text-slate-300">{{ note.text }}</p>
+                <p class="text-xs text-gray-300">{{ note.text }}</p>
               </div>
             </div>
           </div>
 
           <div class="mb-4">
-            <h4 class="text-sm font-medium text-slate-300 mb-2">Features</h4>
+            <h4 class="text-sm font-medium text-gray-300 mb-2">Features</h4>
             <div class="space-y-3">
               <!-- Media Types -->
               <div>
-                <h5 class="text-xs font-medium text-slate-400 mb-1">
+                <h5 class="text-xs font-medium text-gray-400 mb-1">
                   Media Support
                 </h5>
                 <div class="grid grid-cols-2 gap-1 text-xs">
@@ -310,7 +310,7 @@
 
               <!-- Playback Features -->
               <div>
-                <h5 class="text-xs font-medium text-slate-400 mb-1">
+                <h5 class="text-xs font-medium text-gray-400 mb-1">
                   Playback
                 </h5>
                 <div class="grid grid-cols-2 gap-1 text-xs">
@@ -379,7 +379,7 @@
 
               <!-- Technical Features -->
               <div>
-                <h5 class="text-xs font-medium text-slate-400 mb-1">
+                <h5 class="text-xs font-medium text-gray-400 mb-1">
                   Technical
                 </h5>
                 <div class="grid grid-cols-2 gap-1 text-xs">
@@ -492,7 +492,7 @@
 
           <div
             v-if="client.features.tested.date"
-            class="text-xs text-slate-500"
+            class="text-xs text-gray-500"
           >
             Last tested: {{ formatDate(client.features.tested.date) }}
           </div>
@@ -590,7 +590,7 @@ const filteredClients = computed(() => {
 const getFeatureClass = (feature: boolean | undefined) => {
   if (feature === true) return "text-green-400";
   if (feature === false) return "text-red-400";
-  return "text-slate-500";
+  return "text-gray-500";
 };
 
 const getFeatureIcon = (feature: boolean | undefined) => {
@@ -650,12 +650,12 @@ const getCostBadgeClass = (cost: string) => {
     case "Paid":
       return "bg-yellow-600/20 text-yellow-300";
     default:
-      return "bg-slate-600/20 text-slate-300";
+      return "bg-gray-600/20 text-gray-300";
   }
 };
 
 const getApiScoreColor = (score: number | undefined) => {
-  if (score == undefined) return "bg-slate-500";
+  if (score == undefined) return "bg-gray-500";
   if (score <= 1) return "bg-red-500";
   if (score <= 3) return "bg-orange-500";
   if (score === 4) return "bg-yellow-500";
@@ -673,7 +673,7 @@ const getNoteColorClass = (color: string) => {
     case "green":
       return "bg-green-400";
     default:
-      return "bg-slate-400";
+      return "bg-gray-400";
   }
 };
 
@@ -688,7 +688,7 @@ const getNoteBackgroundClass = (color: string) => {
     case "green":
       return "bg-green-600/10 border border-green-600/20";
     default:
-      return "bg-slate-600/10 border border-slate-600/20";
+      return "bg-gray-600/10 border border-gray-600/20";
   }
 };
 

@@ -4,16 +4,16 @@
       <h2 class="text-2xl font-semibold tracking-tight">
         {{ tool.title }}
       </h2>
-      <p class="text-slate-400" v-html="tool.longDescription"></p>
+      <p class="text-gray-400" v-html="tool.longDescription"></p>
     </div>
 
     <form @submit.prevent="handleSubmit" class="space-y-6">
       <div
         v-for="field in tool.fields"
         :key="field.name"
-        class="space-y-2 rounded-xl border border-white/10 bg-slate-900/40 p-4"
+        class="space-y-2 rounded-xl border border-white/10 bg-gray-900/40 p-4"
       >
-        <label class="block text-sm font-medium text-slate-200">
+        <label class="block text-sm font-medium text-gray-200">
           {{ field.label }}
           <span
             v-if="field.required"
@@ -24,7 +24,7 @@
         </label>
         <p
           v-if="field.description"
-          class="text-xs leading-relaxed text-slate-400"
+          class="text-xs leading-relaxed text-gray-400"
         >
           {{ field.description }}
         </p>
@@ -35,7 +35,7 @@
           type="text"
           :placeholder="field.placeholder"
           :required="field.required"
-          class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+          class="w-full rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
         />
 
         <label
@@ -46,14 +46,14 @@
             type="button"
             @click="formData[field.name] = !formData[field.name]"
             class="relative h-7 w-12 rounded-full border border-white/10 transition"
-            :class="formData[field.name] ? 'bg-indigo-600' : 'bg-slate-800'"
+            :class="formData[field.name] ? 'bg-blue-600' : 'bg-gray-800'"
           >
             <span
               class="absolute top-1 left-1 inline-block h-5 w-5 rounded-full bg-white transition"
-              :class="formData[field.name] ? 'translate-x-5' : ''"
+              :class="formData[field.name] ? 'trangray-x-5' : ''"
             />
           </button>
-          <span class="text-sm text-slate-300">
+          <span class="text-sm text-gray-300">
             {{ formData[field.name] ? 'Enabled' : 'Disabled' }}
           </span>
           <input
@@ -67,7 +67,7 @@
           v-else-if="field.type === 'select'"
           v-model="formData[field.name]"
           :required="field.required"
-          class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+          class="w-full rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
         >
           <option value="">Choose an option...</option>
           <option v-for="option in field.options" :key="option" :value="option">
@@ -85,7 +85,7 @@
               v-model="getArrayValue(field.name)[index]"
               type="text"
               :placeholder="field.placeholder"
-              class="flex-1 rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+              class="flex-1 rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
             />
             <button
               type="button"
@@ -108,7 +108,7 @@
         </div>
 
         <div v-else-if="field.type === 'librarySelector'" class="space-y-3">
-          <div v-if="librariesLoading[field.name]" class="text-sm text-slate-400">
+          <div v-if="librariesLoading[field.name]" class="text-sm text-gray-400">
             Loading libraries...
           </div>
           <div v-else-if="librariesError[field.name]" class="text-sm text-rose-400">
@@ -119,18 +119,18 @@
               <button
                 type="button"
                 @click="selectAllLibraries(field.name)"
-                class="px-3 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-500 transition"
+                class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-500 transition"
               >
                 Select All
               </button>
               <button
                 type="button"
                 @click="deselectAllLibraries(field.name)"
-                class="px-3 py-1 text-xs bg-slate-600 text-white rounded hover:bg-slate-500 transition"
+                class="px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-500 transition"
               >
                 Deselect All
               </button>
-              <span class="text-xs text-slate-400">
+              <span class="text-xs text-gray-400">
                 {{ getSelectedLibrariesCount(field.name) }} of {{ libraries[field.name]?.length || 0 }} selected
               </span>
             </div>
@@ -144,11 +144,11 @@
                   type="checkbox"
                   :value="library.id"
                   v-model="formData[field.name]"
-                  class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 rounded focus:ring-indigo-500 focus:ring-2"
+                  class="w-4 h-4 text-blue-600 bg-gray-800 border-white/10 rounded focus:ring-blue-500 focus:ring-2"
                 />
                 <div class="flex items-center gap-2">
-                  <span class="text-sm font-medium text-slate-200">{{ library.name }}</span>
-                  <span class="text-xs text-slate-400 px-2 py-1 bg-slate-800 rounded">
+                  <span class="text-sm font-medium text-gray-200">{{ library.name }}</span>
+                  <span class="text-xs text-gray-400 px-2 py-1 bg-gray-800 rounded">
                     {{ library.mediaType }}
                   </span>
                 </div>
@@ -158,7 +158,7 @@
         </div>
 
         <div v-else-if="field.type === 'singleLibrarySelector'" class="space-y-3">
-          <div v-if="librariesLoading[field.name]" class="text-sm text-slate-400">
+          <div v-if="librariesLoading[field.name]" class="text-sm text-gray-400">
             Loading libraries...
           </div>
           <div v-else-if="librariesError[field.name]" class="text-sm text-rose-400">
@@ -177,11 +177,11 @@
                     :name="`radio-${field.name}`"
                     :value="library.id"
                     v-model="formData[field.name]"
-                    class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 focus:ring-indigo-500 focus:ring-2"
+                    class="w-4 h-4 text-blue-600 bg-gray-800 border-white/10 focus:ring-blue-500 focus:ring-2"
                   />
                   <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-slate-200">{{ library.name }}</span>
-                    <span class="text-xs text-slate-400 px-2 py-1 bg-slate-800 rounded">
+                    <span class="text-sm font-medium text-gray-200">{{ library.name }}</span>
+                    <span class="text-xs text-gray-400 px-2 py-1 bg-gray-800 rounded">
                       {{ library.mediaType }}
                     </span>
                   </div>
@@ -192,18 +192,18 @@
         </div>
 
         <div v-else-if="field.type === 'libraryItemsSelector'" class="space-y-3">
-          <div v-if="librariesLoading[field.name]" class="text-sm text-slate-400">
+          <div v-if="librariesLoading[field.name]" class="text-sm text-gray-400">
             Loading libraries...
           </div>
           <div v-else-if="librariesError[field.name]" class="text-sm text-rose-400">
             Error loading libraries: {{ librariesError[field.name] }}
           </div>
           <div v-else>
-            <label class="block text-sm font-medium text-slate-200">Choose Library</label>
+            <label class="block text-sm font-medium text-gray-200">Choose Library</label>
             <select
               v-model="selectedLibrary[field.name]"
               @change="loadLibraryItems(field.name, selectedLibrary[field.name])"
-              class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+              class="w-full rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
             >
               <option value="">-- Select a library --</option>
               <option
@@ -220,10 +220,10 @@
                 v-model="itemSearch[field.name]"
                 type="text"
                 placeholder="Search items..."
-                class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+                class="w-full rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
               />
 
-              <div v-if="itemsLoading[field.name]" class="text-sm text-slate-400">
+              <div v-if="itemsLoading[field.name]" class="text-sm text-gray-400">
                 Loading items...
               </div>
               <div v-else-if="itemsError[field.name]" class="text-sm text-rose-400">
@@ -239,9 +239,9 @@
                     type="checkbox"
                     :value="item.id"
                     v-model="formData[field.name]"
-                    class="w-4 h-4 text-indigo-600 bg-slate-800 border-white/10 rounded focus:ring-indigo-500 focus:ring-2"
+                    class="w-4 h-4 text-blue-600 bg-gray-800 border-white/10 rounded focus:ring-blue-500 focus:ring-2"
                   />
-                  <span class="text-sm text-slate-200">{{ item.media.metadata.title }}</span>
+                  <span class="text-sm text-gray-200">{{ item.media.metadata.title }}</span>
                 </label>
               </div>
             </div>
@@ -254,14 +254,14 @@
           type="date"
           :placeholder="field.placeholder"
           :required="field.required"
-          class="w-full rounded-lg border border-white/10 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+          class="w-full rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
         />
       </div>
 
       <div class="pt-2">
         <button
           type="submit"
-          class="inline-flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex w-full items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60"
           :disabled="loading"
         >
           {{ loading ? `Executing... (${elapsedTime})` : 'Execute Tool' }}
@@ -270,14 +270,14 @@
     </form>
 
     <div
-      class="mt-6 overflow-hidden rounded-xl border border-indigo-500/30 bg-indigo-900/20"
+      class="mt-6 overflow-hidden rounded-xl border border-blue-500/30 bg-blue-900/20"
       v-if="executionLogs.length > 0"
     >
-      <div class="flex items-center justify-between border-b border-indigo-500/30 bg-indigo-900/30 px-4 py-3">
-        <h3 class="text-sm font-semibold text-indigo-200">Execution Progress</h3>
+      <div class="flex items-center justify-between border-b border-blue-500/30 bg-blue-900/30 px-4 py-3">
+        <h3 class="text-sm font-semibold text-blue-200">Execution Progress</h3>
         <div class="flex items-center gap-2">
-          <div class="h-2 w-2 animate-pulse rounded-full bg-indigo-400"></div>
-          <span class="text-sm font-mono text-indigo-300">{{ elapsedTime }}</span>
+          <div class="h-2 w-2 animate-pulse rounded-full bg-blue-400"></div>
+          <span class="text-sm font-mono text-blue-300">{{ elapsedTime }}</span>
         </div>
       </div>
       <div class="max-h-64 overflow-y-auto p-4">
@@ -285,7 +285,7 @@
             <div
             v-for="(log, index) in executionLogs"
             :key="index"
-            class="text-sm font-mono text-slate-300 animate-fade-in [&_a]:text-indigo-400 [&_a]:underline [&_a]:decoration-indigo-400 [&_a]:hover:text-indigo-300 [&_a]:hover:decoration-indigo-300"
+            class="text-sm font-mono text-gray-300 animate-fade-in [&_a]:text-blue-400 [&_a]:underline [&_a]:decoration-blue-400 [&_a]:hover:text-blue-300 [&_a]:hover:decoration-blue-300"
             >
               <span v-html="log"></span>
             </div>
@@ -298,7 +298,7 @@
       class="mt-6 overflow-hidden rounded-xl border border-white/10 bg-white/5"
     >
       <div
-        class="flex items-center justify-between border-b border-white/10 bg-slate-900/50 px-4 py-3"
+        class="flex items-center justify-between border-b border-white/10 bg-gray-900/50 px-4 py-3"
       >
         <h3 class="text-sm font-semibold">Execution Result</h3>
         <span
@@ -310,7 +310,7 @@
       </div>
 
       <div class="space-y-3 p-4">
-        <p class="font-medium text-slate-200">
+        <p class="font-medium text-gray-200">
           {{ result.message }}
         </p>
 
@@ -321,7 +321,7 @@
           <strong class="font-semibold">Error:</strong> {{ result.error }}
         </div>
 
-        <div class="text-xs text-slate-500">
+        <div class="text-xs text-gray-500">
           Executed at: {{ new Date(result.timestamp).toLocaleString() }}
         </div>
       </div>

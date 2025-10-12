@@ -2,14 +2,14 @@
   <div class="space-y-6">
     <div class="space-y-2">
       <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
-      <p class="text-slate-400">
+      <p class="text-gray-400">
         Configure your Audiobookshelf server connection
       </p>
     </div>
 
     <div class="flex flex-row gap-4">
       <div class="flex-1">
-        <p class="text-sm text-slate-400 py-2">
+        <p class="text-sm text-gray-400 py-2">
           Note: All options you save are only stored locally and never leave
           your browser other than to contact the address you saved above. All
           requests are made client side and you can inspect them using your
@@ -29,7 +29,7 @@
           error.
         </p>
 
-        <p class="text-sm text-slate-400 py-2">
+        <p class="text-sm text-gray-400 py-2">
           Alternatively, you can install a browser extension to temporarily
           disable CORS. However, please be aware that many of these extensions
           pose security risks, and some may even contain malware, adware, or
@@ -52,31 +52,31 @@
     >
       <div class="grid gap-6">
         <div class="space-y-2">
-          <label class="block text-sm font-medium text-slate-200"
+          <label class="block text-sm font-medium text-gray-200"
             >Server URL</label
           >
           <input
             v-model="settingsStore.settings.serverUrl"
             type="url"
             placeholder="https://your-audiobookshelf-server.com"
-            class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+            class="w-full rounded-lg border border-white/10 bg-gray-900/60 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
             required
           />
         </div>
 
         <div class="space-y-3">
-          <label class="block text-sm font-medium text-slate-200"
+          <label class="block text-sm font-medium text-gray-200"
             >Authentication Method</label
           >
           <div class="flex flex-wrap gap-3">
             <label
-              class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-200 hover:border-indigo-400/50 transition"
+              class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-gray-900/60 px-3 py-2 text-sm text-gray-200 hover:border-blue-400/50 transition"
             >
               <input
                 v-model="settingsStore.settings.authMethod"
                 type="radio"
                 value="token"
-                class="h-4 w-4 accent-indigo-500"
+                class="h-4 w-4 accent-blue-500"
               />
               API Token
             </label>
@@ -87,40 +87,40 @@
           v-if="settingsStore.settings.authMethod === 'token'"
           class="space-y-2"
         >
-          <label class="block text-sm font-medium text-slate-200"
+          <label class="block text-sm font-medium text-gray-200"
             >API Token</label
           >
           <input
             v-model="settingsStore.settings.apiToken"
             type="password"
             placeholder="Your API token"
-            class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+            class="w-full rounded-lg border border-white/10 bg-gray-900/60 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
             required
           />
         </div>
 
         <div v-else class="grid gap-6 sm:grid-cols-2">
           <div class="space-y-2">
-            <label class="block text-sm font-medium text-slate-200"
+            <label class="block text-sm font-medium text-gray-200"
               >Username</label
             >
             <input
               v-model="settingsStore.settings.username"
               type="text"
               placeholder="Your username"
-              class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+              class="w-full rounded-lg border border-white/10 bg-gray-900/60 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
               required
             />
           </div>
           <div class="space-y-2">
-            <label class="block text-sm font-medium text-slate-200"
+            <label class="block text-sm font-medium text-gray-200"
               >Password</label
             >
             <input
               v-model="settingsStore.settings.password"
               type="password"
               placeholder="Your password"
-              class="w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 outline-none ring-0 transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+              class="w-full rounded-lg border border-white/10 bg-gray-900/60 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
               required
             />
           </div>
@@ -180,7 +180,7 @@
             type="button"
             @click="testConnection"
             :disabled="testing || !isValidUrl(settingsStore.settings.serverUrl)"
-            class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow transition enabled:hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+            class="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow transition enabled:hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
           >
             {{ testing ? "Testing..." : "Test Connection" }}
           </button>

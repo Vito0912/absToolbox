@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen bg-[#0b0f17] text-slate-100 antialiased flex flex-col"
+    class="min-h-screen bg-[#0b0f17] text-gray-100 antialiased flex flex-col"
   >
     <nav
       class="sticky top-0 z-40 border-b border-white/10 bg-[#0b0f17]/80 backdrop-blur"
@@ -11,7 +11,7 @@
         <h1 class="text-xl font-semibold tracking-tight">
           <router-link
             to="/"
-            class="inline-flex items-center text-slate-100 hover:text-indigo-300 transition-colors"
+            class="inline-flex items-center text-gray-100 hover:text-blue-300 transition-colors"
           >
             <img
               src="/icon-192x192.png"
@@ -25,29 +25,29 @@
         <div class="flex items-center gap-2">
           <router-link
             to="/"
-            class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-indigo-300 bg-indigo-500/10"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-blue-300 bg-blue-500/10"
           >
             Tools
           </router-link>
           <router-link
             to="/projects"
-            class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-indigo-300 bg-indigo-500/10"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-blue-300 bg-blue-500/10"
           >
             Projects
           </router-link>
           <router-link
             to="/clients"
-            class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-indigo-300 bg-indigo-500/10"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-blue-300 bg-blue-500/10"
           >
             Clients
           </router-link>
           <router-link
             to="/settings"
-            class="rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-indigo-300 bg-indigo-500/10"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-blue-300 bg-blue-500/10"
           >
             Settings
           </router-link>

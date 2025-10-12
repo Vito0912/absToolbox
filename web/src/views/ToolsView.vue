@@ -5,7 +5,7 @@
         {{ selectedTool?.title || "Tool" }}
       </h1>
       <p
-        class="text-slate-400 text-sm"
+        class="text-gray-400 text-sm"
         v-if="selectedTool?.description"
         v-html="selectedTool?.description"
       />

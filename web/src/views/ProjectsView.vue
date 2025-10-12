@@ -5,7 +5,7 @@
     >
       <div>
         <h1 class="text-3xl font-semibold tracking-tight">Projects</h1>
-        <p class="text-slate-400 text-sm">
+        <p class="text-gray-400 text-sm">
           Community projects that extend the Audiobookshelf ecosystem
         </p>
       </div>
@@ -14,11 +14,11 @@
         <button
           @click="refreshProjects"
           :disabled="isLoading"
-          class="inline-flex items-center justify-center px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-medium text-white transition"
+          class="inline-flex items-center justify-center px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg font-medium text-white transition"
         >
           {{ isLoading ? "Loading..." : "Refresh" }}
         </button>
-        <div v-if="cacheAge" class="text-xs text-slate-500">
+        <div v-if="cacheAge" class="text-xs text-gray-500">
           Updated {{ cacheAge }}
         </div>
       </div>
@@ -37,16 +37,16 @@
       class="flex flex-col items-center justify-center py-16"
     >
       <div
-        class="animate-spin rounded-full h-8 w-8 border-2 border-indigo-500 border-t-transparent"
+        class="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent"
       ></div>
-      <p class="text-slate-400 mt-3">Loading projects...</p>
+      <p class="text-gray-400 mt-3">Loading projects...</p>
     </div>
 
     <div
       v-else-if="filteredProjects.length === 0"
       class="flex flex-col items-center justify-center py-16"
     >
-      <div class="text-slate-500 mb-2">
+      <div class="text-gray-500 mb-2">
         <svg
           class="h-12 w-12 mx-auto"
           fill="none"
@@ -61,7 +61,7 @@
           />
         </svg>
       </div>
-      <p class="text-slate-400">No projects found matching your criteria.</p>
+      <p class="text-gray-400">No projects found matching your criteria.</p>
     </div>
 
     <div v-else class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -71,18 +71,18 @@
         :href="project.link"
         target="_blank"
         rel="noopener noreferrer"
-        class="group block rounded-xl border border-white/10 bg-slate-900/40 p-5 transition hover:border-indigo-400/50 hover:bg-slate-900/60"
+        class="group block rounded-xl border border-white/10 bg-gray-900/40 p-5 transition hover:border-blue-400/50 hover:bg-gray-900/60"
       >
         <div class="space-y-3">
           <div class="flex items-start justify-between gap-3">
             <h3
-              class="font-semibold text-slate-100 group-hover:text-indigo-300 transition line-clamp-2"
+              class="font-semibold text-gray-100 group-hover:text-blue-300 transition line-clamp-2"
             >
               {{ project.name }}
             </h3>
             <div
               v-if="project.githubStats"
-              class="flex items-center gap-1 text-xs text-slate-500 whitespace-nowrap"
+              class="flex items-center gap-1 text-xs text-gray-500 whitespace-nowrap"
             >
               <svg
                 class="h-3 w-3 text-yellow-400"
@@ -97,21 +97,21 @@
             </div>
           </div>
 
-          <div class="text-xs text-slate-500">
+          <div class="text-xs text-gray-500">
             by
             <span v-for="(author, idx) in project.authors" :key="author">
-              <span class="text-slate-400">{{ author }}</span
+              <span class="text-gray-400">{{ author }}</span
               ><span v-if="idx < project.authors.length - 1">, </span>
             </span>
           </div>
 
-          <p class="text-sm text-slate-400 line-clamp-3 leading-relaxed">
+          <p class="text-sm text-gray-400 line-clamp-3 leading-relaxed">
             {{ project.description }}
           </p>
 
           <div
             v-if="project.githubStats"
-            class="flex items-center gap-3 text-xs text-slate-500"
+            class="flex items-center gap-3 text-xs text-gray-500"
           >
             <div
               v-if="project.githubStats.forks"
@@ -145,7 +145,7 @@
             <span
               v-for="tag in project.tags"
               :key="tag"
-              class="px-2 py-1 bg-slate-800 text-slate-300 rounded text-xs"
+              class="px-2 py-1 bg-gray-800 text-gray-300 rounded text-xs"
             >
               {{ tagDefinitions[tag]?.name || tag }}
             </span>
