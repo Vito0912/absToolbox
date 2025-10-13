@@ -182,12 +182,11 @@
           <div class="mb-4">
             <div
               v-if="
-                client.features.tested.usedApiCorrectly === 0 ||
-                client.features.tested.usedApiCorrectly === 1
+                client.features.tested.usedApiCorrectly === 0
               "
               class="text-xs font-medium text-red-800"
             >
-              Apps with 1 or 0 should not be used with a production ABS server
+              Apps with 0 should not be used with a production ABS server
               as they can cause bigger issues to stats, progress and worse
               performance if not use many resources for transcoding jobs.
               Reminder to read the Disclaimer at the top, as this is my personal
