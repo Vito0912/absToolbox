@@ -105,8 +105,7 @@ export const projects: ClientInfo[] = [
   {
     name: "Buchable",
     link: "https://github.com/Vito0912/abs_flutter",
-    iconLink:
-      "./logos/buchable.png",
+    iconLink: "./logos/buchable.png",
     language: "Dart",
     OSes: ["Android", "Windows", "Web", "Linux"],
     openSource: true,
@@ -371,7 +370,7 @@ export const projects: ClientInfo[] = [
       {
         color: "yellow",
         text: "The download feature can override progress made on other clients. Start a non-downloaded book before closing the app.",
-      }
+      },
     ],
     features: {
       tested: {
@@ -380,7 +379,7 @@ export const projects: ClientInfo[] = [
         usedApiCorrectly: 5,
         comments: [
           "Does not close sessions on it's own. Due to the stable implementation a new playback, closes the old session. 4.5/5 ",
-        ]
+        ],
       },
       ebooks: {
         available: false,
@@ -540,8 +539,8 @@ export const projects: ClientInfo[] = [
       },
       {
         color: "red",
-        text: "Loads most server information directly into the app. An app should never need to have that much information pre-loaded. Especially since the app uses very little pagination causing much traffic. I never got the app load all data of my only 1.5 year old account"
-      }
+        text: "Loads most server information directly into the app. An app should never need to have that much information pre-loaded. Especially since the app uses very little pagination causing much traffic. I never got the app load all data of my only 1.5 year old account",
+      },
     ],
     features: {
       tested: {
@@ -595,7 +594,7 @@ export const projects: ClientInfo[] = [
       {
         color: "yellow",
         text: "Library switching needs an app restart. Performance can be slow with bigger libraries, especially on the personalized page.",
-      }
+      },
     ],
     features: {
       tested: {
@@ -625,6 +624,88 @@ export const projects: ClientInfo[] = [
       carSupport: undefined,
       widgets: false,
       bookmarks: false,
+    },
+  },
+  {
+    name: "Watch Only! - Auribook",
+    link: "https://auribook.backlog.workers.dev/",
+    iconLink: undefined,
+    language: "Unknown",
+    OSes: ["iOS"],
+    openSource: false,
+    cost: "Paid",
+    notes: [
+      {
+        color: "blue",
+        text: "I do not have an Apple Watch and cannot test the app. The author of the app did not respond to my message asking which endpoints are used. All features are taken from the website",
+      },
+      {
+        color: "yellow",
+        text: "There is currently no public way to easily report or view open issues other than privately by email",
+      },
+    ],
+    features: {
+      tested: {
+        wasTested: false,
+      },
+      ebooks: {
+        available: false,
+      },
+      audiobooks: true,
+      podcasts: undefined,
+      queue: undefined,
+      autoqueue: undefined,
+      sleepTimer: true,
+      chapters: undefined,
+      playHistory: undefined,
+      shakeToRewind: undefined,
+      downloads: undefined,
+      customHeaders: undefined,
+      caching: undefined,
+      biggerScreens: undefined,
+      oidc: undefined,
+      carSupport: undefined,
+      widgets: undefined,
+      bookmarks: undefined,
+    },
+  },
+  {
+    name: "Toutui",
+    link: "https://github.com/AlbanDAVID/Toutui",
+    iconLink: undefined,
+    language: "Rust",
+    OSes: ["Linux", "macOS"],
+    openSource: true,
+    cost: "Free",
+    notes: [
+      {
+        color: "blue",
+        text: "I did not have time to test the app yet. At the moment all points are taken from GitHub. I will do that in the future",
+      },
+    ],
+    features: {
+      tested: {
+        wasTested: false,
+      },
+      ebooks: {
+        available: false,
+      },
+      audiobooks: true,
+      podcasts: true,
+      queue: undefined,
+      autoqueue: undefined,
+      sleepTimer: undefined,
+      chapters: undefined,
+      playHistory: undefined,
+      shakeToRewind: undefined,
+      downloads: undefined,
+      customHeaders: undefined,
+      caching: undefined,
+      biggerScreens: undefined,
+      oidc: undefined,
+      carSupport: undefined,
+      widgets: undefined,
+      bookmarks: undefined,
     },
   },
 ];
