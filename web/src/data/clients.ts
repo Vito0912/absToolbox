@@ -218,13 +218,18 @@ export const projects: ClientInfo[] = [
         color: "blue",
         text: "The libraries are in another sort order",
       },
+      {
+        color: "red",
+        text: "There have been multiple reports of users that they have to log in every 7 days. This is likely a wrong implementation of the new auth system. Time of writing: 17.10.2025",
+      },
     ],
     features: {
       tested: {
         wasTested: true,
         date: "09-06-2025",
-        usedApiCorrectly: 3,
+        usedApiCorrectly: 2,
         comments: [
+          "See red comment",
           "Can cause race conditions due to syncing twice at the same time (Will be fixed after ABS is restarted in recent ABS versions)",
           "Calls the user object every ~10 seconds that can be up to 1MB in size, additional to streaming a book",
           "Does not use the /play endpoint, but uses sessions",
