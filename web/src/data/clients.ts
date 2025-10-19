@@ -731,23 +731,27 @@ export const projects: ClientInfo[] = [
     cost: "Free",
     notes: [
       {
+        color: "blue",
+        text: "I sadly do not have access to my iOS test device for a short time (1-2 weeks). The author of the app (https://www.reddit.com/r/audiobookshelf/comments/1oagqnp/comment/nkb0505/) said they fixed the old authentication, new playback API (I am not sure what close on pause means in that context), progress sync, and sync while paused. The personalized view is also fixed again. Since I cannot check it right now, I am keeping my old notes until I can test it again, but I have changed the score to 4. When I have access to my test device again, I will update the comments and score accordingly.",
+      },
+      {
         color: "green",
-        text: "Does one of the best session managements I have seen so far",
+        text: "See first comment. Does one of the best session managements I have seen so far",
       },
       {
         color: "blue",
-        text: "App is in early TestFlight. So any features tested are a first iteration and probably will improve quickly",
+        text: "See first comment. App is in early TestFlight. So any features tested are a first iteration and probably will improve quickly",
       },
       {
         color: "yellow",
-        text: "In the current state, the stats are not accurate. After listening a book offline, the timeListened gets accumulated leading to gigantic timeListened values. Do not use if stats are important to you at the time of testing",
+        text: "See first comment. In the current state, the stats are not accurate. After listening a book offline, the timeListened gets accumulated leading to gigantic timeListened values. Do not use if stats are important to you at the time of testing",
       },
     ],
     features: {
       tested: {
         wasTested: true,
         date: "2025-10-19",
-        usedApiCorrectly: 1,
+        usedApiCorrectly: 4,
         comments: [
           "Uses old authentication method",
           "Uses old playback API",
