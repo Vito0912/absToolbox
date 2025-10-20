@@ -186,9 +186,10 @@
               "
               class="text-xs font-medium text-red-800"
             >
-              Apps with 0 should not be used with a production ABS server
-              as they can cause bigger issues to stats, progress and worse
-              performance if not use many resources for transcoding jobs.
+              This app has a score of 0, meaning it has serious issues with the API, 
+              including but not limited to: not syncing progress, not using sessions, 
+              permission errors or general very bad usage of the API, such as giant 
+              pagination or an excessive amount of requests. Please read the comments.
               Reminder to read the Disclaimer at the top, as this is my personal
               assessment and experience at the time of testing.
             </div>
