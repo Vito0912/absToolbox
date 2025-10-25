@@ -540,6 +540,10 @@ export const projects: ClientInfo[] = [
       },
       {
         color: "green",
+        text: "Supports watchOS",
+      },
+      {
+        color: "green",
         text: "Current Testflight contains no paid features",
       },
       {
@@ -571,14 +575,14 @@ export const projects: ClientInfo[] = [
       autoqueue: false,
       sleepTimer: true,
       chapters: true,
-      playHistory: false,
+      playHistory: true,
       shakeToRewind: undefined,
       downloads: true,
       customHeaders: true,
       caching: true,
       biggerScreens: true,
       oidc: true,
-      carSupport: undefined,
+      carSupport: true,
       widgets: true,
       bookmarks: true,
     },
