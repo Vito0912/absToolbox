@@ -588,12 +588,12 @@ export const projects: ClientInfo[] = [
     },
   },
   {
-    name: "AudioBS",
-    link: "https://testflight.apple.com/join/RjEP31WX",
+    name: "AudioBooth",
+    link: "https://github.com/AudioBooth/AudioBooth",
     iconLink: undefined,
-    language: "Unknown",
+    language: "Swift",
     OSes: ["iOS"],
-    openSource: false,
+    openSource: true,
     cost: "Free",
     notes: [
       {
@@ -627,9 +627,9 @@ export const projects: ClientInfo[] = [
       shakeToRewind: false,
       downloads: true,
       customHeaders: undefined,
-      caching: false,
+      caching: true,
       biggerScreens: true,
-      oidc: false,
+      oidc: true,
       carSupport: undefined,
       widgets: false,
       bookmarks: false,
@@ -735,20 +735,12 @@ export const projects: ClientInfo[] = [
     cost: "Free",
     notes: [
       {
-        color: "blue",
-        text: "I sadly do not have access to my iOS test device for a short time (1-2 weeks). The author of the app (https://www.reddit.com/r/audiobookshelf/comments/1oagqnp/comment/nkb0505/) said they fixed the old authentication, new playback API (I am not sure what close on pause means in that context), progress sync, and sync while paused. The personalized view is also fixed again. Since I cannot check it right now, I am keeping my old notes until I can test it again, but I have changed the score to 4. When I have access to my test device again, I will update the comments and score accordingly.",
-      },
-      {
         color: "green",
         text: "See first comment. Does one of the best session managements I have seen so far",
       },
       {
         color: "blue",
         text: "See first comment. App is in early TestFlight. So any features tested are a first iteration and probably will improve quickly",
-      },
-      {
-        color: "yellow",
-        text: "See first comment. In the current state, the stats are not accurate. After listening a book offline, the timeListened gets accumulated leading to gigantic timeListened values. Do not use if stats are important to you at the time of testing",
       },
     ],
     features: {
@@ -757,11 +749,7 @@ export const projects: ClientInfo[] = [
         date: "2025-10-19",
         usedApiCorrectly: 4,
         comments: [
-          "Uses old authentication method",
           "Uses old playback API",
-          "While using the correct endpoints (nice!) No listening time is tracked",
-          "Does sync progress even when not playing, which can overwrite progress made on other clients",
-          "Does make requests to endpoints that do not exist...",
           "Fetches every book as expanded independent and it's progress in two separate requests (Uses caching, but will still lead to a lot of requests and data usage). No pagination in e.g. series view",
         ],
       },
