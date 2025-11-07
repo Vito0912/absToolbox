@@ -5,7 +5,7 @@ export const projects: ClientInfo[] = [
   {
     name: "Audiobookshelf PWA",
     link: "https://www.audiobookshelf.org/",
-    iconLink: "https://www.audiobookshelf.org/Logo.png",
+    iconLink: "./logos/ABS.png",
     language: "JS, Vue",
     OSes: ["Android", "iOS", "Web"],
     openSource: true,
@@ -53,7 +53,7 @@ export const projects: ClientInfo[] = [
   {
     name: "Audiobookshelf",
     link: "https://www.audiobookshelf.org/",
-    iconLink: "https://www.audiobookshelf.org/Logo.png",
+    iconLink: "./logos/ABS.png",
     language: "Kotlin, Swift, Vue",
     OSes: ["Android", "iOS"],
     openSource: true,
@@ -154,8 +154,7 @@ export const projects: ClientInfo[] = [
   {
     name: "Shelfplayer",
     link: "https://github.com/rasmuslos/ShelfPlayer",
-    iconLink:
-      "https://github.com/rasmuslos/ShelfPlayer/blob/main/Multiplatform/Assets.xcassets/Logo.imageset/ShelfPlayer.png?raw=true",
+    iconLink: undefined,
     language: "Swift",
     OSes: ["iOS"],
     openSource: true,
@@ -262,8 +261,7 @@ export const projects: ClientInfo[] = [
   {
     name: "Lissen",
     link: "https://github.com/GrakovNe/lissen-android",
-    iconLink:
-      "https://github.com/GrakovNe/lissen-android/blob/main/metadata/en-US/images/icon.png?raw=true",
+    iconLink: "./logos/lissen.png",
     language: "Kotlin",
     OSes: ["Android"],
     openSource: true,
@@ -366,7 +364,7 @@ export const projects: ClientInfo[] = [
   {
     name: "Tonspur",
     link: "https://tonspur.app/",
-    iconLink: "https://tonspur.app/_next/image?url=%2Fapp_icon.png&w=1920&q=75",
+    iconLink: undefined,
     language: "Unknown",
     OSes: ["iOS"],
     openSource: false,
@@ -528,7 +526,7 @@ export const projects: ClientInfo[] = [
   {
     name: "Prologue",
     link: "https://prologue.audio/",
-    iconLink: "https://prologue.audio/img/app-icon.svg",
+    iconLink: undefined,
     language: "Unknown",
     OSes: ["iOS"],
     openSource: false,
