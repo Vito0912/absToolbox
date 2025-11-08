@@ -588,7 +588,7 @@ export const projects: ClientInfo[] = [
   {
     name: "AudioBooth",
     link: "https://github.com/AudioBooth/AudioBooth",
-    iconLink: undefined,
+    iconLink: "./logos/AudioBooth.png",
     language: "Swift",
     OSes: ["iOS"],
     openSource: true,
@@ -624,7 +624,7 @@ export const projects: ClientInfo[] = [
       playHistory: false,
       shakeToRewind: false,
       downloads: true,
-      customHeaders: undefined,
+      customHeaders: true,
       caching: true,
       biggerScreens: true,
       oidc: true,
