@@ -826,4 +826,47 @@ export const projects: ClientInfo[] = [
       bookmarks: false,
     },
   },
+  {
+    name: "SideShelf",
+    link: "https://testflight.apple.com/join/X6V7p1sD",
+    iconLink: undefined,
+    language: "Unknown",
+    OSes: ["iOS"],
+    openSource: false,
+    cost: "Freemium",
+    notes: [
+      {
+        color: "red",
+        text: "App did not load at all for me. It correctly authenticated and displayed the amout of libraries, but failed to display any content.",
+      },
+      {
+        color: "red",
+        text: "I am not sure if E-books are supported, but I do not added to have unknown there. Because I cannot test the app at all I put in false at the moment.",
+      },
+    ],
+    features: {
+      tested: {
+        wasTested: false,
+      },
+      ebooks: {
+        available: false,
+      },
+      audiobooks: undefined,
+      podcasts: undefined,
+      queue: undefined,
+      autoqueue: undefined,
+      sleepTimer: undefined,
+      chapters: undefined,
+      playHistory: undefined,
+      shakeToRewind: undefined,
+      downloads: undefined,
+      customHeaders: undefined,
+      caching: undefined,
+      biggerScreens: undefined,
+      oidc: undefined,
+      carSupport: undefined,
+      widgets: undefined,
+      bookmarks: undefined,
+    },
+  },
 ];
