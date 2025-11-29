@@ -423,16 +423,22 @@
                     />
                     Bigger Screens
                   </div>
-                  <div
+                    <div
                     class="flex items-center gap-1"
-                    :class="getFeatureClass(client.features.oidc)"
-                  >
+                    :class="getFeatureClass(client.features.oidc?.available)"
+                    >
                     <component
-                      :is="getFeatureIcon(client.features.oidc)"
+                      :is="getFeatureIcon(client.features.oidc?.available)"
                       class="h-3 w-3"
                     />
                     OIDC
-                  </div>
+                    <span
+                      v-if="client.features.oidc?.available && client.features.oidc?.mobileRedirectURI"
+                      class="inline-flex items-center ml-1 text-gray-400 text-xs"
+                    >
+                      {{ client.features.oidc?.mobileRedirectURI }}
+                    </span>
+                    </div>
                   <div
                     class="flex items-center gap-1"
                     :class="getFeatureClass(client.features.carSupport)"
