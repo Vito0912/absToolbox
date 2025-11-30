@@ -872,7 +872,7 @@ export const projects: ClientInfo[] = [
     iconLink: undefined,
     language: "Unknown",
     OSes: ["iOS"],
-    openSource: false,
+    openSource: true,
     cost: "Freemium",
     heavyAiUsage: true,
     notes: [
