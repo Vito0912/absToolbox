@@ -445,12 +445,14 @@ export const projects: ClientInfo[] = [
         text: "Signing out does not work/ leaves the app in a broken state",
       },
     ],
+    heavyAiUsage: true,
     features: {
       tested: {
         wasTested: true,
-        date: "2025-09-07",
-        usedApiCorrectly: 3,
+        date: "2025-11-30",
+        usedApiCorrectly: 0,
         comments: [
+          "Testing 1.5.32 the app uses non-existing queries and wrong page offsets, making it impossible for me to test the app at all.",
           "Does load big chunks of books in advance.",
           "Opens sessions for everything you click on, even if you don't play it (but closes them)",
         ],
@@ -872,6 +874,7 @@ export const projects: ClientInfo[] = [
     OSes: ["iOS"],
     openSource: false,
     cost: "Freemium",
+    heavyAiUsage: true,
     notes: [
       {
         color: "red",

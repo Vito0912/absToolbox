@@ -5,6 +5,7 @@ export interface ClientInfo {
   language: string;
   OSes: ("Android" | "iOS" | "Windows" | "macOS" | "Linux" | "Web")[];
   cost: "Free" | "Freemium" | "Paid";
+  heavyAiUsage?: boolean;
   openSource: boolean;
   notes?: ClientNote[];
   features: ClientFeatures;
