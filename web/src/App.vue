@@ -26,9 +26,23 @@
           <router-link
             to="/"
             class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+            exact-active-class="!text-blue-300 bg-blue-500/10"
+          >
+            Home
+          </router-link>
+          <router-link
+            to="/tools"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
             active-class="!text-blue-300 bg-blue-500/10"
           >
             Tools
+          </router-link>
+          <router-link
+            to="/stats"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
+            active-class="!text-blue-300 bg-blue-500/10"
+          >
+            Stats
           </router-link>
           <router-link
             to="/projects"
@@ -64,5 +78,5 @@
 </template>
 
 <script setup lang="ts">
-import Footer from "./components/Footer.vue";
+import Footer from "@/shared/components/Footer.vue";
 </script>

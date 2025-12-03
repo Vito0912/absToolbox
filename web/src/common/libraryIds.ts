@@ -1,4 +1,4 @@
-import { useApi } from "@/composables/useApi";
+import { useApi } from "@/shared/composables/useApi";
 
 const { get } = useApi();
 
@@ -9,7 +9,7 @@ export async function fetchLibraryIds(libraryIds: string[]): Promise<string[]> {
 
   if (libraryIds.length !== 0) {
     allLibraries = allLibraries.filter((library: { id: string }) =>
-      libraryIds.includes(library.id)
+      libraryIds.includes(library.id),
     );
   }
   return allLibraries.map((library: { id: string }) => library.id);
