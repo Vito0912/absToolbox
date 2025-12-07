@@ -338,25 +338,25 @@ export const projects: ClientInfo[] = [
     cost: "Free",
     notes: [
       {
-        color: "yellow",
-        text: "In the current state, the stats are not accurate",
+        color: "red",
+        text: "Needs full file system access for downloads to work",
       },
     ],
     features: {
       tested: {
         wasTested: true,
-        date: "2025-09-06",
-        usedApiCorrectly: 2,
+        date: "2025-12-07",
+        usedApiCorrectly: 3,
         comments: [
-          "Uses a non-download endpoint for downloads, which allows users to download even without download permission and incorrect logging",
+          "Uses a non-download endpoint for downloads, which allows users to download with incorrect logging",
           "Uses an old playback API",
-          "Does not use a session, which makes stats inaccurate and can cause other issues related to progress",
+          "Does use progress and sessions, which can lead to problems with marking items as finished",
         ],
       },
       ebooks: {
         available: true,
         ePubSupport: true,
-        pdfSupport: false,
+        pdfSupport: undefined,
         annotations: false,
       },
       audiobooks: true,
@@ -368,9 +368,9 @@ export const projects: ClientInfo[] = [
       playHistory: false,
       shakeToRewind: false,
       downloads: true,
-      customHeaders: false,
+      customHeaders: true,
       caching: undefined,
-      biggerScreens: undefined,
+      biggerScreens: false,
       oidc: {
         available: true,
         mobileRedirectURI: undefined,
