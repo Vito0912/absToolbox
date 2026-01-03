@@ -340,15 +340,26 @@ export const toolDefinitions: ToolDefinition[] = [
         name: "startDate",
         type: "date",
         label: "Start Date",
-        description: "The date when listening started.",
-        required: true,
+        description:
+          "The date when listening started. Optional - if not provided, will use existing progress start date or finished date.",
+        required: false,
+      },
+      {
+        name: "useLastListenDate",
+        type: "boolean",
+        label: "Use Last Listen Date",
+        description:
+          "Automatically set the finished date to the last time you listened to each book (from listening sessions).",
+        required: false,
+        default: false,
       },
       {
         name: "finishedDate",
         type: "date",
         label: "Finished Date",
-        description: "The date when listening finished.",
-        required: true,
+        description:
+          "The date when listening finished. Optional if 'Use Last Listen Date' is enabled. If neither this nor the checkbox is set, today's date will be used.",
+        required: false,
       },
     ],
     execute: executeListenDateUpdater,
