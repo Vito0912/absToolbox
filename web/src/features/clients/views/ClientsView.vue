@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <PageHeader
       title="Clients"
-      subtitle="Third-party applications for accessing Audiobookshelf"
+      subtitle="Third-party players for Audiobookshelf"
     />
 
     <FilterBar

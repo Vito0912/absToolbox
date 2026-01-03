@@ -38,24 +38,24 @@ const sections = [
     path: "/tools",
     title: "Tools",
     description:
-      "Powerful utilities to manage your Audiobookshelf server. Split genres, match chapters, migrate servers, and more.",
+      "Utilities/Tools to manage Audiobookshelf.",
   },
   {
     path: "/projects",
     title: "Projects",
     description:
-      "Discover community projects that extend the Audiobookshelf ecosystem with new features and integrations.",
+      "Discover community projects that extend the Audiobookshelf.",
   },
   {
     path: "/clients",
     title: "Clients",
     description:
-      "Browse third-party applications for accessing your Audiobookshelf library on various platforms.",
+      "Browse third-party Audiobookshelf players.",
   },
   {
     path: "/stats",
     title: "Statistics",
-    description: "Analyze your listening stats.",
+    description: "Analyze your listening stats in more detail.",
   },
 ];
 </script>

@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <PageHeader
       title="Tools"
-      subtitle="Powerful utilities to manage your Audiobookshelf server"
+      subtitle="Utilities/Tools to manage Audiobookshelf"
     />
 
     <InfoBox v-if="!isConfigured" variant="warning">

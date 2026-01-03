@@ -301,6 +301,8 @@
           :required="field.required"
           class="w-full rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 placeholder:text-gray-500 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
         />
+
+        <SessionSelector v-else-if="field.type === 'sessionSelector'" />
       </div>
 
       <div class="pt-2">
@@ -380,6 +382,7 @@
 import { ref, reactive, onMounted } from "vue";
 import type { ToolDefinition, ToolResult } from "../types";
 import { useApi } from "@/shared/composables/useApi";
+import SessionSelector from "./SessionSelector.vue";
 
 interface Props {
   tool: ToolDefinition;

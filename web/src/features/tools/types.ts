@@ -8,6 +8,7 @@ export interface ToolField {
     | "librarySelector"
     | "singleLibrarySelector"
     | "libraryItemsSelector"
+    | "sessionSelector"
     | "date";
   label: string;
   description?: string;

@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <PageHeader
       title="Projects"
-      subtitle="Community projects that extend the Audiobookshelf ecosystem"
+      subtitle="Community projects that extend Audiobookshelf"
     >
       <template #actions>
         <BaseButton

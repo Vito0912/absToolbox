@@ -8,6 +8,7 @@ import { executeRenameSeries } from "./renameSeries";
 import { executePathTagUpdater } from "./pathTagUpdater";
 import { executeMigrateServer } from "./migrateServer";
 import { executeListenDateUpdater } from "./listenDateUpdater";
+import { executeUpdateListeningSessions } from "./updateListeningSessions";
 
 export const toolDefinitions: ToolDefinition[] = [
   {
@@ -326,7 +327,7 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "listen-date-updater",
     group: "Stats",
-    title: "Listen Date Updater",
+    title: "Update Listen Dates",
     description: "Updates the listen dates for specific library items.",
     fields: [
       {
@@ -363,5 +364,23 @@ export const toolDefinitions: ToolDefinition[] = [
       },
     ],
     execute: executeListenDateUpdater,
+  },
+  {
+    id: "edit-listening-sessions",
+    group: "Stats",
+    title: "Edit Listening Sessions",
+    description:
+      "Manually edit listening sessions to correct too long or incorrect sessions.",
+    fields: [
+      {
+        name: "userId",
+        type: "sessionSelector",
+        label: "Select User and Sessions",
+        description:
+          "Choose a user to view their listening sessions, then edit individual sessions as needed.",
+        required: true,
+      },
+    ],
+    execute: executeUpdateListeningSessions,
   },
 ];
