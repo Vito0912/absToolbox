@@ -318,7 +318,7 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "listen-date-updater",
     title: "Listen Date Updater",
-    description: "Updates the listen date for specific library items.",
+    description: "Updates the listen dates for specific library items.",
     fields: [
       {
         name: "libraryItemIds",
@@ -328,10 +328,17 @@ export const toolDefinitions: ToolDefinition[] = [
         required: true,
       },
       {
-        name: "dateToSet",
+        name: "startDate",
         type: "date",
-        label: "Date to Set",
-        description: "The date to set as the listen date.",
+        label: "Start Date",
+        description: "The date when listening started.",
+        required: true,
+      },
+      {
+        name: "finishedDate",
+        type: "date",
+        label: "Finished Date",
+        description: "The date when listening finished.",
         required: true,
       },
     ],
