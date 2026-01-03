@@ -4,16 +4,6 @@ import type { ToolResult } from "./types";
 
 const { get, apiClient, addLog } = useApi();
 
-async function getAllLibraries() {
-  try {
-    const response = await get("/api/libraries");
-    return response.data.libraries || [];
-  } catch (error) {
-    console.error("Error fetching libraries:", error);
-    return [];
-  }
-}
-
 async function getLibraryAuthors(libraryId: string) {
   try {
     const response = await get(`/api/libraries/${libraryId}/authors`);
@@ -35,7 +25,7 @@ async function deleteAuthor(authorId: string) {
 }
 
 export async function executeRemoveEmptyAuthors(
-  formData: Record<string, any>,
+  formData: Record<string, any>
 ): Promise<ToolResult> {
   try {
     const { libraryIds = [], deleteWithoutConfirmation = false } = formData;
@@ -79,7 +69,7 @@ export async function executeRemoveEmptyAuthors(
       addLog("The following authors will be deleted:");
       for (const author of authorsToDelete) {
         addLog(
-          `- ${author.name} (${author.numBooks} books) - ID: ${author.id}`,
+          `- ${author.name} (${author.numBooks} books) - ID: ${author.id}`
         );
       }
 

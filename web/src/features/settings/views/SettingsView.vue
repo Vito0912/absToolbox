@@ -1,218 +1,272 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 max-w-3xl mx-auto">
     <PageHeader
-      title="Settings"
-      subtitle="Configure your Audiobookshelf server connection"
+      :title="t.pageHeader.title"
+      :subtitle="t.pageHeader.subtitle"
     />
 
-    <div class="flex flex-row gap-4">
-      <div class="flex-1">
-        <p class="text-sm text-gray-400 py-2">
-          Note: All options you save are only stored locally and never leave
-          your browser other than to contact the address you saved above. All
-          requests are made client side and you can inspect them using your
-          browser's developer tools.
-        </p>
-
-        <InfoBox variant="danger" class="my-4">
-          <p>
-            <strong>Note:</strong> You need to allow CORS for this website
-            inside your Audiobookshelf server. Visit your Audiobookshelf
-            server's settings page and add
-            <br />
-            <code class="text-white">https://abstoolbox.vito0912.de</code>
-            <br />
-            as an allowed origin. Without this all request will fail with a CORS
-            error.
-          </p>
-        </InfoBox>
-
-        <p class="text-sm text-gray-400 py-2">
-          Alternatively, you can install a browser extension to temporarily
-          disable CORS. However, please be aware that many of these extensions
-          pose security risks.
-        </p>
-      </div>
-
-      <div>
-        <img
-          src="/images/cors.png"
-          alt="CORS Settings"
-          class="h-80 rounded-lg"
-        />
+    <div class="flex items-center justify-between mb-8 px-4">
+      <div v-for="i in 3" :key="i" class="flex items-center flex-1 last:flex-none">
+        <div
+          class="flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors shrink-0"
+          :class="[
+            step >= i
+              ? 'border-blue-500 bg-blue-500 text-white'
+              : 'border-gray-600 text-gray-400',
+          ]"
+        >
+          {{ i }}
+        </div>
+        <div
+          v-if="i < 3"
+          class="h-0.5 mx-2 w-full transition-colors"
+          :class="[step > i ? 'bg-blue-500' : 'bg-gray-600']"
+        ></div>
       </div>
     </div>
 
     <BaseCard>
-      <form @submit.prevent="saveSettings" class="grid gap-6">
-        <BaseInput
-          v-model="settingsStore.settings.serverUrl"
-          label="Server URL"
-          type="url"
-          placeholder="https://your-audiobookshelf-server.com"
-          required
-        />
+      <div v-if="step === 1" class="space-y-6">
+        <h2 class="text-xl font-semibold text-gray-100">{{ t.step1.title }}</h2>
+        
+        <p class="text-gray-300">
+          {{ t.step1.description }}
+        </p>
 
-        <div class="space-y-3">
-          <label class="block text-sm font-medium text-gray-200"
-            >Authentication Method</label
-          >
-          <div class="flex flex-wrap gap-3">
-            <label
-              class="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-gray-900/60 px-3 py-2 text-sm text-gray-200 hover:border-blue-400/50 transition"
-            >
-              <input
-                v-model="settingsStore.settings.authMethod"
-                type="radio"
-                value="token"
-                class="h-4 w-4 accent-blue-500"
-              />
-              API Token
-            </label>
+        <InfoBox variant="info">
+          <div class="flex justify-between items-center cursor-pointer select-none" @click="corsExpanded = !corsExpanded">
+            <span class="font-semibold">{{ t.step1.corsInfo.title }}</span>
+            <span class="text-xl font-bold">{{ corsExpanded ? '−' : '+' }}</span>
           </div>
-        </div>
-
-        <BaseInput
-          v-if="settingsStore.settings.authMethod === 'token'"
-          v-model="settingsStore.settings.apiToken"
-          label="API Token"
-          type="password"
-          placeholder="Your API token"
-          required
-        />
-
-        <div v-else class="grid gap-6 sm:grid-cols-2">
-          <BaseInput
-            v-model="settingsStore.settings.username"
-            label="Username"
-            placeholder="Your username"
-            required
-          />
-          <BaseInput
-            v-model="settingsStore.settings.password"
-            label="Password"
-            type="password"
-            placeholder="Your password"
-            required
-          />
-        </div>
-
-        <InfoBox
-          v-if="settingsStore.settings.serverUrl.startsWith('http:')"
-          variant="warning"
-          title="Insecure Connection"
-        >
-          <p class="text-sm leading-relaxed">
-            You are using <code>http://</code>, which is
-            <span class="font-semibold">not secure</span>. To allow connections
-            you need to enable insecure content in your browser's site settings.
-          </p>
-
-          <p class="text-sm leading-relaxed mt-2">
-            If you still get <code>Connection failed: Network Error</code>, try
-            using:
-            <br />
-            <span class="font-mono text-white break-all">
-              {{ settingsStore.settings.serverUrl }}/audiobookshelf
-            </span>
-          </p>
-
-          <div class="flex flex-col gap-4 pt-2">
-            <img
-              src="/images/insecure1.png"
-              alt="Browser site settings"
-              class="w-full max-w-md rounded-lg border border-white/10 shadow-md"
-            />
-            <img
-              src="/images/insecure2.png"
-              alt="Allow insecure content"
-              class="w-full max-w-md rounded-lg border border-white/10 shadow-md"
-            />
+          
+          <div v-if="corsExpanded" class="mt-4 space-y-3 text-sm text-blue-100/90">
+            <p v-html="t.step1.corsInfo.definition"></p>
+            <p>{{ t.step1.corsInfo.browserSecurity }}</p>
+            <p>{{ t.step1.corsInfo.toolboxExplanation }}</p>
+            <p class="font-semibold">{{ t.step1.corsInfo.safetyTitle }}</p>
+            <p v-html="t.step1.corsInfo.safetyIntro"></p>
+            <ul class="list-disc pl-5 space-y-1">
+              <li v-for="(reason, idx) in t.step1.corsInfo.safetyReasons" :key="idx">{{ reason }}</li>
+            </ul>
+            <p>{{ t.step1.corsInfo.privacyNote }}</p>
           </div>
         </InfoBox>
 
-        <div
-          class="mt-2 flex flex-col gap-3 border-t border-white/10 pt-6 sm:flex-row"
-        >
-          <BaseButton
-            type="submit"
-            variant="success"
-            :disabled="!isValidUrl(settingsStore.settings.serverUrl)"
-          >
-            Save Settings
-          </BaseButton>
-          <BaseButton
-            type="button"
-            @click="testConnection"
-            :loading="testing"
-            :disabled="!isValidUrl(settingsStore.settings.serverUrl)"
-          >
-            Test Connection
-          </BaseButton>
+        <div class="bg-gray-900/50 p-4 rounded-lg border border-white/10 space-y-4">
+          <div>
+            <p class="text-sm text-gray-300 mb-2">
+              {{ t.step1.instructions.addUrl }}
+            </p>
+            <div class="flex gap-2 items-center">
+              <code class="flex-1 bg-black/30 p-2 rounded text-blue-300 font-mono text-sm break-all">
+                {{ currentOrigin }}
+              </code>
+              <BaseButton @click="copyOrigin" size="sm" variant="secondary">
+                {{ t.step1.instructions.copyButton }}
+              </BaseButton>
+            </div>
+          </div>
+          
+          <div class="flex justify-center">
+            <img
+              src="/images/cors.png"
+              :alt="t.step1.instructions.imageAlt"
+              class="rounded-lg border border-white/10 shadow-lg max-w-full"
+            />
+          </div>
         </div>
-      </form>
-    </BaseCard>
 
-    <InfoBox
-      v-if="testResult"
-      :variant="testResult.success ? 'success' : 'danger'"
-    >
-      {{ testResult.message }}
-    </InfoBox>
+        <div class="flex justify-end">
+          <BaseButton @click="step = 2">{{ t.step1.buttons.next }}</BaseButton>
+        </div>
+      </div>
+
+      <div v-if="step === 2" class="space-y-6">
+        <h2 class="text-xl font-semibold text-gray-100">{{ t.step2.title }}</h2>
+        
+        <div class="space-y-2">
+          <p class="text-gray-300">
+            {{ t.step2.description }}
+          </p>
+          <InfoBox variant="info">
+            <div class="text-sm space-y-2">
+              <p v-html="t.step2.serverInfo.title"></p>
+              <p v-html="t.step2.serverInfo.localExample"></p>
+              <p>{{ t.step2.serverInfo.directConnection }}</p>
+            </div>
+          </InfoBox>
+        </div>
+
+        <form @submit.prevent="checkConnection" class="space-y-4">
+          <BaseInput
+            v-model="draftUrl"
+            :label="t.step2.form.serverUrlLabel"
+            type="url"
+            :placeholder="t.step2.form.serverUrlPlaceholder"
+            required
+          />
+          <p v-if="urlError" class="text-sm text-rose-400">{{ urlError }}</p>
+
+          <div v-if="connectionError" class="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-200 text-sm">
+            <p class="font-semibold mb-1">{{ t.step2.errors.connectionFailedTitle }}</p>
+            <p>{{ connectionError }}</p>
+            <p v-if="isCorsError" class="mt-2 text-xs">
+              {{ t.step2.errors.corsHint }}
+            </p>
+          </div>
+
+          <div class="flex justify-between">
+            <BaseButton type="button" variant="secondary" @click="step = 1">{{ t.step2.buttons.back }}</BaseButton>
+            <BaseButton type="submit" :loading="isLoading">{{ t.step2.buttons.checkConnection }}</BaseButton>
+          </div>
+        </form>
+      </div>
+
+      <div v-if="step === 3" class="space-y-6">
+        <h2 class="text-xl font-semibold text-gray-100">{{ t.step3.title }}</h2>
+        
+        <div class="space-y-2">
+          <p class="text-gray-300">
+            {{ t.step3.description }}
+          </p>
+          <InfoBox variant="info">
+            <div class="text-sm space-y-2">
+              <p v-html="t.step3.privacyInfo.title"></p>
+              <p>{{ t.step3.privacyInfo.tokenPurpose }}</p>
+            </div>
+          </InfoBox>
+        </div>
+
+        <div class="bg-blue-500/10 p-4 rounded-lg border border-blue-500/20 text-sm text-blue-200">
+          {{ t.step3.apiKeyGeneration.text }}
+          <br>
+          <code class="text-white break-all">{{ interpolate(t.step3.apiKeyGeneration.path, { url: draftUrl }) }}</code>
+        </div>
+
+        <form @submit.prevent="verifyToken" class="space-y-4">
+          <BaseInput
+            v-model="draftToken"
+            :label="t.step3.form.apiTokenLabel"
+            type="password"
+            :placeholder="t.step3.form.apiTokenPlaceholder"
+            required
+          />
+          <p v-if="tokenError" class="text-sm text-rose-400">{{ tokenError }}</p>
+
+          <div class="flex justify-center">
+            <img
+              src="/images/apiToken.png"
+              :alt="t.step3.apiKeyGeneration.imageAlt"
+              class="rounded-lg border border-white/10 shadow-lg max-w-full"
+            />
+          </div>
+
+          <div class="flex justify-between">
+            <BaseButton type="button" variant="secondary" @click="step = 2">{{ t.step3.buttons.back }}</BaseButton>
+            <BaseButton type="submit" :loading="isLoading">{{ t.step3.buttons.verify }}</BaseButton>
+          </div>
+        </form>
+      </div>
+    </BaseCard>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
 import { useSettingsStore } from "@/shared/settings";
-import { useApi } from "@/shared/composables/useApi";
-import {
-  PageHeader,
-  BaseInput,
-  BaseButton,
-  BaseCard,
-  InfoBox,
-} from "@/shared/components";
+import { useI18n, interpolate } from "@/i18n";
+import PageHeader from "@/shared/components/PageHeader.vue";
+import BaseCard from "@/shared/components/BaseCard.vue";
+import BaseInput from "@/shared/components/BaseInput.vue";
+import BaseButton from "@/shared/components/BaseButton.vue";
+import InfoBox from "@/shared/components/InfoBox.vue";
 
+const router = useRouter();
 const settingsStore = useSettingsStore();
-const { get } = useApi();
-const testing = ref(false);
-const testResult = ref<{ success: boolean; message: string } | null>(null);
+const t = useI18n().settings;
 
-const isValidUrl = (url: string) => {
+const step = ref(1);
+const corsExpanded = ref(false);
+const isLoading = ref(false);
+
+const draftUrl = ref(settingsStore.settings.serverUrl || "");
+const draftToken = ref(settingsStore.settings.apiToken || "");
+
+const urlError = ref("");
+const connectionError = ref("");
+const isCorsError = ref(false);
+const tokenError = ref("");
+
+const currentOrigin = window.location.origin;
+
+const copyOrigin = () => {
+  navigator.clipboard.writeText(currentOrigin);
+};
+
+const checkConnection = async () => {
+  urlError.value = "";
+  connectionError.value = "";
+  isCorsError.value = false;
+  isLoading.value = true;
+
   try {
-    const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
-  } catch {
-    return false;
+    new URL(draftUrl.value);
+  } catch (e) {
+    urlError.value = t.step2.errors.invalidUrl;
+    isLoading.value = false;
+    return;
+  }
+
+  draftUrl.value = draftUrl.value.replace(/\/$/, "");
+
+  try {
+    await axios.get(`${draftUrl.value}/status`, {
+      timeout: 5000
+    });
+    step.value = 3;
+  } catch (error: any) {
+    if (error.code === "ERR_NETWORK" || !error.response) {
+      connectionError.value = t.step2.errors.couldNotConnect;
+      isCorsError.value = true;
+    } else {
+      connectionError.value = interpolate(t.step2.errors.serverError, { 
+        status: error.response?.status, 
+        statusText: error.response?.statusText 
+      });
+    }
+  } finally {
+    isLoading.value = false;
   }
 };
 
-const saveSettings = () => {
-  settingsStore.saveSettings();
-  testResult.value = { success: true, message: "Settings saved successfully!" };
-  setTimeout(() => {
-    testResult.value = null;
-  }, 3000);
-};
-
-const testConnection = async () => {
-  testing.value = true;
-  testResult.value = null;
+const verifyToken = async () => {
+  tokenError.value = "";
+  isLoading.value = true;
 
   try {
-    const response = await get("/api/me");
-    testResult.value = {
-      success: true,
-      message: `Connection successful! Server responded: ${response.data?.message || "OK"}`,
-    };
+    await axios.get(`${draftUrl.value}/api/me`, {
+      headers: {
+        Authorization: `Bearer ${draftToken.value}`
+      },
+      timeout: 5000
+    });
+
+    settingsStore.settings.serverUrl = draftUrl.value;
+    settingsStore.settings.apiToken = draftToken.value;
+    settingsStore.settings.authMethod = "token";
+    settingsStore.saveSettings();
+    
+    router.push("/");
   } catch (error: any) {
-    testResult.value = {
-      success: false,
-      message: `Connection failed: ${error.response?.data?.message || error.message || "Unknown error"}`,
-    };
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      tokenError.value = t.step3.errors.invalidToken;
+    } else {
+      tokenError.value = t.step3.errors.verifyFailed;
+    }
   } finally {
-    testing.value = false;
+    isLoading.value = false;
   }
 };
 </script>

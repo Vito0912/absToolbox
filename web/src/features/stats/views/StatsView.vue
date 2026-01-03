@@ -1,29 +1,26 @@
 <template>
   <div class="space-y-6">
-    <div class="text-center space-y-2">
-      <h1 class="text-3xl font-semibold tracking-tight">
-        Your Listening Stats
-      </h1>
-    </div>
+    <PageHeader
+      title="Listening Stats"
+      subtitle="Analyze your Audiobookshelf listening statistics"
+    />
 
-    <div v-if="!isConfigured" class="mx-auto max-w-lg">
-      <div
-        class="p-6 text-center border border-yellow-500/20 bg-yellow-500/5 rounded-xl"
-      >
-        <h3 class="text-lg font-semibold text-white">Configuration Required</h3>
-        <p class="mt-2 text-sm text-gray-400">
-          Please configure your Audiobookshelf server connection in settings
-          first.
-        </p>
+    <InfoBox v-if="!isConfigured" variant="warning">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-semibold text-amber-100">Configuration Required</p>
+          <p class="mt-1 text-sm text-amber-200/80">
+            Please configure your Audiobookshelf server connection to view your statistics.
+          </p>
+        </div>
         <router-link
           to="/settings"
-          class="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+          class="shrink-0 ml-4 inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600"
         >
-          <Settings class="h-4 w-4" />
           Go to Settings
         </router-link>
       </div>
-    </div>
+    </InfoBox>
 
     <template v-else>
       <div
@@ -341,9 +338,8 @@ import {
   DeviceList,
   StatsConfig as StatsConfigComponent,
 } from "../components";
+import { PageHeader, InfoBox } from "@/shared/components";
 import {
-  AlertTriangle,
-  Settings,
   SlidersHorizontal,
   Calendar,
   Loader2,

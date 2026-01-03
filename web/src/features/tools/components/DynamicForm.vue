@@ -77,7 +77,7 @@
 
         <div v-else-if="field.type === 'stringArray'" class="space-y-2">
           <div
-            v-for="(item, index) in getArrayValue(field.name)"
+            v-for="(_item, index) in getArrayValue(field.name)"
             :key="index"
             class="flex items-center gap-2"
           >

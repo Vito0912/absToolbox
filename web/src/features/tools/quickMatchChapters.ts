@@ -22,7 +22,7 @@ async function searchForBook(title: string, author: string, provider: string) {
     const encodedTitle = encodeURIComponent(title);
     const encodedAuthor = encodeURIComponent(author);
     const response = await get(
-      `/api/search/books?title=${encodedTitle}&author=${encodedAuthor}&provider=${provider}`,
+      `/api/search/books?title=${encodedTitle}&author=${encodedAuthor}&provider=${provider}`
     );
     return response.data || [];
   } catch (error) {
@@ -44,7 +44,7 @@ async function fetchBookDetails(bookId: string) {
 async function fetchChaptersByAsin(asin: string, region: string) {
   try {
     const response = await get(
-      `/api/search/chapters?asin=${asin}&region=${region}`,
+      `/api/search/chapters?asin=${asin}&region=${region}`
     );
     if (response.data.error) {
       throw new Error(response.data.error);
@@ -100,7 +100,7 @@ function createChaptersFromAsin(chapters: any[], bookDuration: number) {
     const start = chapter.startOffsetMs / 1000;
     const end = Math.min(
       (chapter.startOffsetMs + chapter.lengthMs) / 1000,
-      bookDuration,
+      bookDuration
     );
 
     if (start >= bookDuration) {
@@ -120,7 +120,7 @@ function createChaptersFromAsin(chapters: any[], bookDuration: number) {
 }
 
 export async function executeMatchAudiobookChapters(
-  formData: Record<string, any>,
+  formData: Record<string, any>
 ): Promise<ToolResult> {
   try {
     const {
@@ -145,7 +145,6 @@ export async function executeMatchAudiobookChapters(
       const bookId = item.id;
       const metadata = item.media.metadata;
       const title = metadata.title || "Unknown Title";
-      const subtitle = metadata.subtitle || "";
       const authors = metadata.authorName || "Unknown Author";
 
       bookInfo[bookId] = {
@@ -197,7 +196,7 @@ export async function executeMatchAudiobookChapters(
           const bookDetails = await fetchBookDetails(bookId);
           if (!bookDetails) {
             addLog(
-              `Error fetching book "${title}": Failed to get book details`,
+              `Error fetching book "${title}": Failed to get book details`
             );
             bookInfo[bookId].comment = "Tracks retrieval failed";
             continue;
@@ -206,7 +205,7 @@ export async function executeMatchAudiobookChapters(
           const audioFiles = bookDetails.media.audioFiles || [];
           if (audioFiles.length <= 1) {
             addLog(
-              `Error using tracks as chapters for "${title}" (No or 1 track found).`,
+              `Error using tracks as chapters for "${title}" (No or 1 track found).`
             );
             bookInfo[bookId].comment = "Tracks retrieval failed";
             continue;
@@ -220,18 +219,18 @@ export async function executeMatchAudiobookChapters(
             Math.abs(currentChaptersNum - tracksNum) > chapterThreshold
           ) {
             addLog(
-              `Chapters are missing or incorrect for "${title}" (Current num: ${currentChaptersNum}, Tracks num: ${tracksNum}). Updating...`,
+              `Chapters are missing or incorrect for "${title}" (Current num: ${currentChaptersNum}, Tracks num: ${tracksNum}). Updating...`
             );
 
             const newChapters = createChaptersFromTracks(
               audioFiles,
-              item.media.duration,
+              item.media.duration
             );
             const success = await updateBookChapters(bookId, newChapters);
 
             if (success) {
               addLog(
-                `Chapters updated successfully for "${title}" (Using tracks!).`,
+                `Chapters updated successfully for "${title}" (Using tracks!).`
               );
               bookInfo[bookId].comment = "Tracks used as chapters";
               bookInfo[bookId].status = "FINISHED";
@@ -247,7 +246,7 @@ export async function executeMatchAudiobookChapters(
           continue;
         } else {
           addLog(
-            `Skipping book "${title}" (No ASIN found and Tracks not used as source).`,
+            `Skipping book "${title}" (No ASIN found and Tracks not used as source).`
           );
           bookInfo[bookId].comment = "ASIN retrieval failed";
           continue;
@@ -283,7 +282,7 @@ export async function executeMatchAudiobookChapters(
 
         const newChapters = createChaptersFromAsin(
           chapters,
-          item.media.duration,
+          item.media.duration
         );
         const success = await updateBookChapters(bookId, newChapters);
 
@@ -307,13 +306,13 @@ export async function executeMatchAudiobookChapters(
     }
 
     addLog("\n--- Summary ---");
-    for (const [bookId, info] of Object.entries(bookInfo)) {
+    for (const [_bookId, info] of Object.entries(bookInfo)) {
       addLog(`${info.title} (${info.status}): ${info.comment}`);
       addLog("-".repeat(50));
     }
 
     addLog("\n--- Failed Books ---");
-    for (const [bookId, info] of Object.entries(bookInfo)) {
+    for (const [_bookId, info] of Object.entries(bookInfo)) {
       if (info.status !== "FINISHED") {
         addLog(`${info.title} (${info.status}): ${info.comment}`);
         addLog("-".repeat(50));

@@ -1,11 +1,9 @@
 <template>
-  <div class="space-y-8">
-    <div class="text-center space-y-2">
-      <h1 class="text-3xl font-semibold tracking-tight">
-        Audiobookshelf Toolbox
-      </h1>
-      <p class="text-gray-400 text-sm">Select a section to get started</p>
-    </div>
+  <div class="space-y-6">
+    <PageHeader
+      title="Audiobookshelf Toolbox"
+      subtitle="Select a section to get started"
+    />
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <router-link
@@ -33,6 +31,8 @@
 </template>
 
 <script setup lang="ts">
+import { PageHeader } from "@/shared/components";
+
 const sections = [
   {
     path: "/tools",

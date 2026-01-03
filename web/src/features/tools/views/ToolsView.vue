@@ -1,15 +1,9 @@
 <template>
   <div class="space-y-6">
-    <div class="text-center space-y-2">
-      <h1 class="text-3xl font-semibold tracking-tight">
-        {{ selectedTool?.title || "Tool" }}
-      </h1>
-      <p
-        class="text-gray-400 text-sm"
-        v-if="selectedTool?.description"
-        v-html="selectedTool?.description"
-      />
-    </div>
+    <PageHeader
+      :title="selectedTool?.title || 'Tool'"
+      :subtitle="selectedTool?.description"
+    />
 
     <ToolWarning />
 
@@ -23,6 +17,7 @@
 import { computed } from "vue";
 import { toolDefinitions } from "../toolDefinitions";
 import { DynamicForm, ToolWarning } from "../components";
+import { PageHeader } from "@/shared/components";
 import { useRoute } from "vue-router";
 
 const route = useRoute();

@@ -28,6 +28,7 @@ export interface ToolDefinition {
   id: string;
   title: string;
   description: string;
+  group?: string;
   longDescription?: string;
   fields: ToolField[];
   enabled?: boolean;

@@ -1,5 +1,4 @@
 import type { ClientInfo } from "./types";
-import { factory } from "typescript";
 
 export const projects: ClientInfo[] = [
   {

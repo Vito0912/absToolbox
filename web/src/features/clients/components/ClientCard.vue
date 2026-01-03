@@ -112,7 +112,7 @@
             :class="getNoteBackgroundClass(note.color)"
           >
             <div
-              class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+              class="w-2 h-2 rounded-full mt-1.5 shrink-0"
               :class="getNoteColorClass(note.color)"
             ></div>
             <p class="text-xs text-gray-300">{{ note.text }}</p>

@@ -12,6 +12,7 @@ import { executeListenDateUpdater } from "./listenDateUpdater";
 export const toolDefinitions: ToolDefinition[] = [
   {
     id: "split-genres",
+    group: "Metadata",
     title: "Split Genres",
     description:
       "Separate combined genres into individual entries throughout your library.",
@@ -62,6 +63,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "delete-listening-sessions",
+    group: "Stats",
     title: "Delete Large Listening Sessions",
     description:
       "Deletes all listening sessions that exceed a specified duration.",
@@ -95,6 +97,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "match-audiobook-chapters",
+    group: "Metadata",
     title: "Match Audiobook Chapters",
     description:
       "Automatically matches chapters for audiobooks using the AudiobookShelf API.",
@@ -178,6 +181,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "delete-orphaned-authors",
+    group: "Metadata",
     title: "Remove Empty Authors",
     description:
       "Removes all authors who do not have any books associated with them in your libraries.",
@@ -195,6 +199,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "force-metadata",
+    group: "Metadata",
     title: "Force Metadata",
     description:
       "Adds a tag to all books in the selected library to force a metadata refresh on the next load.",
@@ -212,6 +217,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "migrate-server",
+    group: "Admin",
     title: "Migrate Server",
     description:
       "Migrates all server data to a new server.<div class='text-sm text-red-500'>There are known issues with marking podcasts episodes as played. Days and Session are still copied</div>",
@@ -247,6 +253,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "rename-series",
+    group: "Metadata",
     title: "Rename Series",
     description: "Renames a book series in the selected library.",
     fields: [
@@ -276,6 +283,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "path-tag-genre-updater",
+    group: "Metadata",
     title: "Path Tag and Genre Updater",
     description:
       "Updates or removes tags and genres for based on file path patterns. Inspiration taken from <a href='https://github.com/bengalih/ABS-scripts/blob/main/ApTaGu.md' target='_blank' class='text-blue-500 hover:underline'>ApTaGu</a>.",
@@ -317,6 +325,7 @@ export const toolDefinitions: ToolDefinition[] = [
   },
   {
     id: "listen-date-updater",
+    group: "Stats",
     title: "Listen Date Updater",
     description: "Updates the listen dates for specific library items.",
     fields: [

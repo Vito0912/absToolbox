@@ -4,7 +4,7 @@ import type { ToolResult } from "./types";
 async function getAllBooksForGenre(
   genre: string,
   libraryId: string,
-  type: string,
+  type: string
 ) {
   const { get, addLog } = useApi();
   try {
@@ -14,18 +14,18 @@ async function getAllBooksForGenre(
       .replace(/=+$/, "");
 
     const response = await get(
-      `/api/libraries/${libraryId}/items?filter=${type}.${base64Genre}`,
+      `/api/libraries/${libraryId}/items?filter=${type}.${base64Genre}`
     );
     const bookCount = response.data.results.length;
     addLog(
-      `Found ${bookCount} books for genre "${genre}" in library ${libraryId}`,
+      `Found ${bookCount} books for genre "${genre}" in library ${libraryId}`
     );
     return response.data.results || [];
   } catch (error) {
     addLog(`Error fetching books for genre "${genre}" in library ${libraryId}`);
     console.error(
       `Error fetching books for genre ${genre} in library ${libraryId}:`,
-      error,
+      error
     );
     return [];
   }
@@ -35,7 +35,7 @@ async function appendGenreToBook(
   book: any,
   genre: string,
   delimiter: string,
-  type: "genres" | "tags",
+  type: "genres" | "tags"
 ) {
   const { patch, addLog } = useApi();
   const bookId = book.id;
@@ -69,9 +69,9 @@ async function appendGenreToBook(
 }
 
 export async function executeSplitGenres(
-  formData: Record<string, any>,
+  formData: Record<string, any>
 ): Promise<ToolResult> {
-  const { get, post, addLog } = useApi();
+  const { get, addLog } = useApi();
 
   try {
     let { type, libraryIds, delimiter, delimiterOverride } = formData;
@@ -129,7 +129,9 @@ export async function executeSplitGenres(
         }
       }
       addLog(
-        `Processed ${bookTitlesOverall.length} books for genre ${genre}: ${bookTitlesOverall.join(", ")}`,
+        `Processed ${
+          bookTitlesOverall.length
+        } books for genre ${genre}: ${bookTitlesOverall.join(", ")}`
       );
     }
 

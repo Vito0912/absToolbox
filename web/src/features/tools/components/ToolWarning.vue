@@ -13,9 +13,6 @@
       to create a backup before proceeding.
     </p>
   </InfoBox>
-  <InfoBox v-else variant="danger">
-    <p>Please configure the server URL in the settings.</p>
-  </InfoBox>
 </template>
 
 <script setup lang="ts">

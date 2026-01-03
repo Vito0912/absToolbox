@@ -22,54 +22,52 @@
           </router-link>
         </h1>
 
-        <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-2">
           <router-link
-            to="/"
+            v-for="link in links"
+            :key="link.to"
+            :to="link.to"
             class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-            exact-active-class="!text-blue-300 bg-blue-500/10"
+            :active-class="link.to !== '/' ? '!text-blue-300 bg-blue-500/10' : undefined"
+            :exact-active-class="link.to === '/' ? '!text-blue-300 bg-blue-500/10' : undefined"
           >
-            Home
+            {{ link.text }}
           </router-link>
-          <router-link
-            to="/tools"
-            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-blue-300 bg-blue-500/10"
+        </div>
+
+        <div class="flex md:hidden">
+          <button
+            @click="isMenuOpen = !isMenuOpen"
+            type="button"
+            class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            aria-controls="mobile-menu"
+            :aria-expanded="isMenuOpen"
           >
-            Tools
-          </router-link>
+            <span class="sr-only">Open main menu</span>
+            <Menu v-if="!isMenuOpen" />
+            <X v-else />
+          </button>
+        </div>
+      </div>
+
+      <div v-show="isMenuOpen" class="md:hidden" id="mobile-menu">
+        <div class="space-y-1 px-2 pb-3 pt-2">
           <router-link
-            to="/stats"
-            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-blue-300 bg-blue-500/10"
+            v-for="link in links"
+            :key="link.to"
+            :to="link.to"
+            class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            :active-class="link.to !== '/' ? 'bg-gray-900 text-white' : undefined"
+            :exact-active-class="link.to === '/' ? 'bg-gray-900 text-white' : undefined"
+            @click="isMenuOpen = false"
           >
-            Stats
-          </router-link>
-          <router-link
-            to="/projects"
-            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-blue-300 bg-blue-500/10"
-          >
-            Projects
-          </router-link>
-          <router-link
-            to="/clients"
-            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-blue-300 bg-blue-500/10"
-          >
-            Clients
-          </router-link>
-          <router-link
-            to="/settings"
-            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-            active-class="!text-blue-300 bg-blue-500/10"
-          >
-            Settings
+            {{ link.text }}
           </router-link>
         </div>
       </div>
     </nav>
 
-    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex-1">
+    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 flex-1 w-full">
       <router-view />
     </main>
 
@@ -79,4 +77,18 @@
 
 <script setup lang="ts">
 import Footer from "@/shared/components/Footer.vue";
+import { Menu, X } from "lucide-vue-next";
+
+import { ref } from "vue";
+
+const isMenuOpen = ref(false);
+
+const links = [
+  { to: "/", text: "Home" },
+  { to: "/tools", text: "Tools" },
+  { to: "/stats", text: "Stats" },
+  { to: "/projects", text: "Projects" },
+  { to: "/clients", text: "Clients" },
+  { to: "/settings", text: "Settings" },
+];
 </script>

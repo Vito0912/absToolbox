@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useApi } from "@/shared/composables/useApi";
 import type {
   ListeningSession,
@@ -27,17 +27,17 @@ export function useStats() {
   };
 
   const loadAllSessions = async (
-    userId: string,
+    userId: string
   ): Promise<ListeningSession[]> => {
     loadingProgress.value.status = "Loading listening sessions...";
     const response = await get(
-      `/api/users/${userId}/listening-sessions?page=0&itemsPerPage=1000000`,
+      `/api/users/${userId}/listening-sessions?page=0&itemsPerPage=1000000`
     );
     return response.data.sessions || [];
   };
 
   const loadLibraryItemsBatch = async (
-    libraryItemIds: string[],
+    libraryItemIds: string[]
   ): Promise<Map<string, LibraryItem>> => {
     const itemMap = new Map<string, LibraryItem>();
     const uniqueIds = [...new Set(libraryItemIds)];
@@ -47,7 +47,7 @@ export function useStats() {
       const batch = uniqueIds.slice(i, i + batchSize);
       loadingProgress.value.status = `Loading book details... (${Math.min(
         i + batchSize,
-        uniqueIds.length,
+        uniqueIds.length
       )}/${uniqueIds.length})`;
       loadingProgress.value.current = Math.min(i + batchSize, uniqueIds.length);
       loadingProgress.value.total = uniqueIds.length;
@@ -74,7 +74,7 @@ export function useStats() {
   const filterSessionsByDate = (
     allSessions: ListeningSession[],
     startDate: string,
-    endDate: string,
+    endDate: string
   ): ListeningSession[] => {
     const start = new Date(startDate).getTime();
     const end = new Date(endDate).setHours(23, 59, 59, 999);
@@ -89,17 +89,17 @@ export function useStats() {
     allSessions: ListeningSession[],
     user: UserData,
     cfg: StatsConfig,
-    items: Map<string, LibraryItem> = new Map(),
+    items: Map<string, LibraryItem> = new Map()
   ): Promise<ProcessedStats> => {
     const filteredSessions = filterSessionsByDate(
       allSessions,
       cfg.startDate,
-      cfg.endDate,
+      cfg.endDate
     );
 
     const totalListeningTime = filteredSessions.reduce(
       (sum, s) => sum + s.timeListening,
-      0,
+      0
     );
     const totalSessions = filteredSessions.length;
 
@@ -108,8 +108,8 @@ export function useStats() {
     const daysDiff = Math.max(
       1,
       Math.ceil(
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-      ),
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      )
     );
     const dailyAverage = totalListeningTime / daysDiff;
 
@@ -117,17 +117,17 @@ export function useStats() {
     const last7Days = filterSessionsByDate(
       allSessions,
       new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-      new Date().toISOString().split("T")[0],
+      new Date().toISOString().split("T")[0]
     );
     const last30Days = filterSessionsByDate(
       allSessions,
       new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-      new Date().toISOString().split("T")[0],
+      new Date().toISOString().split("T")[0]
     );
     const last365Days = filterSessionsByDate(
       allSessions,
       new Date(now - 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-      new Date().toISOString().split("T")[0],
+      new Date().toISOString().split("T")[0]
     );
 
     const dailyAverageLast7 =
@@ -140,7 +140,7 @@ export function useStats() {
     const allTimeStart = Math.min(...allSessions.map((s) => s.startedAt));
     const allTimeDays = Math.max(
       1,
-      Math.ceil((now - allTimeStart) / (1000 * 60 * 60 * 24)),
+      Math.ceil((now - allTimeStart) / (1000 * 60 * 60 * 24))
     );
     const dailyAverageAllTime =
       allSessions.reduce((sum, s) => sum + s.timeListening, 0) / allTimeDays;
@@ -167,7 +167,7 @@ export function useStats() {
     }).length;
 
     const bookmarksCreated = user.bookmarks.filter(
-      (b) => b.createdAt >= dateRangeStart && b.createdAt <= dateRangeEnd,
+      (b) => b.createdAt >= dateRangeStart && b.createdAt <= dateRangeEnd
     ).length;
 
     const genreMap = new Map<string, number>();
@@ -202,7 +202,7 @@ export function useStats() {
         if (genre) {
           genreMap.set(
             genre,
-            (genreMap.get(genre) || 0) + session.timeListening,
+            (genreMap.get(genre) || 0) + session.timeListening
           );
         }
       }
@@ -212,7 +212,7 @@ export function useStats() {
         if (author?.name) {
           authorMap.set(
             author.name,
-            (authorMap.get(author.name) || 0) + session.timeListening,
+            (authorMap.get(author.name) || 0) + session.timeListening
           );
         }
       }
@@ -222,7 +222,7 @@ export function useStats() {
         if (narrator) {
           narratorMap.set(
             narrator,
-            (narratorMap.get(narrator) || 0) + session.timeListening,
+            (narratorMap.get(narrator) || 0) + session.timeListening
           );
         }
       }
@@ -232,7 +232,7 @@ export function useStats() {
         if (s?.name) {
           seriesMap.set(
             s.name,
-            (seriesMap.get(s.name) || 0) + session.timeListening,
+            (seriesMap.get(s.name) || 0) + session.timeListening
           );
         }
       }
@@ -278,7 +278,7 @@ export function useStats() {
       if (session.dayOfWeek) {
         dayMap.set(
           session.dayOfWeek,
-          (dayMap.get(session.dayOfWeek) || 0) + session.timeListening,
+          (dayMap.get(session.dayOfWeek) || 0) + session.timeListening
         );
       }
 
@@ -306,28 +306,28 @@ export function useStats() {
       items.sort((a, b) => b.time - a.time);
 
     const topGenres = sortByTime(
-      Array.from(genreMap.entries()).map(([name, time]) => ({ name, time })),
+      Array.from(genreMap.entries()).map(([name, time]) => ({ name, time }))
     ).slice(0, cfg.topItemsCount);
 
     const topAuthors = sortByTime(
-      Array.from(authorMap.entries()).map(([name, time]) => ({ name, time })),
+      Array.from(authorMap.entries()).map(([name, time]) => ({ name, time }))
     ).slice(0, cfg.topItemsCount);
 
     const topNarrators = sortByTime(
-      Array.from(narratorMap.entries()).map(([name, time]) => ({ name, time })),
+      Array.from(narratorMap.entries()).map(([name, time]) => ({ name, time }))
     ).slice(0, cfg.topItemsCount);
 
     const topSeries = sortByTime(
-      Array.from(seriesMap.entries()).map(([name, time]) => ({ name, time })),
+      Array.from(seriesMap.entries()).map(([name, time]) => ({ name, time }))
     ).slice(0, cfg.topItemsCount);
 
     const topTags = sortByTime(
-      Array.from(tagMap.entries()).map(([name, time]) => ({ name, time })),
+      Array.from(tagMap.entries()).map(([name, time]) => ({ name, time }))
     ).slice(0, cfg.topItemsCount);
 
     const topBooks = sortByTime(Array.from(bookMap.values())).slice(
       0,
-      cfg.topItemsCount,
+      cfg.topItemsCount
     );
 
     const sortedDays = Array.from(dayMap.entries()).sort((a, b) => b[1] - a[1]);
@@ -336,7 +336,7 @@ export function useStats() {
       : { day: "N/A", time: 0 };
 
     const sortedHours = Array.from(hourMap.entries()).sort(
-      (a, b) => b[1] - a[1],
+      (a, b) => b[1] - a[1]
     );
     const mostActiveTime = sortedHours[0]
       ? { hour: sortedHours[0][0], time: sortedHours[0][1] }
@@ -404,7 +404,7 @@ export function useStats() {
         sessions.value,
         userData.value,
         config.value,
-        libraryItems.value,
+        libraryItems.value
       );
 
       return stats;
@@ -420,11 +420,6 @@ export function useStats() {
   const updateConfig = (newConfig: Partial<StatsConfig>) => {
     config.value = { ...config.value, ...newConfig };
   };
-
-  const isConfigured = computed(() => {
-    const { get } = useApi();
-    return !!get;
-  });
 
   return {
     isLoading,

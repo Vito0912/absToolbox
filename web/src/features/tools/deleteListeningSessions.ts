@@ -16,7 +16,7 @@ async function getAllUsers() {
 async function getListeningSessions(userId: string, itemsPerPage: number) {
   try {
     const response = await get(
-      `/api/users/${userId}/listening-sessions?itemsPerPage=${itemsPerPage}`,
+      `/api/users/${userId}/listening-sessions?itemsPerPage=${itemsPerPage}`
     );
     return response.data.sessions || [];
   } catch (error) {
@@ -36,7 +36,7 @@ async function deleteSession(sessionId: string) {
 }
 
 export async function executeDeleteListeningSessions(
-  formData: Record<string, any>,
+  formData: Record<string, any>
 ): Promise<ToolResult> {
   try {
     const { userIds = [], threshold, sessionsToFetch } = formData;
@@ -63,7 +63,7 @@ export async function executeDeleteListeningSessions(
         if (sessionDuration > threshold) {
           sessionTimeDeleted += sessionDuration;
           addLog(
-            `Session greater than threshold: ${session.id} ${sessionDuration} hours`,
+            `Session greater than threshold: ${session.id} ${sessionDuration} hours`
           );
           sessionsToDelete.push([session.id, sessionDuration]);
         } else {
@@ -72,10 +72,14 @@ export async function executeDeleteListeningSessions(
       }
 
       addLog(
-        `User ${userId} has ${sessionsToDelete.length} sessions to delete with a total duration of ${sessionTimeDeleted.toFixed(2)} hours. (${sessionTimeNotDeleted.toFixed(2)} hours not deleted)`,
+        `User ${userId} has ${
+          sessionsToDelete.length
+        } sessions to delete with a total duration of ${sessionTimeDeleted.toFixed(
+          2
+        )} hours. (${sessionTimeNotDeleted.toFixed(2)} hours not deleted)`
       );
 
-      for (const [sessionId, duration] of sessionsToDelete) {
+      for (const [sessionId, _duration] of sessionsToDelete) {
         const success = await deleteSession(sessionId);
         if (success) {
           addLog(`Deleted session ${sessionId}`);
