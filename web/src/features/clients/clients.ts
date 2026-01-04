@@ -626,23 +626,19 @@ export const projects: ClientInfo[] = [
     notes: [
       {
         color: "green",
-        text: "Is the only free third party iOS client for Audiobookshelf. App is in TestFlight",
-      },
-      {
-        color: "yellow",
-        text: "Library switching needs an app restart. Performance can be slow with bigger libraries, especially on the personalized page.",
+        text: "Is the only free third party iOS client for Audiobookshelf.",
       },
     ],
     features: {
       tested: {
         wasTested: true,
-        date: "2025-09-28",
+        date: "2026-01-04",
         usedApiCorrectly: 5,
       },
       ebooks: {
-        available: false,
-        ePubSupport: false,
-        pdfSupport: false,
+        available: true,
+        ePubSupport: true,
+        pdfSupport: true,
         annotations: false,
       },
       audiobooks: true,
@@ -651,7 +647,7 @@ export const projects: ClientInfo[] = [
       autoqueue: false,
       sleepTimer: true,
       chapters: true,
-      playHistory: false,
+      playHistory: true,
       shakeToRewind: false,
       downloads: true,
       customHeaders: true,
@@ -661,9 +657,9 @@ export const projects: ClientInfo[] = [
         available: true,
         mobileRedirectURI: "audiobooth://oauth",
       },
-      carSupport: undefined,
-      widgets: false,
-      bookmarks: false,
+      carSupport: true,
+      widgets: true,
+      bookmarks: true,
     },
   },
   {
