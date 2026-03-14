@@ -20,7 +20,8 @@
     "lucide-vue-next": "^0.555.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.18",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "@vito0912/web": "github:Vito0912/web"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
