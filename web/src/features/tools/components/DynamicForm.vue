@@ -423,7 +423,7 @@ const itemsError = reactive<Record<string, string | null>>({});
 const selectedLibrary = reactive<Record<string, string>>({});
 const itemSearch = reactive<Record<string, string>>({});
 
-const { get, executionLogs, startExecution, stopExecution, getElapsedTime } =
+const { absClient, executionLogs, startExecution, stopExecution, getElapsedTime } =
   useApi();
 
 const elapsedTime = ref("0:00");
@@ -453,7 +453,7 @@ const loadLibraries = async (fieldName: string) => {
   librariesError[fieldName] = null;
 
   try {
-    const response = (await get("/api/libraries")).data;
+    const response = await absClient.libraries.list();
     if (response.libraries) {
       libraries[fieldName] = response.libraries.sort(
         (a: Library, b: Library) => a.displayOrder - b.displayOrder,
@@ -487,7 +487,7 @@ const loadLibraryItems = async (fieldName: string, libraryId: string) => {
   itemsLoading[fieldName] = true;
   itemsError[fieldName] = null;
   try {
-    const response = (await get(`/api/libraries/${libraryId}/items`)).data;
+    const response = await absClient.libraries.listItems(libraryId);
     if (response.results) {
       items[fieldName] = response.results;
     }

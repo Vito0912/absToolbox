@@ -1,30 +1,14 @@
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
+import {
+  AbsSessionLocalSyncRequest,
+  AbsSessionsResponse,
+} from "@vito0912/abs-ts-sdk/types";
 
-const { get, post, del, addLog } = useApi();
-
-interface Session {
-  id: string;
-  userId: string;
-  libraryId: string;
-  libraryItemId: string;
-  timeListening: number;
-  startTime: number;
-  currentTime: number;
-  startedAt: number;
-  updatedAt: number;
-}
-
-interface SessionsResponse {
-  total: number;
-  numPages: number;
-  page: number;
-  itemsPerPage: number;
-  sessions: Session[];
-}
+const { absClient, addLog } = useApi();
 
 export async function executeUpdateListeningSessions(
-  formData: Record<string, any>
+  formData: Record<string, any>,
 ): Promise<ToolResult> {
   try {
     const { userId } = formData;
@@ -56,16 +40,19 @@ export async function executeUpdateListeningSessions(
 
 export async function fetchUserSessions(
   userId: string,
-  page: number = 0
-): Promise<SessionsResponse> {
-  const response = await get(
-    `/api/users/${userId}/listening-sessions?page=${page}&itemsPerPage=10`
-  );
-  return response.data;
+  page: number = 0,
+): Promise<AbsSessionsResponse> {
+  return await absClient.sessions.list({
+    page: page,
+    user: userId,
+    desc: true,
+  });
 }
 
-export async function updateSession(session: Session): Promise<void> {
-  await del(`/api/sessions/${session.id}`);
+export async function updateSession(
+  session: AbsSessionLocalSyncRequest,
+): Promise<void> {
+  await absClient.sessions.delete(session.id);
   await new Promise((resolve) => setTimeout(resolve, 100));
-  await post(`/api/session/local`, session);
+  await absClient.sessions.syncLocal(session);
 }

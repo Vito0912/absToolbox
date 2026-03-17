@@ -1,14 +1,14 @@
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
 
-const { get, post, addLog } = useApi();
+const { absClient, addLog } = useApi();
 
 export async function executePathTagUpdater(
   formData: Record<string, any>,
 ): Promise<ToolResult> {
   const { libraryId, ruleSets, dryRun, type } = formData;
 
-  const books = (await get(`/api/libraries/${libraryId}/items`)).data.results;
+  const books = (await absClient.libraries.listItems(libraryId)).results || [];
 
   for (const ruleSet of ruleSets) {
     const payload = [];
@@ -52,7 +52,7 @@ export async function executePathTagUpdater(
 
     if (payload.length > 0 && !dryRun) {
       try {
-        await post("/api/items/batch/update", [...payload]);
+        await absClient.libraryItems.batchUpdate([...payload]);
         addLog(`Updated ${payload.length} books for rule "${ruleSet}"`);
       } catch (error: unknown) {
         throw new Error(
@@ -63,9 +63,11 @@ export async function executePathTagUpdater(
     if (dryRun) {
       for (const book of payload) {
         const fullBook = books.find((b: any) => b.id === book.id);
-        addLog(
-          `Dry run: would update book ${fullBook.media.metadata.title} with tag "${tag}" based on path "${fullBook.path}"`,
-        );
+        if (fullBook) {
+          addLog(
+            `Dry run: would update book ${fullBook.media.metadata.title} with tag "${tag}" based on path "${fullBook.path}"`,
+          );
+        }
       }
     }
     if (payload.length === 0) {

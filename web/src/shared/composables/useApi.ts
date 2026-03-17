@@ -1,7 +1,6 @@
-import axios from "axios";
-import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { computed, ref } from "vue";
 import { useSettingsStore } from "@/shared/settings";
+import { createAbsClient } from "@vito0912/abs-ts-sdk";
 
 const executionLogs = ref<string[]>([]);
 const executionStartTime = ref<number | null>(null);
@@ -10,56 +9,60 @@ const isExecuting = ref(false);
 export function useApi() {
   const settingsStore = useSettingsStore();
 
-  const apiClient = computed((): AxiosInstance => {
-    const client = axios.create({
-      baseURL: settingsStore.settings.serverUrl,
-      timeout: 600000, // 10 minutes for now
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  type AbsClient = ReturnType<typeof createAbsClient>;
 
-    client.interceptors.request.use((config) => {
-      if (settingsStore.settings.authMethod === "token") {
-        config.headers.Authorization = `Bearer ${settingsStore.settings.apiToken}`;
-      }
-      return config;
-    });
+  let cachedClient: AbsClient | null = null;
+  let cachedBaseUrl = "";
+  let cachedAccessToken = "";
 
-    client.interceptors.response.use(
-      (response) => response,
-      (error) => {
-        console.error("API Error:", error);
-        return Promise.reject(error);
-      },
-    );
+  const getAbsClient = (): AbsClient => {
+    const baseUrl = settingsStore.settings.serverUrl.trim();
+    const accessToken = settingsStore.settings.apiToken.trim();
 
-    return client;
+    if (!baseUrl) {
+      throw new Error("A valid ABS server URL is required.");
+    }
+
+    try {
+      new URL(baseUrl);
+    } catch {
+      throw new Error("A valid ABS server URL is required.");
+    }
+
+    if (
+      !cachedClient ||
+      cachedBaseUrl !== baseUrl ||
+      cachedAccessToken !== accessToken
+    ) {
+      cachedClient = createAbsClient({
+        authTokens: {
+          accessToken,
+        },
+        baseUrl,
+      });
+      cachedBaseUrl = baseUrl;
+      cachedAccessToken = accessToken;
+    }
+
+    return cachedClient;
+  };
+
+  const absClient = new Proxy({} as AbsClient, {
+    get(_target, property, receiver) {
+      const client = getAbsClient();
+      const value = Reflect.get(client as object, property, receiver);
+
+      return typeof value === "function" ? value.bind(client) : value;
+    },
   });
 
-  const get = (url: string, config?: AxiosRequestConfig) => {
-    return apiClient.value.get(url, config);
-  };
-
-  const post = (url: string, data?: any, config?: AxiosRequestConfig) => {
-    return apiClient.value.post(url, data, config);
-  };
-
-  const put = (url: string, data?: any, config?: AxiosRequestConfig) => {
-    return apiClient.value.put(url, data, config);
-  };
-
-  const patch = (url: string, data?: any, config?: AxiosRequestConfig) => {
-    return apiClient.value.patch(url, data, config);
-  };
-
-  const del = (url: string, config?: AxiosRequestConfig) => {
-    return apiClient.value.delete(url, config);
-  };
-
   const baseDomain = computed(() => {
-    const url = new URL(settingsStore.settings.serverUrl);
-    return url;
+    try {
+      const url = new URL(settingsStore.settings.serverUrl);
+      return url;
+    } catch {
+      return null;
+    }
   });
 
   const startExecution = () => {
@@ -92,12 +95,7 @@ export function useApi() {
   };
 
   return {
-    apiClient,
-    get,
-    post,
-    put,
-    patch,
-    del,
+    absClient,
     baseDomain,
     executionLogs,
     isExecuting,

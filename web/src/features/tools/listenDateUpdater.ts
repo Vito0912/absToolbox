@@ -1,10 +1,10 @@
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
 
-const { get, patch, del, addLog } = useApi();
+const { absClient, addLog } = useApi();
 
 export async function executeListenDateUpdater(
-  formData: Record<string, any>
+  formData: Record<string, any>,
 ): Promise<ToolResult> {
   try {
     const { libraryItemIds, startDate, finishedDate, useLastListenDate } =
@@ -14,7 +14,7 @@ export async function executeListenDateUpdater(
       const yyyymmdd = dateString.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
       if (!yyyymmdd) {
         throw new Error(
-          `Invalid date format: ${dateString}. Expected YYYY-MM-DD.`
+          `Invalid date format: ${dateString}. Expected YYYY-MM-DD.`,
         );
       }
 
@@ -29,7 +29,7 @@ export async function executeListenDateUpdater(
     if (!useLastListenDate && !finishedDate) {
       finishedDateObj = new Date();
       addLog(
-        "No finished date provided and not using last listen date - using current date"
+        "No finished date provided and not using last listen date - using current date",
       );
     } else if (finishedDate && !useLastListenDate) {
       finishedDateObj = parseDateToUTC(finishedDate);
@@ -43,11 +43,11 @@ export async function executeListenDateUpdater(
       addLog(
         `Setting listen dates - Started: ${startDateObj.toISOString()} for ${
           libraryItemIds.length
-        } items`
+        } items`,
       );
     } else {
       addLog(
-        `No start date provided - will use existing progress start date or finished date for ${libraryItemIds.length} items`
+        `No start date provided - will use existing progress start date or finished date for ${libraryItemIds.length} items`,
       );
     }
 
@@ -66,15 +66,12 @@ export async function executeListenDateUpdater(
       if (useLastListenDate) {
         try {
           addLog(`Fetching listening sessions for item ${id}...`);
-          const sessionsResponse = await get(
-            `/api/me/item/listening-sessions/${id}/null?page=0&itemsPerPage=1`
-          );
+          const session = await absClient.users.itemListeningSessions(id, {
+            itemsPerPage: 1,
+          });
 
-          if (
-            sessionsResponse.data?.sessions &&
-            sessionsResponse.data.sessions.length > 0
-          ) {
-            const lastSession = sessionsResponse.data.sessions[0];
+          if (session.total > 0) {
+            const lastSession = session.sessions[0];
             const lastListenTimestamp = lastSession.updatedAt;
             itemFinishedDate = new Date(lastListenTimestamp);
 
@@ -82,17 +79,17 @@ export async function executeListenDateUpdater(
             addLog(`Last listen date for item ${id}: ${lastListenDateString}`);
             addLog(
               `  Session updated at: ${lastListenTimestamp} (${new Date(
-                lastListenTimestamp
-              ).toLocaleString()})`
+                lastListenTimestamp,
+              ).toLocaleString()})`,
             );
           } else {
             addLog(
-              `Warning: No listening sessions found for item ${id}, using fallback date`
+              `Warning: No listening sessions found for item ${id}, using fallback date`,
             );
           }
         } catch (error: any) {
           addLog(
-            `Warning: Could not fetch listening sessions for item ${id}: ${error.message}`
+            `Warning: Could not fetch listening sessions for item ${id}: ${error.message}`,
           );
           addLog(`Using fallback finished date for item ${id}`);
         }
@@ -101,47 +98,38 @@ export async function executeListenDateUpdater(
       // Get existing progress to determine start date (if not provided) and for deletion
       let existingProgressStartDate: Date | null = null;
       try {
-        const progressResponse = await get(`/api/me/progress/${id}`);
-        if (progressResponse.data?.id) {
-          if (progressResponse.data.startedAt) {
-            existingProgressStartDate = new Date(
-              progressResponse.data.startedAt
-            );
+        const progressData = await absClient.users.getProgress(id);
+        if (progressData.id) {
+          if (progressData.startedAt) {
+            existingProgressStartDate = new Date(progressData.startedAt);
             addLog(
-              `Found existing progress with start date for item ${id}: ${existingProgressStartDate.toISOString()}`
+              `Found existing progress with start date for item ${id}: ${existingProgressStartDate.toISOString()}`,
             );
           }
           // Delete using the progress ID (not library item ID)
-          await del(`/api/me/progress/${progressResponse.data.id}`);
+          await absClient.users.deleteProgress(progressData.id);
           addLog(`Deleted existing progress for item ${id}`);
           // Wait a moment for delete to complete
           await new Promise((resolve) => setTimeout(resolve, 500));
         }
-      } catch (error: any) {
-        // 404 means no progress exists, which is fine - continue to create new progress
-        if (error.response?.status !== 404) {
-          addLog(
-            `Warning: Could not check/delete progress for item ${id}: ${error.message}`
-          );
-        }
-      }
+      } catch (error: any) {}
 
       if (!itemStartDate) {
         if (existingProgressStartDate) {
           itemStartDate = existingProgressStartDate;
           addLog(
-            `Using existing progress start date for item ${id}: ${itemStartDate.toISOString()}`
+            `Using existing progress start date for item ${id}: ${itemStartDate.toISOString()}`,
           );
         } else {
           itemStartDate = itemFinishedDate;
           addLog(
-            `No existing progress found, using finished date as start date for item ${id}: ${itemStartDate.toISOString()}`
+            `No existing progress found, using finished date as start date for item ${id}: ${itemStartDate.toISOString()}`,
           );
         }
       }
 
       // Set new progress with dates
-      await patch(`/api/me/progress/${id}`, {
+      await absClient.users.updateProgress(id, {
         createdAt: itemStartDate.getTime(),
         finishedAt: itemFinishedDate.getTime(),
         isFinished: true,

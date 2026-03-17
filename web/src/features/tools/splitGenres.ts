@@ -1,43 +1,47 @@
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
+import {
+  AbsGenresResponse,
+  AbsLibraryItemMinified,
+  AbsTagsResponse,
+} from "@vito0912/abs-ts-sdk";
+
+const { addLog, absClient } = useApi();
 
 async function getAllBooksForGenre(
   genre: string,
   libraryId: string,
-  type: string
-) {
-  const { get, addLog } = useApi();
+  type: string,
+): Promise<AbsLibraryItemMinified[]> {
   try {
-    const base64Genre = btoa(unescape(encodeURIComponent(genre)))
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
+    const books = await absClient.libraries.listItems(libraryId, {
+      filter: {
+        group: type as "genres" | "tags",
+        value: genre,
+      },
+    });
 
-    const response = await get(
-      `/api/libraries/${libraryId}/items?filter=${type}.${base64Genre}`
-    );
-    const bookCount = response.data.results.length;
+    const bookCount = books.results.length;
     addLog(
-      `Found ${bookCount} books for genre "${genre}" in library ${libraryId}`
+      `Found ${bookCount} books for genre "${genre}" in library ${libraryId}`,
     );
-    return response.data.results || [];
+    return books.results || [];
   } catch (error) {
     addLog(`Error fetching books for genre "${genre}" in library ${libraryId}`);
     console.error(
       `Error fetching books for genre ${genre} in library ${libraryId}:`,
-      error
+      error,
     );
     return [];
   }
 }
 
 async function appendGenreToBook(
-  book: any,
+  book: AbsLibraryItemMinified,
   genre: string,
   delimiter: string,
-  type: "genres" | "tags"
+  type: "genres" | "tags",
 ) {
-  const { patch, addLog } = useApi();
   const bookId = book.id;
   const genres = genre.split(delimiter).map((g: string) => g.trim());
 
@@ -49,15 +53,17 @@ async function appendGenreToBook(
       const updated = [
         ...new Set([...current.filter((g: string) => g !== genre), ...genres]),
       ];
-      await patch(`/api/items/${bookId}/media`, {
-        metadata: { genres: updated },
+      await absClient.libraryItems.updateMedia(bookId, {
+        metadata: {
+          genres: updated,
+        },
       });
     } else {
       const current = Array.isArray(book.media?.tags) ? book.media.tags : [];
       const updated = [
         ...new Set([...current.filter((t: string) => t !== genre), ...genres]),
       ];
-      await patch(`/api/items/${bookId}/media`, {
+      await absClient.libraryItems.updateMedia(bookId, {
         tags: updated,
       });
     }
@@ -69,10 +75,8 @@ async function appendGenreToBook(
 }
 
 export async function executeSplitGenres(
-  formData: Record<string, any>
+  formData: Record<string, any>,
 ): Promise<ToolResult> {
-  const { get, addLog } = useApi();
-
   try {
     let { type, libraryIds, delimiter, delimiterOverride } = formData;
 
@@ -84,11 +88,11 @@ export async function executeSplitGenres(
     addLog("Starting split genres operation...");
     console.log("Executing split genres with formData:", formData);
 
-    const libraryResponse = await get("/api/libraries");
+    const libraryResponse = await absClient.libraries.list();
 
     const processableLibraries = [];
 
-    for (const library of libraryResponse.data.libraries) {
+    for (const library of libraryResponse.libraries) {
       if (libraryIds.length === 0 || libraryIds.includes(library.id)) {
         processableLibraries.push(library.id);
       }
@@ -97,8 +101,15 @@ export async function executeSplitGenres(
     const libraryMessage = `Processing ${processableLibraries.length} libraries`;
     addLog(libraryMessage);
 
-    let genres = (await get(`/api/${type}`)).data || [];
-    genres = genres.genres || genres.tags || [];
+    const genreResponse =
+      (type == "genre"
+        ? await absClient.misc.getGenres()
+        : await absClient.misc.getTags()) || [];
+
+    let genres =
+      (genreResponse as AbsGenresResponse).genres ||
+      (genreResponse as AbsTagsResponse).tags ||
+      [];
 
     const multiGenres = [];
 
@@ -131,7 +142,7 @@ export async function executeSplitGenres(
       addLog(
         `Processed ${
           bookTitlesOverall.length
-        } books for genre ${genre}: ${bookTitlesOverall.join(", ")}`
+        } books for genre ${genre}: ${bookTitlesOverall.join(", ")}`,
       );
     }
 
@@ -145,6 +156,7 @@ export async function executeSplitGenres(
     };
   } catch (error: any) {
     const errorMessage = "Failed to split genres";
+    console.error(errorMessage, error);
     addLog(errorMessage);
     return {
       success: false,

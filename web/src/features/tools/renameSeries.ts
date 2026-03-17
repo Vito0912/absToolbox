@@ -1,22 +1,24 @@
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
+import { AbsLibraryItemMinified } from "@vito0912/abs-ts-sdk/types";
 
-const { get, post, addLog } = useApi();
+const { absClient, addLog } = useApi();
 
-async function getAllBooksForSeries(seriesId: string, libraryId: string) {
+async function getAllBooksForSeries(
+  seriesId: string,
+  libraryId: string,
+): Promise<AbsLibraryItemMinified[]> {
   try {
-    const base64SeriesId = btoa(unescape(encodeURIComponent(seriesId)))
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/, "");
-
-    const response = await get(
-      `/api/libraries/${libraryId}/items?filter=series.${base64SeriesId}`,
-    );
+    const response = await absClient.libraries.listItems(libraryId, {
+      filter: {
+        group: "series",
+        value: seriesId,
+      },
+    });
     console.log(
-      `Fetched ${response.data.results.length} books for series ${seriesId} in library ${libraryId}`,
+      `Fetched ${response.results.length} books for series ${seriesId} in library ${libraryId}`,
     );
-    return response.data.results || [];
+    return response.results || [];
   } catch (error) {
     console.error(
       `Error fetching books for series ${seriesId} in library ${libraryId}:`,
@@ -33,15 +35,16 @@ export async function executeRenameSeries(
 
   const seriesBooks = await getAllBooksForSeries(seriesId, libraryId);
   const books = (
-    await post(`/api/items/batch/get`, {
+    await absClient.libraryItems.batchGet({
       libraryItemIds: seriesBooks.map((book: any) => book.id),
     })
-  ).data.libraryItems;
+  ).libraryItems;
 
   const payload = [];
 
   for (const book of books) {
     const oldSeries = book.media.metadata.series;
+    if (!oldSeries) continue;
 
     for (const series of oldSeries) {
       if (series.id === seriesId) {
@@ -60,7 +63,7 @@ export async function executeRenameSeries(
     payload.push(push);
   }
 
-  await post("/api/items/batch/update", [...payload]);
+  await absClient.libraryItems.batchUpdate(payload);
 
   addLog(`Renamed series to "${newName}" for ${payload.length} books`);
 

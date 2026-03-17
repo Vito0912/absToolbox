@@ -1,8 +1,9 @@
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
 import axios from "axios";
+import { AbsPodcastLibraryItem } from "@vito0912/abs-ts-sdk/types";
 
-const { get, post, del, addLog, baseDomain } = useApi();
+const { absClient, addLog, baseDomain } = useApi();
 
 function expandMapping(
   mapping: Record<string, string | null>,
@@ -55,7 +56,7 @@ export async function executeMigrateServer(
   }
   const expiresInSeconds = expiresInMinutes * 60;
 
-  const newLibraries = (await get("/api/libraries")).data.libraries;
+  const newLibraries = (await absClient.libraries.list()).libraries;
   const oldLibraries = (
     await axios.get(`${serverUrl}/api/libraries`, {
       headers: {
@@ -90,7 +91,7 @@ export async function executeMigrateServer(
     }
   }
 
-  const newUsers = (await get("/api/users")).data.users;
+  const newUsers = (await absClient.users.list()).users;
   const oldUsers = (
     await axios.get(`${serverUrl}/api/users`, {
       headers: {
@@ -134,7 +135,7 @@ export async function executeMigrateServer(
   for (const [oldId, newId] of Object.entries(libraryMapping)) {
     addLog(`Processing library: ${oldId} -> ${newId}`);
 
-    const newItems = (await get(`/api/libraries/${newId}/items`)).data.results;
+    const newItems = (await absClient.libraries.listItems(newId)).results;
     const oldItems = (
       await axios.get(`${serverUrl}/api/libraries/${oldId}/items`, {
         headers: {
@@ -183,14 +184,19 @@ export async function executeMigrateServer(
               },
             })
           ).data;
-          item = (await get(`/api/items/${item.id}`)).data;
+          const item2 = await absClient.libraryItems.getById(item.id);
 
-          for (let i: number = 0; i < oldItem.media.episodes.length; i++) {
+          for (
+            let i: number = 0;
+            i < (oldItem.media.episodes ?? []).length;
+            i++
+          ) {
             const oldEpisode = oldItem.media.episodes[i];
-            const newEpisode = item.media.episodes[i];
+            const podcastItem = item2 as AbsPodcastLibraryItem | undefined;
+            const newEpisode = podcastItem?.media?.episodes?.[i] ?? null;
             if (newEpisode) {
               itemMapping[`${oldItem.id};${oldEpisode.id}`] =
-                `${item.id};${newEpisode.id}`;
+                `${item!.id};${newEpisode.id}`;
             } else {
               addLog(
                 `Warning: No mapping found for podcast episode <a href="${serverUrl}/item/${oldItem.id}" target="_blank">${oldItem.media.metadata.title}</a> episode "${oldEpisode.title}"`,
@@ -307,14 +313,12 @@ export async function executeMigrateServer(
   for (const userId of Object.values(userMapping)) {
     const userProgress = progressMapping[userId];
 
-    const apiKeyResponse = (
-      await post("/api/api-keys", {
-        name: "Migration Script",
-        expiresIn: expiresInSeconds,
-        isActive: true,
-        userId: userId,
-      })
-    ).data;
+    const apiKeyResponse = await absClient.misc.createApiKey({
+      name: "Migration Script",
+      expiresIn: expiresInSeconds,
+      isActive: true,
+      userId: userId,
+    });
 
     const apiKey = apiKeyResponse.apiKey.apiKey;
     const apiKeyId = apiKeyResponse.apiKey.id;
@@ -344,7 +348,7 @@ export async function executeMigrateServer(
         },
       },
     );
-    await del(`/api/api-keys/${apiKeyId}`);
+    await absClient.misc.deleteApiKey(apiKeyId);
 
     addLog(`Added sessions for user ${userId}`);
   }

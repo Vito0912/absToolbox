@@ -154,7 +154,7 @@ import { ref, computed, onMounted } from "vue";
 import { useApi } from "@/shared/composables/useApi";
 import { fetchUserSessions, updateSession } from "../updateListeningSessions";
 
-const { get, addLog } = useApi();
+const { absClient, addLog } = useApi();
 
 const users = ref<Array<{ id: string; username: string }>>([]);
 const loading = ref(true);
@@ -194,8 +194,8 @@ const formatDate = (timestamp: number): string => {
 const loadUsers = async () => {
   try {
     loading.value = true;
-    const response = await get("/api/users");
-    users.value = response.data.users || [];
+    const response = await absClient.users.list();
+    users.value = response.users || [];
   } catch (err: any) {
     error.value = err.message || "Failed to load users";
   } finally {

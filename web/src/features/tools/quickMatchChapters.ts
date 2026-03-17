@@ -1,64 +1,25 @@
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
+import {
+  AbsBookLibraryItemExpanded,
+  AbsBookLibraryItemMinified,
+  AbsLibrary,
+  AbsSearchChaptersData,
+} from "@vito0912/abs-ts-sdk";
+import { AbsLibraryItemChaptersUpdateRequest } from "@vito0912/abs-ts-sdk/types";
 
-const { get, post, addLog } = useApi();
+const { absClient, addLog } = useApi();
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchLibraryItems(libraryId: string) {
+async function updateBookChapters(
+  bookId: string,
+  chapters: AbsLibraryItemChaptersUpdateRequest,
+) {
   try {
-    const response = await get(`/api/libraries/${libraryId}/items`);
-    return response.data.results || [];
-  } catch (error) {
-    console.error("Error fetching library items:", error);
-    return [];
-  }
-}
-
-async function searchForBook(title: string, author: string, provider: string) {
-  try {
-    const encodedTitle = encodeURIComponent(title);
-    const encodedAuthor = encodeURIComponent(author);
-    const response = await get(
-      `/api/search/books?title=${encodedTitle}&author=${encodedAuthor}&provider=${provider}`
-    );
-    return response.data || [];
-  } catch (error) {
-    console.error(`Error searching for book "${title}":`, error);
-    return [];
-  }
-}
-
-async function fetchBookDetails(bookId: string) {
-  try {
-    const response = await get(`/api/items/${bookId}?expanded=1`);
-    return response.data || null;
-  } catch (error) {
-    console.error(`Error fetching book details for ${bookId}:`, error);
-    return null;
-  }
-}
-
-async function fetchChaptersByAsin(asin: string, region: string) {
-  try {
-    const response = await get(
-      `/api/search/chapters?asin=${asin}&region=${region}`
-    );
-    if (response.data.error) {
-      throw new Error(response.data.error);
-    }
-    return response.data.chapters || [];
-  } catch (error) {
-    console.error(`Error fetching chapters for ASIN ${asin}:`, error);
-    return [];
-  }
-}
-
-async function updateBookChapters(bookId: string, chapters: any[]) {
-  try {
-    await post(`/api/items/${bookId}/chapters`, { chapters });
+    await absClient.libraryItems.updateChapters(bookId, chapters);
     return true;
   } catch (error) {
     console.error(`Error updating chapters for book ${bookId}:`, error);
@@ -100,7 +61,7 @@ function createChaptersFromAsin(chapters: any[], bookDuration: number) {
     const start = chapter.startOffsetMs / 1000;
     const end = Math.min(
       (chapter.startOffsetMs + chapter.lengthMs) / 1000,
-      bookDuration
+      bookDuration,
     );
 
     if (start >= bookDuration) {
@@ -120,7 +81,7 @@ function createChaptersFromAsin(chapters: any[], bookDuration: number) {
 }
 
 export async function executeMatchAudiobookChapters(
-  formData: Record<string, any>
+  formData: Record<string, any>,
 ): Promise<ToolResult> {
   try {
     const {
@@ -137,7 +98,13 @@ export async function executeMatchAudiobookChapters(
 
     addLog(`Fetching library items from library: ${libraryId}`);
 
-    const items = await fetchLibraryItems(libraryId);
+    const library = await absClient.libraries.getById(libraryId);
+    if (!library || (library as AbsLibrary).mediaType !== "book") {
+      throw new Error(`Library with ID ${libraryId} not a valid book library.`);
+    }
+
+    const items = ((await absClient.libraries.listItems(libraryId)).results ||
+      []) as AbsBookLibraryItemMinified[];
     addLog(`Found ${items.length} items in the library.`);
 
     // Process each item in the library
@@ -164,7 +131,11 @@ export async function executeMatchAudiobookChapters(
 
         if (searchForAsin) {
           addLog(`Searching for ASIN for "${title}"...`);
-          const searchResults = await searchForBook(title, authors, provider);
+          const searchResults = await absClient.search.getBooks({
+            title,
+            author: authors,
+            provider,
+          });
 
           if (searchResults.length === 0) {
             addLog(`Error matching book "${title}" (No results found).`);
@@ -193,10 +164,13 @@ export async function executeMatchAudiobookChapters(
           addLog(`Using tracks as chapters for "${title}".`);
           bookInfo[bookId].status = "TRACKS";
 
-          const bookDetails = await fetchBookDetails(bookId);
+          const bookDetails: AbsBookLibraryItemExpanded =
+            (await absClient.libraryItems.getById(bookId, {
+              expanded: true,
+            })) as AbsBookLibraryItemExpanded;
           if (!bookDetails) {
             addLog(
-              `Error fetching book "${title}": Failed to get book details`
+              `Error fetching book "${title}": Failed to get book details`,
             );
             bookInfo[bookId].comment = "Tracks retrieval failed";
             continue;
@@ -205,7 +179,7 @@ export async function executeMatchAudiobookChapters(
           const audioFiles = bookDetails.media.audioFiles || [];
           if (audioFiles.length <= 1) {
             addLog(
-              `Error using tracks as chapters for "${title}" (No or 1 track found).`
+              `Error using tracks as chapters for "${title}" (No or 1 track found).`,
             );
             bookInfo[bookId].comment = "Tracks retrieval failed";
             continue;
@@ -219,18 +193,20 @@ export async function executeMatchAudiobookChapters(
             Math.abs(currentChaptersNum - tracksNum) > chapterThreshold
           ) {
             addLog(
-              `Chapters are missing or incorrect for "${title}" (Current num: ${currentChaptersNum}, Tracks num: ${tracksNum}). Updating...`
+              `Chapters are missing or incorrect for "${title}" (Current num: ${currentChaptersNum}, Tracks num: ${tracksNum}). Updating...`,
             );
 
             const newChapters = createChaptersFromTracks(
               audioFiles,
-              item.media.duration
+              item.media.duration,
             );
-            const success = await updateBookChapters(bookId, newChapters);
+            const success = await updateBookChapters(bookId, {
+              chapters: newChapters,
+            });
 
             if (success) {
               addLog(
-                `Chapters updated successfully for "${title}" (Using tracks!).`
+                `Chapters updated successfully for "${title}" (Using tracks!).`,
               );
               bookInfo[bookId].comment = "Tracks used as chapters";
               bookInfo[bookId].status = "FINISHED";
@@ -246,7 +222,7 @@ export async function executeMatchAudiobookChapters(
           continue;
         } else {
           addLog(
-            `Skipping book "${title}" (No ASIN found and Tracks not used as source).`
+            `Skipping book "${title}" (No ASIN found and Tracks not used as source).`,
           );
           bookInfo[bookId].comment = "ASIN retrieval failed";
           continue;
@@ -259,7 +235,12 @@ export async function executeMatchAudiobookChapters(
       const asin = item.media.metadata.asin;
       addLog(`Fetching chapters for ASIN: ${asin}`);
 
-      const chapters = await fetchChaptersByAsin(asin, region);
+      const chapters = (
+        (await absClient.search.getChapters({
+          asin: asin,
+          region: region,
+        })) as AbsSearchChaptersData
+      ).chapters;
 
       if (chapters.length === 0) {
         bookInfo[bookId].comment = "No chapters found";
@@ -282,9 +263,11 @@ export async function executeMatchAudiobookChapters(
 
         const newChapters = createChaptersFromAsin(
           chapters,
-          item.media.duration
+          item.media.duration,
         );
-        const success = await updateBookChapters(bookId, newChapters);
+        const success = await updateBookChapters(bookId, {
+          chapters: newChapters,
+        });
 
         if (success) {
           addLog(`Chapters updated successfully for "${title}".`);

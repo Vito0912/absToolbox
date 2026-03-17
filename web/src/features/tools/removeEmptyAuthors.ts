@@ -1,13 +1,16 @@
 import { fetchLibraryIds } from "@/common/libraryIds";
 import { useApi } from "@/shared/composables/useApi";
 import type { ToolResult } from "./types";
+import { AbsLibraryAuthorsResponse } from "@vito0912/abs-ts-sdk";
 
-const { get, apiClient, addLog } = useApi();
+const { absClient, addLog } = useApi();
 
 async function getLibraryAuthors(libraryId: string) {
   try {
-    const response = await get(`/api/libraries/${libraryId}/authors`);
-    return response.data.authors || [];
+    const response = (await absClient.libraries.listAuthors(
+      libraryId,
+    )) as AbsLibraryAuthorsResponse;
+    return response.authors || [];
   } catch (error) {
     console.error(`Error fetching authors for library ${libraryId}:`, error);
     return [];
@@ -16,7 +19,7 @@ async function getLibraryAuthors(libraryId: string) {
 
 async function deleteAuthor(authorId: string) {
   try {
-    await apiClient.value.delete(`/api/authors/${authorId}`);
+    await absClient.authors.delete(authorId);
     return true;
   } catch (error) {
     console.error(`Error deleting author ${authorId}:`, error);
@@ -25,7 +28,7 @@ async function deleteAuthor(authorId: string) {
 }
 
 export async function executeRemoveEmptyAuthors(
-  formData: Record<string, any>
+  formData: Record<string, any>,
 ): Promise<ToolResult> {
   try {
     const { libraryIds = [], deleteWithoutConfirmation = false } = formData;
@@ -69,7 +72,7 @@ export async function executeRemoveEmptyAuthors(
       addLog("The following authors will be deleted:");
       for (const author of authorsToDelete) {
         addLog(
-          `- ${author.name} (${author.numBooks} books) - ID: ${author.id}`
+          `- ${author.name} (${author.numBooks} books) - ID: ${author.id}`,
         );
       }
 

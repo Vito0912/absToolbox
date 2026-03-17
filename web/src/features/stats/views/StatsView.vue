@@ -391,13 +391,13 @@ const allTimeStats = computed(() => {
   );
   const totalSessions = sessions.value.length;
 
-  const finishedBooks = userData.value.mediaProgress.filter((p) => {
+  const finishedBooks = userData.value.mediaProgress!.filter((p) => {
     const isFinished = p.isFinished || p.progress >= 0.999;
     const isBook = p.episodeId === null;
     return isFinished && isBook;
   }).length;
 
-  const finishedPodcasts = userData.value.mediaProgress.filter((p) => {
+  const finishedPodcasts = userData.value.mediaProgress!.filter((p) => {
     const isFinished = p.isFinished || p.progress >= 0.999;
     const isPodcastEpisode = p.episodeId !== null;
     return isFinished && isPodcastEpisode;

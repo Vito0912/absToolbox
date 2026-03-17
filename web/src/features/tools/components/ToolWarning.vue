@@ -5,7 +5,7 @@
       responsible for any data loss or issues that may occur by using these
       tools. Visit
       <a
-        :href="`${baseDomain}config/backups`"
+        :href="backupUrl"
         target="_blank"
         class="text-blue-400 underline"
         >Backups</a
@@ -25,4 +25,7 @@ const settingsStore = useSettingsStore();
 const { baseDomain } = useApi();
 
 const serverUrl = computed(() => settingsStore.settings.serverUrl);
+const backupUrl = computed(() =>
+  baseDomain.value ? `${baseDomain.value}config/backups` : "#"
+);
 </script>

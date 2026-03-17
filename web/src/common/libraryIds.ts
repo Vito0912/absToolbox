@@ -1,11 +1,11 @@
 import { useApi } from "@/shared/composables/useApi";
 
-const { get } = useApi();
+const { absClient } = useApi();
 
 export async function fetchLibraryIds(libraryIds: string[]): Promise<string[]> {
-  const response = await get("/api/libraries");
+  const response = await absClient.libraries.list();
 
-  let allLibraries = response.data.libraries || [];
+  let allLibraries = response.libraries || [];
 
   if (libraryIds.length !== 0) {
     allLibraries = allLibraries.filter((library: { id: string }) =>

@@ -21,7 +21,8 @@
     "pinia": "^3.0.3",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1",
-    "@vito0912/web": "github:Vito0912/web"
+    "@vito0912/web": "github:Vito0912/web",
+    "@vito0912/abs-ts-sdk": "latest"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",
