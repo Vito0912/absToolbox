@@ -1,32 +1,62 @@
 import { onMounted, reactive, ref } from "vue";
-import { useApi } from "@/shared/composables/useApi";
-import type { ToolDefinition, ToolField, ToolResult } from "../../types";
 import {
   AbsLibrary,
   AbsLibraryItemMinified,
   AbsLibraryItemsMinifiedPageResponse,
 } from "@vito0912/abs-ts-sdk";
-
-type FieldValue = string | boolean | string[];
-type FormDataState = Record<string, FieldValue>;
+import { useApi } from "@/shared/composables/useApi";
+import type { ToolDefinition, ToolField, ToolResult } from "../types";
+import type { FieldValue, FormDataState } from "./types";
 
 interface LibrariesResponse {
   libraries?: AbsLibrary[];
 }
 
+const LIBRARY_FIELD_TYPES: ToolField["type"][] = [
+  "librarySelector",
+  "singleLibrarySelector",
+  "libraryItemsSelector",
+];
+
+const ARRAY_FIELD_TYPES: ToolField["type"][] = [
+  "stringArray",
+  "librarySelector",
+  "libraryItemsSelector",
+];
+
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
   }
+
   return "Unknown error occurred";
 };
 
 const isArrayField = (field: ToolField): boolean => {
-  return (
-    field.type === "stringArray" ||
+  return ARRAY_FIELD_TYPES.includes(field.type);
+};
+
+const needsLibraries = (field: ToolField): boolean => {
+  return LIBRARY_FIELD_TYPES.includes(field.type);
+};
+
+const initializeFieldValue = (field: ToolField): FieldValue => {
+  if (field.type === "boolean") {
+    return typeof field.default === "boolean" ? field.default : false;
+  }
+
+  if (field.type === "stringArray") {
+    return Array.isArray(field.default) ? field.default : [""];
+  }
+
+  if (
     field.type === "librarySelector" ||
     field.type === "libraryItemsSelector"
-  );
+  ) {
+    return [];
+  }
+
+  return typeof field.default === "string" ? field.default : "";
 };
 
 export function useDynamicFormState(tool: ToolDefinition) {
@@ -54,34 +84,15 @@ export function useDynamicFormState(tool: ToolDefinition) {
   const selectedLibrary = reactive<Record<string, string>>({});
   const itemSearch = reactive<Record<string, string>>({});
 
-  const initializeFieldValue = (field: ToolField): FieldValue => {
-    if (field.type === "boolean") {
-      return typeof field.default === "boolean" ? field.default : false;
-    }
-
-    if (field.type === "stringArray") {
-      return Array.isArray(field.default) ? field.default : [""];
-    }
-
-    if (
-      field.type === "librarySelector" ||
-      field.type === "libraryItemsSelector"
-    ) {
-      return [];
-    }
-
-    return typeof field.default === "string" ? field.default : "";
-  };
-
   const initializeFormState = () => {
-    tool.fields.forEach((field) => {
+    for (const field of tool.fields) {
       formData[field.name] = initializeFieldValue(field);
 
       if (field.type === "libraryItemsSelector") {
         selectedLibrary[field.name] = "";
         itemSearch[field.name] = "";
       }
-    });
+    }
   };
 
   const loadLibraries = async (fieldName: string) => {
@@ -157,14 +168,14 @@ export function useDynamicFormState(tool: ToolDefinition) {
   const buildCleanedData = (): FormDataState => {
     const cleanedData: FormDataState = { ...formData };
 
-    tool.fields.forEach((field) => {
+    for (const field of tool.fields) {
       const fieldValue = formData[field.name];
       if (isArrayField(field) && Array.isArray(fieldValue)) {
         cleanedData[field.name] = fieldValue.filter(
-          (item: string) => item.trim() !== "",
+          (item) => item.trim() !== "",
         );
       }
-    });
+    }
 
     return cleanedData;
   };
@@ -202,18 +213,15 @@ export function useDynamicFormState(tool: ToolDefinition) {
   onMounted(() => {
     initializeFormState();
 
-    tool.fields.forEach((field) => {
-      if (
-        field.type === "librarySelector" ||
-        field.type === "singleLibrarySelector" ||
-        field.type === "libraryItemsSelector"
-      ) {
+    for (const field of tool.fields) {
+      if (needsLibraries(field)) {
         loadLibraries(field.name);
       }
-    });
+    }
   });
 
   return {
+    elapsedTime,
     executionLogs,
     formData,
     handleSubmit,
@@ -228,7 +236,6 @@ export function useDynamicFormState(tool: ToolDefinition) {
     loading,
     result,
     selectedLibrary,
-    elapsedTime,
     updateFieldValue,
     updateItemSearch,
     updateSelectedLibrary,

@@ -9,19 +9,16 @@
 
     <form class="space-y-5" @submit.prevent="handleSubmit">
       <FormFieldShell
-        v-for="field in tool.fields"
-        :key="field.name"
-        :label="field.label"
-        :description="field.description"
-        :required="field.required"
+        v-for="binding in fieldBindings"
+        :key="binding.field.name"
+        :label="binding.field.label"
+        :description="binding.field.description"
+        :required="binding.field.required"
       >
         <component
-          :is="getFieldComponent(field.type)"
-          v-bind="getFieldProps(field)"
-          @update:modelValue="onFieldValueUpdate(field.name, $event)"
-          @update:selectedLibrary="onSelectedLibraryUpdate(field.name, $event)"
-          @update:itemSearch="onItemSearchUpdate(field.name, $event)"
-          @loadItems="onLoadItems(field.name, $event)"
+          :is="binding.component"
+          v-bind="binding.props"
+          v-on="binding.listeners"
         />
       </FormFieldShell>
 
@@ -42,18 +39,17 @@
 </template>
 
 <script setup lang="ts">
-import type { ToolDefinition, ToolField } from "../types";
+import { computed } from "vue";
+import type { ToolDefinition } from "../types";
 import ExecutionLogsPanel from "./dynamic-form/ExecutionLogsPanel.vue";
 import ExecutionResultPanel from "./dynamic-form/ExecutionResultPanel.vue";
 import FormFieldShell from "./dynamic-form/FormFieldShell.vue";
-import { getFieldComponent } from "./dynamic-form/fieldRegistry";
-import { useDynamicFormState } from "./dynamic-form/useDynamicFormState";
+import { resolveFieldBinding } from "../form/fieldRegistry";
+import { useDynamicFormState } from "../form/useDynamicFormState";
 
 interface Props {
   tool: ToolDefinition;
 }
-
-type FieldValue = string | boolean | string[];
 
 const props = defineProps<Props>();
 
@@ -78,60 +74,29 @@ const {
   updateSelectedLibrary,
 } = useDynamicFormState(props.tool);
 
-const getFieldProps = (field: ToolField) => {
-  const shared = {
-    modelValue: formData[field.name],
-    required: field.required,
-    placeholder: field.placeholder,
+const fieldBindings = computed(() => {
+  const state = {
+    formData,
+    libraries,
+    librariesLoading,
+    librariesError,
+    items,
+    itemsLoading,
+    itemsError,
+    selectedLibrary,
+    itemSearch,
   };
 
-  if (field.type === "select") {
-    return {
-      ...shared,
-      options: field.options ?? [],
-    };
-  }
+  const actions = {
+    updateFieldValue,
+    updateSelectedLibrary,
+    updateItemSearch,
+    loadLibraryItems,
+  };
 
-  if (field.type === "librarySelector" || field.type === "singleLibrarySelector") {
-    return {
-      ...shared,
-      name: field.name,
-      libraries: libraries[field.name] ?? [],
-      loading: librariesLoading[field.name] ?? false,
-      error: librariesError[field.name] ?? null,
-    };
-  }
-
-  if (field.type === "libraryItemsSelector") {
-    return {
-      ...shared,
-      libraries: libraries[field.name] ?? [],
-      loading: librariesLoading[field.name] ?? false,
-      error: librariesError[field.name] ?? null,
-      selectedLibrary: selectedLibrary[field.name] ?? "",
-      itemSearch: itemSearch[field.name] ?? "",
-      items: items[field.name] ?? [],
-      itemsLoading: itemsLoading[field.name] ?? false,
-      itemsError: itemsError[field.name] ?? null,
-    };
-  }
-
-  return shared;
-};
-
-const onFieldValueUpdate = (fieldName: string, value: FieldValue) => {
-  updateFieldValue(fieldName, value);
-};
-
-const onSelectedLibraryUpdate = (fieldName: string, value: string) => {
-  updateSelectedLibrary(fieldName, value);
-};
-
-const onItemSearchUpdate = (fieldName: string, value: string) => {
-  updateItemSearch(fieldName, value);
-};
-
-const onLoadItems = (fieldName: string, libraryId: string) => {
-  loadLibraryItems(fieldName, libraryId);
-};
+  return props.tool.fields.map((field) => ({
+    field,
+    ...resolveFieldBinding(field, state, actions),
+  }));
+});
 </script>
