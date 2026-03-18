@@ -56,7 +56,7 @@ function createChaptersFromTracks(tracks: any[], bookDuration: number) {
 function createChaptersFromAsin(chapters: any[], bookDuration: number) {
   const newChapters = [];
 
-  for (let i = 0; i < chapters.length; i++) {
+  for (let i = 0; i < (chapters?.length || 0); i++) {
     const chapter = chapters[i];
     const start = chapter.startOffsetMs / 1000;
     const end = Math.min(
@@ -242,7 +242,7 @@ export async function executeMatchAudiobookChapters(
         })) as AbsSearchChaptersData
       ).chapters;
 
-      if (chapters.length === 0) {
+      if (chapters == undefined || chapters.length === 0) {
         bookInfo[bookId].comment = "No chapters found";
         addLog(`No chapters found for "${title}".`);
         continue;

@@ -24,7 +24,7 @@ const variantClasses = computed(() => {
   const variants = {
     info: "border-blue-500/30 bg-blue-500/10 text-blue-200",
     warning: "border-amber-500/30 bg-amber-500/10 text-amber-200",
-    danger: "border-rose-500/30 bg-rose-500/10 text-rose-200",
+    danger: "border-rose-500/10 bg-rose-500/5 text-rose-200/75",
     success: "border-emerald-500/30 bg-emerald-500/10 text-emerald-200",
   };
   return variants[props.variant];

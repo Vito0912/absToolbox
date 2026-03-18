@@ -14,11 +14,10 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "split-genres",
     group: "Metadata",
-    title: "Split Genres",
-    description:
-      "Separate combined genres into individual entries throughout your library.",
+    title: "Split genres",
+    description: "Split combined genre or tag values into separate entries.",
     longDescription:
-      "Please specify genres/tags you want to skip. This is case-sensitive. Then select a delimiter to split the genres/tags. The original genres/tags will be removed, and the new ones (splitted) will be added to the books.",
+      "Specify any genres or tags to skip (case-sensitive). Choose a delimiter to split the values. The original combined values will be removed and the new, split entries will be added to the books.",
     fields: [
       {
         name: "libraryIds",
@@ -56,7 +55,7 @@ export const toolDefinitions: ToolDefinition[] = [
         type: "string",
         label: "Delimiter Override",
         description:
-          "Overrides the selected delimiter for splitting genres/tags.",
+          "If set, this string will be used instead of the selected delimiter.",
         required: false,
       },
     ],
@@ -65,9 +64,9 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "delete-listening-sessions",
     group: "Stats",
-    title: "Delete Large Listening Sessions",
+    title: "Delete long listening sessions",
     description:
-      "Deletes all listening sessions that exceed a specified duration.",
+      "Delete listening sessions that are longer than a given threshold.",
     fields: [
       {
         name: "userIds",
@@ -99,11 +98,11 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "match-audiobook-chapters",
     group: "Metadata",
-    title: "Match Audiobook Chapters",
+    title: "Match audiobook chapters",
     description:
-      "Automatically matches chapters for audiobooks using the AudiobookShelf API.",
+      "Try to match or add chapters for audiobooks using AudiobookShelf.",
     longDescription:
-      "Automatically matches chapters for audiobooks using the AudiobookShelf API. If chapters have been manually added to a book, they may be overwritten.",
+      "Search for chapter information using the selected provider and add or update chapters for matching books. This may overwrite chapters that were added manually.",
     fields: [
       {
         name: "libraryId",
@@ -117,7 +116,7 @@ export const toolDefinitions: ToolDefinition[] = [
         type: "string",
         label: "Chapter Threshold",
         description:
-          "Threshold for identifying missing chapters. Set to 99999999 to prevent overwriting existing chapters.",
+          "Number used to decide if a book has too few chapters. Use a large value to avoid overwriting existing chapters.",
         required: true,
         default: "3",
       },
@@ -155,7 +154,7 @@ export const toolDefinitions: ToolDefinition[] = [
         type: "boolean",
         label: "Search for ASIN",
         description:
-          "Search for ASIN if not available. Disable to use tracks as chapters if no ASIN is found.",
+          "If enabled, try to find the book's ASIN. If disabled and no ASIN is found, tracks may be used as chapters.",
         required: true,
         default: true,
       },
@@ -173,7 +172,7 @@ export const toolDefinitions: ToolDefinition[] = [
         type: "boolean",
         label: "Disable Rate Protection",
         description:
-          "Disable rate protection to speed up processing, but this may cause timeouts.",
+          "Allow faster requests at the risk of timeouts or rate limits.",
         required: true,
         default: false,
       },
@@ -183,9 +182,9 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "delete-orphaned-authors",
     group: "Metadata",
-    title: "Remove Empty Authors",
+    title: "Remove authors without books",
     description:
-      "Removes all authors who do not have any books associated with them in your libraries.",
+      "Remove author entries that have no associated books in the selected libraries.",
     fields: [
       {
         name: "libraryIds",
@@ -201,9 +200,9 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "force-metadata",
     group: "Metadata",
-    title: "Force Metadata",
+    title: "Force metadata refresh",
     description:
-      "Adds a tag to all books in the selected library to force a metadata refresh on the next load.",
+      "Add a tag to books so the server will refresh their metadata on next load.",
     fields: [
       {
         name: "libraryIds",
@@ -219,9 +218,9 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "migrate-server",
     group: "Admin",
-    title: "Migrate Server",
+    title: "Migrate server data",
     description:
-      "Migrates all server data to a new server.<div class='text-sm text-red-500'>There are known issues with marking podcasts episodes as played. Days and Session are still copied</div>",
+      "Copy statistics and user data from an existing ABS server to a new one. Some podcast play states may not transfer correctly.",
     longDescription:
       "Migrates all server data to a new server.<div class='text-sm text-red-500'>There are known issues with marking podcasts episodes as played. Days and Session are still copied correctly</div><br/> <section>   <p>     To migrate a server to a new operating system or directory, you can use the     following tool to copy all stats and data. Please follow these steps     exactly:   </p>    <h3 class='font-bold mt-4'>1. Create a Backup</h3>   <p>Create a backup in the settings.</p>    <h3 class='font-bold mt-4'>2. Enable Metadata Storage</h3>   <p>     Enable the setting <strong>'Store metadata with item'</strong> in the ABS     settings:   </p>   <img src='/images/metadata.png' alt='Metadata setting screenshot' class='my-2' />    <p>     If this setting was not enabled from the beginning, you must use the     following tool to force the creation of the corresponding files:     <a       href='https://abstoolbox.vito0912.de/tool/force-metadata'       class='text-blue-500 underline hover:text-blue-700'       >Force Metadata tool</a     >.   </p>    <h3 class='font-bold mt-4'>3. Copy Library Folders</h3>   <p>     Now copy your library folders to your new server and set up your server from     scratch. Do <strong>NOT</strong> load a backup from the old server.   </p>    <h4 class='font-semibold mt-2'>When setting up your new server:</h4>   <ul class='list-disc list-inside'>     <li>       Name the libraries exactly the same. After migration, you can rename them       if you wish. The paths you add can, of course, be different.     </li>     <li>       Create all users for whom you want to migrate progress. Users that are not       created will have no progress or stats. Name the users exactly the same or       give them the same email address.     </li>   </ul>    <h3 class='font-bold mt-4'>4. Make Another Backup</h3>   <p>     After doing this, make another backup from both servers in the settings!   </p>    <h3 class='font-bold mt-4'>5. Add CORS Entry</h3>   <p>     Now add this website as a CORS entry in the settings of both servers. You     can find out how to do this here:     <a       href='https://abstoolbox.vito0912.de/settings'       class='text-blue-500 underline hover:text-blue-700'       >Settings</a     >.   </p>    <h3 class='font-bold mt-4'>Important!</h3>   <ul class='list-disc list-inside'>     <li>       The server in the       <a         href='https://abstoolbox.vito0912.de/settings'         class='text-blue-500 underline hover:text-blue-700'         >Settings</a       >       is your <strong>NEW</strong> server.     </li>     <li>       The server you enter below is your <strong>OLD</strong> server.     </li>   </ul>    <h3 class='font-bold mt-4'>6. Execute</h3>   <p>     Now you can click 'Execute' and wait. It should transfer all stats.   </p> </section>",
     fields: [
@@ -245,7 +244,7 @@ export const toolDefinitions: ToolDefinition[] = [
         type: "string",
         label: "API Key Expiration Time",
         description:
-          "For this script to work it needs to issue an API key for every user. Please specify (in minutes) how long the API keys should be valid. The more items you have, the longer the keys should be valid. 5 minutes should be good for a user with around 5 years of listening histories. Keys are never shared and automatically deleted. The expiration time should be set if the script fails and is unable to delete the key!",
+          "How long (in minutes) temporary API keys should be valid while the migration runs. Increase for large libraries or long migrations. Keys are created temporarily and deleted afterwards.",
         required: true,
         default: "5",
       },
@@ -255,8 +254,8 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "rename-series",
     group: "Metadata",
-    title: "Rename Series",
-    description: "Renames a book series in the selected library.",
+    title: "Rename series",
+    description: "Change the name of a series in the selected library.",
     fields: [
       {
         name: "libraryId",
@@ -299,17 +298,17 @@ export const toolDefinitions: ToolDefinition[] = [
       {
         name: "ruleSets",
         type: "stringArray",
-        label: "Rule Sets",
+        label: "Rule sets",
         description:
-          "Define rules for updating tags and genres based on file paths. Each rule should be in the format: '<regex>:<tag name>'.",
+          "One rule per entry in the format '<regex>:<tag name>'. If a path matches the regex, the tag will be added or removed depending on the rule.",
         default: [".*Fiction.*:Fiction"],
       },
       {
         name: "dryRun",
         type: "boolean",
-        label: "Dry Runq",
+        label: "Dry run",
         description:
-          "If enabled, the tool will simulate the changes without applying them.",
+          "When enabled, show the changes that would be made without applying them.",
         default: true,
       },
       {
@@ -327,8 +326,9 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "listen-date-updater",
     group: "Stats",
-    title: "Update Listen Dates",
-    description: "Updates the listen dates for specific library items.",
+    title: "Update listen dates",
+    description:
+      "Set or correct the start and finished dates for selected library items.",
     fields: [
       {
         name: "libraryItemIds",
@@ -350,7 +350,7 @@ export const toolDefinitions: ToolDefinition[] = [
         type: "boolean",
         label: "Use Last Listen Date",
         description:
-          "Automatically set the finished date to the last time you listened to each book (from listening sessions).",
+          "If enabled, set the finished date to the last recorded listen time from sessions.",
         required: false,
         default: false,
       },
@@ -368,16 +368,15 @@ export const toolDefinitions: ToolDefinition[] = [
   {
     id: "edit-listening-sessions",
     group: "Stats",
-    title: "Edit Listening Sessions",
+    title: "Edit listening sessions",
     description:
-      "Manually edit listening sessions to correct too long or incorrect sessions.",
+      "Manually edit a user's listening sessions to correct times or durations.",
     fields: [
       {
         name: "userId",
         type: "sessionSelector",
         label: "Select User and Sessions",
-        description:
-          "Choose a user to view their listening sessions, then edit individual sessions as needed.",
+        description: "Choose a user to view and edit their listening sessions.",
         required: true,
       },
     ],
