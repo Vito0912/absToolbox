@@ -24,6 +24,8 @@
 
     <ToolWarning />
 
+    <ToolDeprecation />
+
     <div class="space-y-6">
       <div
         v-for="group in groupedTools"
@@ -51,7 +53,7 @@ import { toolDefinitions } from "../toolDefinitions";
 import type { ToolDefinition } from "../types";
 import { useSettingsStore } from "@/shared/settings";
 import { useApi } from "@/shared/composables/useApi";
-import { ToolCard, ToolWarning } from "../components";
+import { ToolCard, ToolWarning, ToolDeprecation } from "../components";
 import { PageHeader, InfoBox } from "@/shared/components";
 
 const router = useRouter();
