@@ -127,6 +127,17 @@
             />
           </div>
 
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">
+              Date
+            </label>
+            <input
+              type="date"
+              v-model="newListeningDate"
+              class="w-full rounded-lg border border-white/10 bg-gray-900 px-3 py-2 text-sm text-gray-100 outline-none ring-0 transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30"
+            />
+          </div>
+
           <div class="flex gap-2 pt-2">
             <button
               type="button"
@@ -170,6 +181,7 @@ const totalPages = ref(0);
 const showModal = ref(false);
 const editingSession = ref<any | null>(null);
 const newListeningTime = ref(0);
+const newListeningDate = ref(0);
 
 const suggestedTime = computed(() => {
   if (!editingSession.value) return 0;
@@ -236,6 +248,7 @@ const previousPage = () => {
 const openEditModal = (session: any) => {
   editingSession.value = { ...session };
   newListeningTime.value = suggestedTime.value;
+  newListeningDate.value = editingSession.value ? editingSession.value.date : 0;
   showModal.value = true;
 };
 
@@ -243,6 +256,7 @@ const closeModal = () => {
   showModal.value = false;
   editingSession.value = null;
   newListeningTime.value = 0;
+  newListeningDate.value = 0;
 };
 
 const saveSession = async () => {
@@ -251,7 +265,8 @@ const saveSession = async () => {
   try {
     const updatedSession = {
       ...editingSession.value,
-      timeListening: newListeningTime.value * 3600
+      timeListening: newListeningTime.value * 3600,
+      date: newListeningDate.value
     };
     
     addLog(`Updating session ${updatedSession.id} with new listening time: ${formatTime(updatedSession.timeListening)}`);
